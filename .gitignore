@@ -1,0 +1,9 @@
+*.env
+.env
+api_keys.txt
+credentials.txt
+*_credentials*
+*_apikeys*
+.DS_Store
+.claude/
+.codex/
