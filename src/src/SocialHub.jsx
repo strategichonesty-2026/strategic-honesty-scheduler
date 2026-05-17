@@ -1,3 +1,4 @@
+const BUILD_TIME = process.env.REACT_APP_BUILD_TIME || 'dev';
 import { useState, useEffect } from "react";
 
 const GREEN = "#24b47e"; // v2;
@@ -617,3 +618,4 @@ export default function SocialHub() {
     </div>
   );
 }
+

@@ -9,7 +9,7 @@
   },
   "scripts": {
     "start": "react-scripts start",
-    "build": "react-scripts build",
+    "build": "REACT_APP_BUILD_TIME=$(date +%s) react-scripts build",
     "test": "react-scripts test"
   },
   "browserslist": {
