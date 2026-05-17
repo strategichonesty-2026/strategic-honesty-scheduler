@@ -32,7 +32,7 @@ router.get("/linkedin/callback", async (req, res) => {
   try {
     const tokens = await linkedin.exchangeCode(code);
     const profile = await linkedin.getProfile(tokens.access_token);
-    await upsertToken("linkedin", profile.sub, { ...tokens, scope: `${tokens.scope}|urn:li:person:${profile.sub}` });
+    await upsertToken("linkedin", stored.userId, { ...tokens, scope: `${tokens.scope}|urn:li:person:${profile.sub}` });
     const redirectUrl = `${process.env.FRONTEND_URL}?auth=success&platform=linkedin&userId=${profile.sub}&name=${encodeURIComponent(profile.name)}`;
     res.send(`<!DOCTYPE html><html><head><meta charset="utf-8"><meta http-equiv="refresh" content="0;url=${redirectUrl}"><title>Redirecting...</title></head><body><p>LinkedIn connected! <a href="${redirectUrl}">Click here if not redirected</a></p></body></html>`);
   } catch (err) {
