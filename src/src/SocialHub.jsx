@@ -124,7 +124,7 @@ export default function SocialHub() {
   async function fetchStatus() {
     try {
       const liUserId = userId;
-      const res = await fetch(`${BACKEND}/auth/status?userId=${liUserId}`);
+      const res = await fetch(`${BACKEND}/auth/status?userId=${liUserId}&t=${Date.now()}`);
       const data = await res.json();
       setConnections(data.connections || {});
     } catch { /* backend unreachable */ }
