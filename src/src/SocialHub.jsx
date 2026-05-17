@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 
-const GREEN = '#24b47e';
+const GREEN = "#24b47e"; // v2;
 const BACKEND = 'https://strategic-honesty-scheduler-production.up.railway.app';
 const F = '-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif';
 
@@ -617,4 +617,3 @@ export default function SocialHub() {
     </div>
   );
 }
-/* cache bust Sat May 16 21:56:54 CDT 2026 */
