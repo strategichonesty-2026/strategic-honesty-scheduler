@@ -1,6 +1,6 @@
-const BUILD_TIME = process.env.REACT_APP_BUILD_TIME || 'dev';
 import { useState, useEffect } from "react";
 
+const BUILD_TIME = process.env.REACT_APP_BUILD_TIME || 'dev';
 const GREEN = "#24b47e"; // v2;
 const BACKEND = 'https://strategic-honesty-scheduler-production.up.railway.app';
 const F = '-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif';
