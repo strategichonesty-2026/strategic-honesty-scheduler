@@ -104,7 +104,7 @@ export default function SocialHub() {
       const name = params.get('name');
       const uid = params.get('userId');
       if (uid) localStorage.setItem(`sh_${platform}_userId`, uid);
-      localStorage.setItem(`sh_user_id`, uid);
+
       addLog(setLogs, 'ok', `✓ ${platform} connected as "${name}"`);
       window.history.replaceState({}, '', window.location.pathname);
       setTab('connect');
@@ -123,7 +123,7 @@ export default function SocialHub() {
 
   async function fetchStatus() {
     try {
-      const liUserId = localStorage.getItem("sh_linkedin_userId") || userId;
+      const liUserId = userId;
       const res = await fetch(`${BACKEND}/auth/status?userId=${liUserId}`);
       const data = await res.json();
       setConnections(data.connections || {});
@@ -170,7 +170,7 @@ export default function SocialHub() {
     for (const platformId of testSel) {
       // Only LinkedIn and YouTube go through backend; others are simulated
       if (platformId === 'li' && connections.linkedin) {
-        const liUserId = localStorage.getItem('sh_linkedin_userId') || userId;
+        const liUserId = userId;
         if (publishNow) {
           addLog(setLogs,'info','Sending to LinkedIn...');
           try {
