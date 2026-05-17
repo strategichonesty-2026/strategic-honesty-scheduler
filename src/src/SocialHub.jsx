@@ -191,7 +191,7 @@ export default function SocialHub() {
           try {
             const res = await fetch(`${BACKEND}/posts`, {
               method:'POST', headers:{'Content-Type':'application/json'},
-              body: JSON.stringify({platform:'linkedin', userId: liUserId, content: testContent, mediaUrl: testImage||null, mediaType: testImage?'image':null, scheduledAt: scheduleDate})
+              body: JSON.stringify({platform:'linkedin', userId: liUserId, content: testContent, mediaUrl: testImage||null, mediaType: testImage?'image':null, scheduledAt: new Date(scheduleDate).toISOString()})
             });
             const data = await res.json();
             if (data.success) { addLog(setLogs,'ok',`✓ LinkedIn post scheduled for ${new Date(scheduleDate).toLocaleString()}`); fetchScheduledPosts(); }
@@ -204,7 +204,7 @@ export default function SocialHub() {
           try {
             const res = await fetch(`${BACKEND}/posts`, {
               method:'POST', headers:{'Content-Type':'application/json'},
-              body: JSON.stringify({platform:'youtube', userId: ytUserId, content: testContent, scheduledAt: scheduleDate})
+              body: JSON.stringify({platform:'youtube', userId: ytUserId, content: testContent, scheduledAt: new Date(scheduleDate).toISOString()})
             });
             const data = await res.json();
             if (data.success) { addLog(setLogs,'ok',`✓ YouTube post scheduled for ${new Date(scheduleDate).toLocaleString()}`); fetchScheduledPosts(); }
