@@ -33,19 +33,10 @@ router.get("/linkedin/callback", async (req, res) => {
     const tokens = await linkedin.exchangeCode(code);
     const profile = await linkedin.getProfile(tokens.access_token);
     await upsertToken("linkedin", profile.sub, { ...tokens, scope: `${tokens.scope}|urn:li:person:${profile.sub}` });
-    // Use a simple HTML redirect page to preserve query params past Chrome bounce tracking
-    res.send(`<!DOCTYPE html><html><head><meta charset="utf-8"><title>Connected!</title></head><body>
-      <script>
-        const url = new URL('${process.env.FRONTEND_URL}');
-        url.searchParams.set('auth', 'success');
-        url.searchParams.set('platform', 'linkedin');
-        url.searchParams.set('userId', '${profile.sub}');
-        url.searchParams.set('name', '${encodeURIComponent(profile.name)}');
-        window.location.replace(url.toString());
-      </script>
-      <p>Connected! Redirecting...</p>
-    </body></html>`);
+    const redirectUrl = `${process.env.FRONTEND_URL}?auth=success&platform=linkedin&userId=${profile.sub}&name=${encodeURIComponent(profile.name)}`;
+    res.send(`<!DOCTYPE html><html><head><meta charset="utf-8"><meta http-equiv="refresh" content="0;url=${redirectUrl}"><title>Redirecting...</title></head><body><p>LinkedIn connected! <a href="${redirectUrl}">Click here if not redirected</a></p></body></html>`);
   } catch (err) {
+    console.error("LinkedIn callback error:", err.message);
     res.redirect(`${process.env.FRONTEND_URL}?auth=error&platform=linkedin&reason=token_exchange_failed`);
   }
 });
@@ -69,18 +60,10 @@ router.get("/youtube/callback", async (req, res) => {
     const channelInfo = await youtube.getChannelInfo(authClient);
     const userId = channelInfo?.id || stored.userId;
     await upsertToken("youtube", userId, tokens);
-    res.send(`<!DOCTYPE html><html><head><meta charset="utf-8"><title>Connected!</title></head><body>
-      <script>
-        const url = new URL('${process.env.FRONTEND_URL}');
-        url.searchParams.set('auth', 'success');
-        url.searchParams.set('platform', 'youtube');
-        url.searchParams.set('userId', '${userId}');
-        url.searchParams.set('name', '${encodeURIComponent(channelInfo?.title || "YouTube Channel")}');
-        window.location.replace(url.toString());
-      </script>
-      <p>Connected! Redirecting...</p>
-    </body></html>`);
+    const redirectUrl = `${process.env.FRONTEND_URL}?auth=success&platform=youtube&userId=${userId}&name=${encodeURIComponent(channelInfo?.title || "YouTube Channel")}`;
+    res.send(`<!DOCTYPE html><html><head><meta charset="utf-8"><meta http-equiv="refresh" content="0;url=${redirectUrl}"><title>Redirecting...</title></head><body><p>YouTube connected! <a href="${redirectUrl}">Click here if not redirected</a></p></body></html>`);
   } catch (err) {
+    console.error("YouTube callback error:", err.message);
     res.redirect(`${process.env.FRONTEND_URL}?auth=error&platform=youtube&reason=token_exchange_failed`);
   }
 });
