@@ -11,6 +11,7 @@ const postsRoutes = require("./routes/posts");
 const app = express();
 const PORT = process.env.PORT || 3001;
 
+app.set("trust proxy", 1);
 app.use(helmet());
 const allowedOrigins = (process.env.ALLOWED_ORIGINS || "").split(",").map(o => o.trim());
 app.use(cors({ origin: (origin, cb) => (!origin || allowedOrigins.includes(origin) ? cb(null, true) : cb(new Error("CORS blocked"))), credentials: true }));
