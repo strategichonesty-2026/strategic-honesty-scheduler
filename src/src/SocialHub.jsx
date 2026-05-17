@@ -76,7 +76,7 @@ function Avatar({ch, size=32}) {
 }
 
 export default function SocialHub() {
-  const [tab, setTab] = useState('calendar');
+  const _ = BUILD_TIME; const [tab, setTab] = useState('calendar');
   const [userId] = useState(getUserId);
   const [connections, setConnections] = useState({}); // { linkedin: {...}, youtube: {...} }
   const [testSel, setTestSel] = useState(new Set(['ig','tt']));
