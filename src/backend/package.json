@@ -1,19 +1,23 @@
 {
-  "name": "strategic-honesty-scheduler",
+  "name": "strategic-honesty-scheduler-backend",
   "version": "1.0.0",
-  "private": true,
-  "dependencies": {
-    "react": "^18.2.0",
-    "react-dom": "^18.2.0",
-    "react-scripts": "5.0.1"
-  },
+  "main": "src/index.js",
   "scripts": {
-    "start": "react-scripts start",
-    "build": "react-scripts build",
-    "test": "react-scripts test"
+    "start": "node src/index.js",
+    "dev": "nodemon src/index.js"
   },
-  "browserslist": {
-    "production": [">0.2%", "not dead", "not op_mini all"],
-    "development": ["last 1 chrome version", "last 1 firefox version", "last 1 safari version"]
-  }
+  "dependencies": {
+    "axios": "^1.6.7",
+    "better-sqlite3": "^9.4.3",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.5",
+    "express": "^4.18.3",
+    "express-rate-limit": "^7.2.0",
+    "google-auth-library": "^9.7.0",
+    "googleapis": "^137.1.0",
+    "helmet": "^7.1.0",
+    "node-cron": "^3.0.3",
+    "uuid": "^9.0.1"
+  },
+  "engines": { "node": ">=18.0.0" }
 }
