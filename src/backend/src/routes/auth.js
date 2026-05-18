@@ -18,16 +18,13 @@ async function upsertToken(platform, userId, tokenData) {
 router.get("/linkedin/connect", (req, res) => {
   const userId = req.query.userId || "default";
   const state = uuid();
-  // Store state in DB instead of memory
-  db.run("INSERT INTO post_log (id, post_id, platform, action, detail, logged_at) VALUES (?, ?, ?, ?, ?, ?)",
-    [state, userId, 'linkedin', 'oauth_state', userId, Date.now()]);
+  db.run("INSERT INTO post_log (id, post_id, platform, action, detail, logged_at) VALUES (?, ?, ?, ?, ?, ?)", [state, userId, 'linkedin', 'oauth_state', userId, Date.now()]);
   res.redirect(linkedin.getAuthUrl(state));
 });
 
 router.get("/linkedin/callback", async (req, res) => {
   const { code, state, error } = req.query;
   if (error) return res.redirect(`${process.env.FRONTEND_URL}?auth=error&platform=linkedin&reason=${error}`);
-  // Look up state from DB
   const stateRow = await db.get("SELECT * FROM post_log WHERE id = ? AND action = 'oauth_state'", [state]);
   if (!stateRow) return res.redirect(`${process.env.FRONTEND_URL}?auth=error&platform=linkedin&reason=invalid_state`);
   await db.run("DELETE FROM post_log WHERE id = ?", [state]);
@@ -39,36 +36,51 @@ router.get("/linkedin/callback", async (req, res) => {
     res.send(`<!DOCTYPE html><html><head><meta charset="utf-8"><meta http-equiv="refresh" content="0;url=${redirectUrl}"><title>Redirecting...</title></head><body><p>LinkedIn connected! <a href="${redirectUrl}">Click here if not redirected</a></p></body></html>`);
   } catch (err) {
     console.error("LinkedIn callback error:", err.message);
-    res.redirect(`${process.env.FRONTEND_URL}?auth=error&platform=linkedin&reason=token_exchange_failed`);
+    res.redirect(`${process.env.FRONTEND_URL}?auth=error&platform=linkedin&reason=${encodeURIComponent(err.message)}`);
   }
 });
 
 router.get("/youtube/connect", (req, res) => {
   const userId = req.query.userId || "default";
   const state = uuid();
-  db.run("INSERT INTO post_log (id, post_id, platform, action, detail, logged_at) VALUES (?, ?, ?, ?, ?, ?)",
-    [state, userId, 'youtube', 'oauth_state', userId, Date.now()]);
+  db.run("INSERT INTO post_log (id, post_id, platform, action, detail, logged_at) VALUES (?, ?, ?, ?, ?, ?)", [state, userId, 'youtube', 'oauth_state', userId, Date.now()]);
   res.redirect(youtube.getAuthUrl(state));
 });
 
 router.get("/youtube/callback", async (req, res) => {
   const { code, state, error } = req.query;
-  if (error) return res.redirect(`${process.env.FRONTEND_URL}?auth=error&platform=youtube&reason=${error}`);
+  console.log("YouTube callback received:", { code: !!code, state, error });
+  
+  if (error) {
+    console.error("YouTube OAuth error:", error);
+    return res.redirect(`${process.env.FRONTEND_URL}?auth=error&platform=youtube&reason=${error}`);
+  }
+  
   const stateRow = await db.get("SELECT * FROM post_log WHERE id = ? AND action = 'oauth_state'", [state]);
+  console.log("State row found:", !!stateRow);
+  
   if (!stateRow) return res.redirect(`${process.env.FRONTEND_URL}?auth=error&platform=youtube&reason=invalid_state`);
   const storedUserId = stateRow.post_id;
   await db.run("DELETE FROM post_log WHERE id = ?", [state]);
+  
   try {
+    console.log("Exchanging YouTube code for tokens...");
     const tokens = await youtube.exchangeCode(code);
+    console.log("Tokens received, building auth client...");
     const authClient = youtube.buildAuthClient({ raw: tokens.raw });
+    console.log("Getting channel info...");
     const channelInfo = await youtube.getChannelInfo(authClient);
+    console.log("Channel info:", channelInfo);
     const userId = channelInfo?.id || storedUserId;
+    console.log("Saving token for userId:", userId);
     await upsertToken("youtube", userId, tokens);
+    console.log("Token saved successfully!");
     const redirectUrl = `${process.env.FRONTEND_URL}?auth=success&platform=youtube&userId=${userId}&name=${encodeURIComponent(channelInfo?.title || "YouTube Channel")}`;
     res.send(`<!DOCTYPE html><html><head><meta charset="utf-8"><meta http-equiv="refresh" content="0;url=${redirectUrl}"><title>Redirecting...</title></head><body><p>YouTube connected! <a href="${redirectUrl}">Click here if not redirected</a></p></body></html>`);
   } catch (err) {
-    console.error("YouTube callback error:", err.message);
-    res.redirect(`${process.env.FRONTEND_URL}?auth=error&platform=youtube&reason=${encodeURIComponent(err.message)}`);
+    console.error("YouTube callback error FULL:", err);
+    const reason = encodeURIComponent(err.message || "unknown_error");
+    res.redirect(`${process.env.FRONTEND_URL}?auth=error&platform=youtube&reason=${reason}`);
   }
 });
 
