@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 
-const GREEN = '#24b47e';
+const BUILD_TIME = process.env.REACT_APP_BUILD_TIME || 'dev';
+const GREEN = "#24b47e"; // v3
 const BACKEND = 'https://strategic-honesty-scheduler-production.up.railway.app';
 const F = '-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif';
 
@@ -75,7 +76,7 @@ function Avatar({ch, size=32}) {
 }
 
 export default function SocialHub() {
-  const [tab, setTab] = useState('calendar');
+  const _ = BUILD_TIME; const [tab, setTab] = useState('calendar');
   const [userId] = useState(getUserId);
   const [connections, setConnections] = useState({}); // { linkedin: {...}, youtube: {...} }
   const [testSel, setTestSel] = useState(new Set(['ig','tt']));
@@ -103,6 +104,7 @@ export default function SocialHub() {
       const name = params.get('name');
       const uid = params.get('userId');
       if (uid) localStorage.setItem(`sh_${platform}_userId`, uid);
+
       addLog(setLogs, 'ok', `✓ ${platform} connected as "${name}"`);
       window.history.replaceState({}, '', window.location.pathname);
       setTab('connect');
@@ -121,7 +123,8 @@ export default function SocialHub() {
 
   async function fetchStatus() {
     try {
-      const res = await fetch(`${BACKEND}/auth/status?userId=${userId}`);
+      const liUserId = userId;
+      const res = await fetch(`${BACKEND}/auth/status?userId=${liUserId}&t=${Date.now()}`);
       const data = await res.json();
       setConnections(data.connections || {});
     } catch { /* backend unreachable */ }
@@ -167,7 +170,7 @@ export default function SocialHub() {
     for (const platformId of testSel) {
       // Only LinkedIn and YouTube go through backend; others are simulated
       if (platformId === 'li' && connections.linkedin) {
-        const liUserId = localStorage.getItem('sh_linkedin_userId') || userId;
+        const liUserId = userId;
         if (publishNow) {
           addLog(setLogs,'info','Sending to LinkedIn...');
           try {
@@ -188,7 +191,7 @@ export default function SocialHub() {
           try {
             const res = await fetch(`${BACKEND}/posts`, {
               method:'POST', headers:{'Content-Type':'application/json'},
-              body: JSON.stringify({platform:'linkedin', userId: liUserId, content: testContent, mediaUrl: testImage||null, mediaType: testImage?'image':null, scheduledAt: scheduleDate})
+              body: JSON.stringify({platform:'linkedin', userId: liUserId, content: testContent, mediaUrl: testImage||null, mediaType: testImage?'image':null, scheduledAt: new Date(scheduleDate).toISOString()})
             });
             const data = await res.json();
             if (data.success) { addLog(setLogs,'ok',`✓ LinkedIn post scheduled for ${new Date(scheduleDate).toLocaleString()}`); fetchScheduledPosts(); }
@@ -201,7 +204,7 @@ export default function SocialHub() {
           try {
             const res = await fetch(`${BACKEND}/posts`, {
               method:'POST', headers:{'Content-Type':'application/json'},
-              body: JSON.stringify({platform:'youtube', userId: ytUserId, content: testContent, scheduledAt: scheduleDate})
+              body: JSON.stringify({platform:'youtube', userId: ytUserId, content: testContent, scheduledAt: new Date(scheduleDate).toISOString()})
             });
             const data = await res.json();
             if (data.success) { addLog(setLogs,'ok',`✓ YouTube post scheduled for ${new Date(scheduleDate).toLocaleString()}`); fetchScheduledPosts(); }
@@ -615,3 +618,4 @@ export default function SocialHub() {
     </div>
   );
 }
+
