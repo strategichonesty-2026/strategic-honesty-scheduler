@@ -103,7 +103,7 @@ export default function SocialHub() {
       const platform = params.get('platform');
       const name = params.get('name');
       const uid = params.get('userId');
-      if (uid) localStorage.setItem(`sh_${platform}_userId`, uid);
+      if (uid) { localStorage.setItem(`sh_${platform}_userId`, uid); if (platform === "linkedin") localStorage.setItem("sh_linkedin_userId", uid); if (platform === "youtube") localStorage.setItem("sh_youtube_userId", uid); }
 
       addLog(setLogs, 'ok', `✓ ${platform} connected as "${name}"`);
       window.history.replaceState({}, '', window.location.pathname);
@@ -123,10 +123,20 @@ export default function SocialHub() {
 
   async function fetchStatus() {
     try {
-      const liUserId = userId;
-      const res = await fetch(`${BACKEND}/auth/status?userId=${liUserId}&t=${Date.now()}`);
-      const data = await res.json();
-      setConnections(data.connections || {});
+      const allConnections = {};
+      // Check LinkedIn userId
+      const liUserId = localStorage.getItem('sh_linkedin_userId') || userId;
+      const liRes = await fetch(`${BACKEND}/auth/status?userId=${liUserId}&t=${Date.now()}`);
+      const liData = await liRes.json();
+      Object.assign(allConnections, liData.connections || {});
+      // Check YouTube userId
+      const ytUserId = localStorage.getItem('sh_youtube_userId');
+      if (ytUserId && ytUserId !== liUserId) {
+        const ytRes = await fetch(`${BACKEND}/auth/status?userId=${ytUserId}&t=${Date.now()}`);
+        const ytData = await ytRes.json();
+        Object.assign(allConnections, ytData.connections || {});
+      }
+      setConnections(allConnections);
     } catch { /* backend unreachable */ }
   }
 
