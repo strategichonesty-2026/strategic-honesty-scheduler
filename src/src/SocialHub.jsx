@@ -178,7 +178,7 @@ export default function SocialHub() {
     setPosting(true);
 
     for (const platformId of testSel) {
-      // Only LinkedIn and YouTube go through backend; others are simulated
+      // Only LinkedIn goes through backend; YouTube API deprecated; others are simulated
       if (platformId === 'li' && connections.linkedin) {
         const liUserId = userId;
         if (publishNow) {
@@ -208,21 +208,9 @@ export default function SocialHub() {
             else { addLog(setLogs,'err',`LinkedIn: ${data.error}`); }
           } catch(e) { addLog(setLogs,'err',`LinkedIn error: ${e.message}`); }
         }
-      } else if (platformId === 'yt' && connections.youtube) {
-        const ytUserId = localStorage.getItem('sh_youtube_userId') || userId;
-        if (!publishNow && scheduleDate) {
-          try {
-            const res = await fetch(`${BACKEND}/posts`, {
-              method:'POST', headers:{'Content-Type':'application/json'},
-              body: JSON.stringify({platform:'youtube', userId: ytUserId, content: testContent, scheduledAt: new Date(scheduleDate).toISOString()})
-            });
-            const data = await res.json();
-            if (data.success) { addLog(setLogs,'ok',`✓ YouTube post scheduled for ${new Date(scheduleDate).toLocaleString()}`); fetchScheduledPosts(); }
-            else { addLog(setLogs,'err',`YouTube: ${data.error}`); }
-          } catch(e) { addLog(setLogs,'err',`YouTube error: ${e.message}`); }
-        } else {
-          addLog(setLogs,'info','YouTube: use Schedule (not Send) for community posts');
-        }
+      } else if (platformId === 'yt') {
+        // YouTube Community Posts API was deprecated by Google in 2020 — no replacement exists
+        addLog(setLogs,'warn','⚠ YouTube Community Posts are not available via API — Google deprecated this feature with no replacement. Post manually at youtube.com/community.');
       } else {
         // Simulated for FB, IG, TT
         await new Promise(r=>setTimeout(r,400));
@@ -271,7 +259,7 @@ export default function SocialHub() {
 
   const inputStyle = {width:'100%',border:'1px solid #e0e0e0',borderRadius:6,padding:'8px 10px',fontSize:13,color:'#1a1a1a',fontFamily:F,outline:'none',resize:'none',marginBottom:10,background:'#fff',boxSizing:'border-box'};
   const labelStyle = {fontSize:12,color:'#666',marginBottom:6,display:'block'};
-  const logColor = t => t==='ok'?'#16a34a':t==='err'?'#dc2626':'#185fa5';
+  const logColor = t => t==='ok'?'#16a34a':t==='err'?'#dc2626':t==='warn'?'#d97706':'#185fa5';
   const statusDot = status => ({width:8,height:8,borderRadius:'50%',flexShrink:0,background:status==='active'?'#22c55e':status==='warning'?'#f59e0b':'#ef4444'});
 
   const isLiConnected = !!connections.linkedin;
@@ -458,14 +446,15 @@ export default function SocialHub() {
               <div style={{fontSize:12,fontWeight:600,color:'#666',textTransform:'uppercase',letterSpacing:'.5px',marginBottom:10}}>Direct posting (OAuth)</div>
               <div style={{display:'flex',flexDirection:'column',gap:10,marginBottom:24}}>
                 {[
-                  {id:'linkedin',name:'LinkedIn',icon:'💼',color:'#0A66C2',connected:isLiConnected,fn:connectLinkedIn},
-                  {id:'youtube',name:'YouTube',icon:'▶️',color:'#FF0000',connected:isYtConnected,fn:connectYouTube},
+                  {id:'linkedin',name:'LinkedIn',icon:'💼',color:'#0A66C2',connected:isLiConnected,fn:connectLinkedIn,note:null},
+                  {id:'youtube',name:'YouTube',icon:'▶️',color:'#FF0000',connected:isYtConnected,fn:connectYouTube,note:'⚠ Community Posts unavailable — Google API deprecated'},
                 ].map(p=>(
                   <div key={p.id} style={{background:'#fff',border:`1px solid ${p.connected?GREEN+'44':'#e8e8e8'}`,borderRadius:10,padding:'14px 16px',display:'flex',alignItems:'center',gap:12}}>
                     <div style={{width:44,height:44,borderRadius:10,background:p.color+'15',display:'flex',alignItems:'center',justifyContent:'center',fontSize:22,flexShrink:0}}>{p.icon}</div>
                     <div style={{flex:1}}>
                       <div style={{fontSize:13,fontWeight:600,color:'#1a1a1a'}}>{p.name}</div>
-                      <div style={{fontSize:12,color:'#888'}}>{p.connected?'Connected — posts directly via API':'Not connected'}</div>
+                      <div style={{fontSize:12,color:'#888'}}>{p.connected?'Connected — video uploads only':'Not connected'}</div>
+                      {p.note && <div style={{fontSize:11,color:'#d97706',marginTop:2}}>{p.note}</div>}
                     </div>
                     {p.connected
                       ? <><span style={{fontSize:11,padding:'3px 8px',borderRadius:10,background:'#dcfce7',color:'#166534',fontWeight:500}}>✓ Connected</span>
@@ -628,4 +617,3 @@ export default function SocialHub() {
     </div>
   );
 }
-
