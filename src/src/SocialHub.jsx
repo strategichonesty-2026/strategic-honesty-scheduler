@@ -193,13 +193,13 @@ export default function SocialHub() {
           addLog(setLogs,'info','Sending to LinkedIn...');
           try {
             const scheduledAt = new Date(Date.now() + 10000).toISOString();
-            const data = await (await fetch(`${BACKEND}/posts`, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({platform:'linkedin', userId, content:testContent, mediaUrl:testImage||null, mediaType:testImage?'image':null, scheduledAt}) })).json();
+            const data = await (await fetch(`${BACKEND}/posts`, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({platform:'linkedin', userId: localStorage.getItem('sh_linkedin_userId') || userId, content:testContent, mediaUrl:testImage||null, mediaType:testImage?'image':null, scheduledAt}) })).json();
             if (data.success) { await fetch(`${BACKEND}/posts/${data.post.id}/publish`, {method:'POST'}); addLog(setLogs,'ok','✓ Sent to LinkedIn successfully'); }
             else { addLog(setLogs,'err',`LinkedIn: ${data.error}`); }
           } catch(e) { addLog(setLogs,'err',`LinkedIn error: ${e.message}`); }
         } else if (scheduleDate) {
           try {
-            const data = await (await fetch(`${BACKEND}/posts`, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({platform:'linkedin', userId, content:testContent, mediaUrl:testImage||null, mediaType:testImage?'image':null, scheduledAt:new Date(scheduleDate).toISOString()}) })).json();
+            const data = await (await fetch(`${BACKEND}/posts`, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({platform:'linkedin', userId: localStorage.getItem('sh_linkedin_userId') || userId, content:testContent, mediaUrl:testImage||null, mediaType:testImage?'image':null, scheduledAt:new Date(scheduleDate).toISOString()}) })).json();
             if (data.success) { addLog(setLogs,'ok',`✓ LinkedIn scheduled for ${new Date(scheduleDate).toLocaleString()}`); fetchScheduledPosts(); }
             else { addLog(setLogs,'err',`LinkedIn: ${data.error}`); }
           } catch(e) { addLog(setLogs,'err',`LinkedIn error: ${e.message}`); }
