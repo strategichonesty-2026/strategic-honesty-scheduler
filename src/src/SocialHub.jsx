@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 
-const BUILD_TIME = process.env.REACT_APP_BUILD_TIME || 'dev3';
+const BUILD_TIME = process.env.REACT_APP_BUILD_TIME || 'dev5';
 const GREEN = "#24b47e";
 const BSKY_COLOR = "#0085FF";
 const BACKEND = 'https://strategic-honesty-scheduler-production.up.railway.app';
