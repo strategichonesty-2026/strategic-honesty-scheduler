@@ -6,6 +6,38 @@ const BSKY_COLOR = "#0085FF";
 const BACKEND = 'https://strategic-honesty-scheduler-production.up.railway.app';
 const F = '-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif';
 
+// ─── Smart Content Router ───────────────────────────────────────────────────
+const CONTENT_TYPES = [
+  { id: 'video-long',  label: 'Video Long',       emoji: '🎬', desc: 'YouTube, Facebook' },
+  { id: 'video-short', label: 'Video Short/Reel',  emoji: '📱', desc: 'TikTok, Reels, Shorts' },
+  { id: 'image',       label: 'Image + Caption',   emoji: '📸', desc: 'Instagram, Facebook…' },
+  { id: 'text-short',  label: 'Text Short <280',   emoji: '✍️', desc: 'X, Bluesky, Threads' },
+  { id: 'text-medium', label: 'Text Medium <700',  emoji: '📝', desc: 'LinkedIn, Facebook…' },
+  { id: 'text-long',   label: 'Text Long',         emoji: '📄', desc: 'LinkedIn Articles…' },
+  { id: 'link',        label: 'Link Share',        emoji: '🔗', desc: 'LinkedIn, Bluesky…' },
+];
+
+const ROUTER_MAP = {
+  'video-long':  ['yt', 'fb'],
+  'video-short': ['tt', 'ig', 'yt', 'fb'],
+  'image':       ['ig', 'fb', 'pi', 'li'],
+  'text-short':  ['tw', 'bs', 'th'],
+  'text-medium': ['li', 'fb', 'bs'],
+  'text-long':   ['li', 'ss'],
+  'link':        ['li', 'fb', 'bs', 'tw'],
+};
+
+const CHAR_LIMITS = {
+  li: { label: 'LinkedIn',  limit: 3000,  warn: 2800,  color: '#0A66C2' },
+  bs: { label: 'Bluesky',   limit: 300,   warn: 260,   color: '#0085FF', hard: true },
+  tw: { label: 'X/Twitter', limit: 280,   warn: 250,   color: '#000000' },
+  fb: { label: 'Facebook',  limit: 63206, warn: 60000, color: '#1877F2' },
+  ig: { label: 'Instagram', limit: 2200,  warn: 2000,  color: '#E1306C' },
+  tt: { label: 'TikTok',    limit: 2200,  warn: 2000,  color: '#010101' },
+  yt: { label: 'YouTube',   limit: 5000,  warn: 4500,  color: '#FF0000' },
+};
+// ────────────────────────────────────────────────────────────────────────────
+
 function getUserId() {
   let id = localStorage.getItem('sh_user_id');
   if (!id) { id = 'user_' + Math.random().toString(36).slice(2, 10); localStorage.setItem('sh_user_id', id); }
@@ -87,6 +119,53 @@ function Avatar({ch, size=32}) {
   );
 }
 
+// ─── Character Counter Component ────────────────────────────────────────────
+function CharCounter({ content, selectedPlatforms }) {
+  const relevant = Object.entries(CHAR_LIMITS).filter(([id]) => selectedPlatforms.has(id));
+  if (!relevant.length || !content) return null;
+  const len = content.length;
+  return (
+    <div style={{display:'flex',flexWrap:'wrap',gap:6,marginBottom:10}}>
+      {relevant.map(([id, cfg]) => {
+        const over = len > cfg.limit;
+        const warn = len > cfg.warn && !over;
+        const pct = Math.min(len / cfg.limit, 1);
+        const barColor = over ? '#dc2626' : warn ? '#d97706' : cfg.color;
+        return (
+          <div key={id} style={{
+            padding:'5px 10px',borderRadius:8,fontSize:11,
+            border:`1px solid ${over ? '#fca5a5' : warn ? '#fcd34d' : '#e8e8e8'}`,
+            background: over ? '#fef2f2' : warn ? '#fffbeb' : '#f8f8f8',
+            minWidth:110,
+          }}>
+            <div style={{display:'flex',justifyContent:'space-between',marginBottom:4,alignItems:'center'}}>
+              <span style={{fontWeight:600,color:cfg.color}}>{cfg.label}</span>
+              <span style={{color: over ? '#dc2626' : warn ? '#d97706' : '#666', fontWeight: over||warn ? 600 : 400}}>
+                {len}/{cfg.limit}
+              </span>
+            </div>
+            <div style={{height:3,background:'#e8e8e8',borderRadius:2,overflow:'hidden'}}>
+              <div style={{width:`${pct*100}%`,height:'100%',background:barColor,borderRadius:2,transition:'width .2s'}}/>
+            </div>
+            {over && cfg.hard && (
+              <div style={{fontSize:10,color:'#dc2626',marginTop:3,fontWeight:600}}>
+                🚫 Will error — must trim to {cfg.limit}
+              </div>
+            )}
+            {over && !cfg.hard && (
+              <div style={{fontSize:10,color:'#dc2626',marginTop:3}}>Over limit by {len - cfg.limit}</div>
+            )}
+            {warn && (
+              <div style={{fontSize:10,color:'#d97706',marginTop:3}}>⚠ {cfg.limit - len} chars left</div>
+            )}
+          </div>
+        );
+      })}
+    </div>
+  );
+}
+// ────────────────────────────────────────────────────────────────────────────
+
 export default function SocialHub() {
   const _ = BUILD_TIME;
   const [tab, setTab] = useState('calendar');
@@ -106,6 +185,114 @@ export default function SocialHub() {
   const [selectedChannel, setSelectedChannel] = useState(null);
   const [scheduledPosts, setScheduledPosts] = useState([]);
   const [posting, setPosting] = useState(false);
+
+  // ─── Smart Content Router state ──────────────────────────────────────────
+  const [postType, setPostType] = useState(null);
+  // ─────────────────────────────────────────────────────────────────────────
+
+  // ─── Review & Post Wizard state ──────────────────────────────────────────
+  const [wizardStep, setWizardStep] = useState(1);       // 1 Write 2 Route 3 Review 4 Send
+  const [wizardContent, setWizardContent] = useState('');
+  const [wizardImage, setWizardImage] = useState('');
+  const [wizardSchedule, setWizardSchedule] = useState('now');   // 'now' | 'scheduled' | '1week' | '2weeks' | 'custom'
+  const [wizardDate, setWizardDate] = useState('');
+  const [wizardPostType, setWizardPostType] = useState(null);
+  const [wizardSel, setWizardSel] = useState(new Set());
+  const [wizardSendStatus, setWizardSendStatus] = useState({}); // { platformId: 'pending'|'sending'|'ok'|'err'|'warn', msg }
+  const [wizardPosting, setWizardPosting] = useState(false);
+  const [wizardDone, setWizardDone] = useState(false);
+
+  function wizardSelectPostType(typeId) {
+    setWizardPostType(typeId);
+    const recommended = ROUTER_MAP[typeId] || [];
+    const available = new Set(CONNECTED_CHANNELS.map(c => c.id));
+    const next = new Set(recommended.filter(id => available.has(id)));
+    if (recommended.includes('bs') && bskyConnected) next.add('bs');
+    setWizardSel(next.size > 0 ? next : new Set(recommended));
+  }
+
+  function wizardToggleSel(id) {
+    setWizardSel(prev => { const n = new Set(prev); n.has(id) ? n.delete(id) : n.add(id); return n; });
+  }
+
+  function wizardCanAdvance(step) {
+    if (step === 1) return wizardContent.trim().length > 0;
+    if (step === 2) return wizardSel.size > 0;
+    if (step === 3) {
+      // Block if Bluesky selected and over 300
+      if (wizardSel.has('bs') && wizardContent.length > 300) return false;
+      if (wizardSchedule === 'scheduled' && !wizardDate) return false;
+      return true;
+    }
+    return true;
+  }
+
+  function wizardComputeScheduledAt() {
+    if (wizardSchedule === 'now') return new Date(Date.now() + 10000).toISOString();
+    if (wizardSchedule === '1week') return new Date(Date.now() + 7*24*60*60*1000).toISOString();
+    if (wizardSchedule === '2weeks') return new Date(Date.now() + 14*24*60*60*1000).toISOString();
+    if (wizardSchedule === 'scheduled' && wizardDate) return new Date(wizardDate).toISOString();
+    return new Date(Date.now() + 10000).toISOString();
+  }
+
+  async function wizardSend() {
+    if (wizardPosting) return;
+    setWizardPosting(true);
+    setWizardDone(false);
+    const initialStatus = {};
+    wizardSel.forEach(id => { initialStatus[id] = { state: 'sending', msg: 'Sending…' }; });
+    setWizardSendStatus(initialStatus);
+
+    const scheduledAt = wizardComputeScheduledAt();
+    const publishNow = wizardSchedule === 'now';
+
+    const update = (id, state, msg) =>
+      setWizardSendStatus(prev => ({ ...prev, [id]: { state, msg } }));
+
+    for (const platformId of wizardSel) {
+      if (platformId === 'li' && connections.linkedin) {
+        try {
+          const data = await (await fetch(`${BACKEND}/posts`, {
+            method: 'POST', headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ platform: 'linkedin', userId: localStorage.getItem('sh_linkedin_userId') || userId, content: wizardContent, mediaUrl: wizardImage || null, mediaType: wizardImage ? 'image' : null, scheduledAt })
+          })).json();
+          if (data.success) {
+            if (publishNow) {
+              await fetch(`${BACKEND}/posts/${data.post.id}/publish`, { method: 'POST' });
+              update('li', 'ok', '✓ Published to LinkedIn');
+            } else {
+              update('li', 'ok', `✓ Scheduled for ${new Date(scheduledAt).toLocaleString()}`);
+              fetchScheduledPosts();
+            }
+          } else { update('li', 'err', `Error: ${data.error}`); }
+        } catch(e) { update('li', 'err', `LinkedIn error: ${e.message}`); }
+
+      } else if (platformId === 'bs') {
+        if (!bskyConnected) { update('bs', 'err', 'Not connected — go to Connect tab'); continue; }
+        if (wizardContent.length > 300) { update('bs', 'err', `Over 300 chars (${wizardContent.length}) — skipped`); continue; }
+        try {
+          const session = await bskyCreateSession(localStorage.getItem('sh_bsky_handle'), localStorage.getItem('sh_bsky_apppw'));
+          await bskyPost(session.accessJwt, session.did, wizardContent);
+          update('bs', 'ok', '✓ Published to Bluesky');
+        } catch(e) { update('bs', 'err', `Bluesky: ${e.message}`); }
+
+      } else if (platformId === 'yt') {
+        update('yt', 'warn', '⚠ YouTube Community Posts deprecated — post manually');
+      } else {
+        await new Promise(r => setTimeout(r, 500));
+        update(platformId, 'ok', `✓ Simulated post to ${platformId.toUpperCase()}`);
+      }
+    }
+    setWizardPosting(false);
+    setWizardDone(true);
+  }
+
+  function wizardReset() {
+    setWizardStep(1); setWizardContent(''); setWizardImage('');
+    setWizardSchedule('now'); setWizardDate(''); setWizardPostType(null);
+    setWizardSel(new Set()); setWizardSendStatus({}); setWizardPosting(false); setWizardDone(false);
+  }
+  // ─────────────────────────────────────────────────────────────────────────
 
   // Bluesky state
   const [bskyConnected, setBskyConnected] = useState(() => !!localStorage.getItem('sh_bsky_handle') && !!localStorage.getItem('sh_bsky_apppw'));
@@ -183,9 +370,41 @@ export default function SocialHub() {
     addLog(setLogs,'info',`${platform} disconnected`);
   }
 
+  // ─── Smart Content Router: select post type and auto-select platforms ────
+  function selectPostType(typeId) {
+    setPostType(typeId);
+    const recommended = ROUTER_MAP[typeId] || [];
+    // Build new selection from recommended IDs that exist in connected channels
+    const available = new Set(CONNECTED_CHANNELS.map(c => c.id));
+    const next = new Set(recommended.filter(id => available.has(id)));
+    // Always include bs if Bluesky connected and recommended
+    if (recommended.includes('bs') && bskyConnected) next.add('bs');
+    setTestSel(next.size > 0 ? next : new Set(recommended));
+    addLog(setLogs, 'info', `📡 Auto-selected platforms for ${CONTENT_TYPES.find(t=>t.id===typeId)?.label}`);
+  }
+
+  function postToAllRecommended() {
+    if (!postType) { addLog(setLogs,'err','Select a post type first.'); return; }
+    const recommended = ROUTER_MAP[postType] || [];
+    const available = new Set(CONNECTED_CHANNELS.map(c => c.id));
+    const next = new Set(recommended.filter(id => available.has(id)));
+    if (recommended.includes('bs') && bskyConnected) next.add('bs');
+    setTestSel(next.size > 0 ? next : new Set(recommended));
+    sendPost(true);
+  }
+  // ─────────────────────────────────────────────────────────────────────────
+
   async function sendPost(publishNow = true) {
     if (!testContent.trim()) { addLog(setLogs,'err','Write a post first.'); return; }
     if (testSel.size === 0) { addLog(setLogs,'err','Select at least one platform.'); return; }
+
+    // ─── Bluesky hard limit guard ─────────────────────────────────────────
+    if (testSel.has('bs') && testContent.length > 300) {
+      addLog(setLogs,'err',`🚫 Bluesky: post is ${testContent.length} chars — hard limit is 300. Trim before sending.`);
+      return;
+    }
+    // ─────────────────────────────────────────────────────────────────────
+
     setPosting(true);
     for (const platformId of testSel) {
       if (platformId === 'li' && connections.linkedin) {
@@ -193,13 +412,13 @@ export default function SocialHub() {
           addLog(setLogs,'info','Sending to LinkedIn...');
           try {
             const scheduledAt = new Date(Date.now() + 10000).toISOString();
-            const data = await (await fetch(`${BACKEND}/posts`, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({platform:'linkedin', userId, content:testContent, mediaUrl:testImage||null, mediaType:testImage?'image':null, scheduledAt}) })).json();
+            const data = await (await fetch(`${BACKEND}/posts`, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({platform:'linkedin', userId: localStorage.getItem('sh_linkedin_userId') || userId, content:testContent, mediaUrl:testImage||null, mediaType:testImage?'image':null, scheduledAt}) })).json();
             if (data.success) { await fetch(`${BACKEND}/posts/${data.post.id}/publish`, {method:'POST'}); addLog(setLogs,'ok','✓ Sent to LinkedIn successfully'); }
             else { addLog(setLogs,'err',`LinkedIn: ${data.error}`); }
           } catch(e) { addLog(setLogs,'err',`LinkedIn error: ${e.message}`); }
         } else if (scheduleDate) {
           try {
-            const data = await (await fetch(`${BACKEND}/posts`, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({platform:'linkedin', userId, content:testContent, mediaUrl:testImage||null, mediaType:testImage?'image':null, scheduledAt:new Date(scheduleDate).toISOString()}) })).json();
+            const data = await (await fetch(`${BACKEND}/posts`, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({platform:'linkedin', userId: localStorage.getItem('sh_linkedin_userId') || userId, content:testContent, mediaUrl:testImage||null, mediaType:testImage?'image':null, scheduledAt:new Date(scheduleDate).toISOString()}) })).json();
             if (data.success) { addLog(setLogs,'ok',`✓ LinkedIn scheduled for ${new Date(scheduleDate).toLocaleString()}`); fetchScheduledPosts(); }
             else { addLog(setLogs,'err',`LinkedIn: ${data.error}`); }
           } catch(e) { addLog(setLogs,'err',`LinkedIn error: ${e.message}`); }
@@ -347,11 +566,11 @@ export default function SocialHub() {
       <div style={{display:'flex',flexDirection:'column',overflow:'hidden'}}>
         <div style={{display:'flex',alignItems:'center',gap:10,padding:'12px 20px',borderBottom:'1px solid #e8e8e8',background:'#fff'}}>
           <div style={{fontSize:15,fontWeight:600,color:'#1a1a1a',flex:1}}>📊 All Channels</div>
-          <button onClick={()=>setTab('upload')} style={{padding:'6px 14px',borderRadius:6,fontSize:13,cursor:'pointer',border:'none',background:GREEN,color:'#fff',fontWeight:500}}>+ New post</button>
+          <button onClick={()=>{wizardReset();setTab('wizard');}} style={{padding:'6px 14px',borderRadius:6,fontSize:13,cursor:'pointer',border:'none',background:GREEN,color:'#fff',fontWeight:500}}>✦ New post</button>
         </div>
-        <div style={{display:'flex',borderBottom:'1px solid #e8e8e8',padding:'0 20px',background:'#fff'}}>
-          {[['calendar','📅 Calendar'],['connect','🔗 Connect'],['upload','⬆ Upload CSV'],['test','✉ Compose & Schedule']].map(([t,label])=>(
-            <div key={t} onClick={()=>setTab(t)} style={{padding:'10px 16px',fontSize:13,cursor:'pointer',borderBottom:tab===t?'2px solid #1a1a1a':'2px solid transparent',color:tab===t?'#1a1a1a':'#666',fontWeight:tab===t?500:400,transition:'all .15s'}}>{label}</div>
+        <div style={{display:'flex',borderBottom:'1px solid #e8e8e8',padding:'0 20px',background:'#fff',overflowX:'auto'}}>
+          {[['calendar','📅 Calendar'],['connect','🔗 Connect'],['upload','⬆ Upload CSV'],['test','✉ Quick Compose'],['wizard','🚀 Review & Post']].map(([t,label])=>(
+            <div key={t} onClick={()=>{ if(t==='wizard') wizardReset(); setTab(t); }} style={{padding:'10px 16px',fontSize:13,cursor:'pointer',borderBottom:tab===t?`2px solid ${t==='wizard'?GREEN:'#1a1a1a'}`:'2px solid transparent',color:tab===t?(t==='wizard'?GREEN:'#1a1a1a'):'#666',fontWeight:tab===t?600:400,transition:'all .15s',whiteSpace:'nowrap'}}>{label}</div>
           ))}
         </div>
 
@@ -513,20 +732,102 @@ export default function SocialHub() {
           {/* COMPOSE */}
           {tab==='test' && (
             <div>
-              <div style={{fontSize:15,fontWeight:600,color:'#1a1a1a',marginBottom:16}}>Compose & Schedule</div>
+              <div style={{fontSize:15,fontWeight:600,color:'#1a1a1a',marginBottom:12}}>Compose & Schedule</div>
+
+              {/* ── SMART CONTENT ROUTER ──────────────────────────────────── */}
+              <div style={{background:'#fff',border:'1px solid #e8e8e8',borderRadius:10,padding:16,marginBottom:16}}>
+                <div style={{display:'flex',alignItems:'center',justifyContent:'space-between',marginBottom:12}}>
+                  <div>
+                    <div style={{fontSize:13,fontWeight:600,color:'#1a1a1a'}}>🗺 Smart Content Router</div>
+                    <div style={{fontSize:11,color:'#888',marginTop:2}}>Pick your content type — platforms auto-select. Override anytime.</div>
+                  </div>
+                  {postType && (
+                    <button
+                      onClick={() => { setPostType(null); setTestSel(new Set(['ig','tt'])); }}
+                      style={{fontSize:11,color:'#888',background:'none',border:'1px solid #e0e0e0',borderRadius:5,padding:'3px 8px',cursor:'pointer'}}>
+                      ✕ Clear
+                    </button>
+                  )}
+                </div>
+                <div style={{display:'flex',flexWrap:'wrap',gap:7}}>
+                  {CONTENT_TYPES.map(ct => {
+                    const isActive = postType === ct.id;
+                    return (
+                      <button
+                        key={ct.id}
+                        onClick={() => selectPostType(ct.id)}
+                        style={{
+                          display:'flex',flexDirection:'column',alignItems:'flex-start',
+                          padding:'8px 12px',borderRadius:8,cursor:'pointer',
+                          border: isActive ? `1.5px solid ${GREEN}` : '1.5px solid #e8e8e8',
+                          background: isActive ? '#e6f7f2' : '#fafafa',
+                          transition:'all .15s',minWidth:120,
+                        }}>
+                        <span style={{fontSize:16,marginBottom:3}}>{ct.emoji}</span>
+                        <span style={{fontSize:12,fontWeight:600,color: isActive ? '#0f6e56' : '#1a1a1a',lineHeight:1.2}}>{ct.label}</span>
+                        <span style={{fontSize:10,color:'#999',marginTop:2}}>{ct.desc}</span>
+                      </button>
+                    );
+                  })}
+                </div>
+
+                {postType && (
+                  <div style={{marginTop:12,padding:'10px 12px',background:'#f0faf6',borderRadius:8,border:'1px solid #b6e8d6',display:'flex',alignItems:'center',justifyContent:'space-between',flexWrap:'wrap',gap:8}}>
+                    <div style={{fontSize:12,color:'#0f6e56'}}>
+                      <strong>Recommended:</strong>{' '}
+                      {(ROUTER_MAP[postType]||[]).map(id => {
+                        const p = ALL_PLATFORMS.find(x=>x.id===id);
+                        return p ? `${p.icon} ${p.name}` : id;
+                      }).join(' · ')}
+                    </div>
+                    <button
+                      onClick={postToAllRecommended}
+                      disabled={posting || !testContent.trim()}
+                      style={{
+                        padding:'6px 14px',fontSize:12,fontWeight:600,
+                        background: (posting||!testContent.trim()) ? '#ccc' : GREEN,
+                        color:'#fff',border:'none',borderRadius:6,
+                        cursor:(posting||!testContent.trim())?'not-allowed':'pointer',
+                        whiteSpace:'nowrap',
+                      }}>
+                      {posting ? 'Sending…' : '⚡ Post to all recommended'}
+                    </button>
+                  </div>
+                )}
+              </div>
+              {/* ── END SMART CONTENT ROUTER ──────────────────────────────── */}
+
               <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:16}}>
                 <div style={{background:'#fff',border:'1px solid #e8e8e8',borderRadius:10,padding:16}}>
                   <label style={labelStyle}>Write your post</label>
                   <textarea value={testContent} onChange={e=>setTestContent(e.target.value)} rows={7} style={inputStyle} placeholder="Integrity isn't a soft skill..."/>
+
+                  {/* ── CHARACTER COUNTERS ───────────────────────────────── */}
+                  <CharCounter content={testContent} selectedPlatforms={testSel} />
+                  {/* ────────────────────────────────────────────────────── */}
+
                   <label style={labelStyle}>Select platforms</label>
                   <div style={{marginBottom:10,display:'flex',flexWrap:'wrap',gap:6}}>
-                    {CONNECTED_CHANNELS.map(ch=>(
-                      <span key={ch.id} onClick={()=>toggleTestSel(ch.id)}
-                        style={{padding:'4px 10px',borderRadius:20,fontSize:12,cursor:'pointer',border:`1px solid ${testSel.has(ch.id)?GREEN+'66':'#e0e0e0'}`,background:testSel.has(ch.id)?'#e6f7f2':'#fff',color:testSel.has(ch.id)?'#0f6e56':'#666',display:'inline-flex',alignItems:'center',gap:5}}>
-                        <span style={{fontSize:13}}>{ch.icon}</span> {ch.name}
-                      </span>
-                    ))}
+                    {CONNECTED_CHANNELS.map(ch=>{
+                      const limit = CHAR_LIMITS[ch.id];
+                      const isOver = limit && testContent.length > limit.limit;
+                      return (
+                        <span key={ch.id} onClick={()=>toggleTestSel(ch.id)}
+                          style={{
+                            padding:'4px 10px',borderRadius:20,fontSize:12,cursor:'pointer',
+                            border:`1px solid ${isOver ? '#fca5a5' : testSel.has(ch.id)?GREEN+'66':'#e0e0e0'}`,
+                            background: isOver && testSel.has(ch.id) ? '#fef2f2' : testSel.has(ch.id)?'#e6f7f2':'#fff',
+                            color: isOver && testSel.has(ch.id) ? '#dc2626' : testSel.has(ch.id)?'#0f6e56':'#666',
+                            display:'inline-flex',alignItems:'center',gap:5,
+                          }}>
+                          <span style={{fontSize:13}}>{ch.icon}</span>
+                          {ch.name}
+                          {isOver && testSel.has(ch.id) && <span style={{fontSize:10}}>⚠</span>}
+                        </span>
+                      );
+                    })}
                   </div>
+
                   <label style={labelStyle}>Image URL (optional)</label>
                   <input value={testImage} onChange={e=>setTestImage(e.target.value)} style={inputStyle} placeholder="https://img.youtube.com/vi/VIDEO_ID/maxresdefault.jpg"/>
                   <label style={labelStyle}>Schedule date/time (for LinkedIn)</label>
@@ -591,6 +892,301 @@ export default function SocialHub() {
               </div>
             </div>
           )}
+
+          {/* ── REVIEW & POST WIZARD ─────────────────────────────────────── */}
+          {tab==='wizard' && (() => {
+            const STEPS = [
+              { n:1, label:'Write',  icon:'✍️' },
+              { n:2, label:'Route',  icon:'🗺' },
+              { n:3, label:'Review', icon:'👁' },
+              { n:4, label:'Send',   icon:'🚀' },
+            ];
+            const canAdvance = wizardCanAdvance(wizardStep);
+
+            const StepBar = () => (
+              <div style={{display:'flex',alignItems:'center',marginBottom:24,background:'#fff',border:'1px solid #e8e8e8',borderRadius:12,padding:'14px 20px'}}>
+                {STEPS.map((s,i) => {
+                  const done = wizardStep > s.n;
+                  const active = wizardStep === s.n;
+                  return (
+                    <div key={s.n} style={{display:'flex',alignItems:'center',flex:1}}>
+                      <div style={{display:'flex',alignItems:'center',gap:8,cursor:done?'pointer':'default'}}
+                           onClick={()=>{ if(done) setWizardStep(s.n); }}>
+                        <div style={{width:32,height:32,borderRadius:'50%',display:'flex',alignItems:'center',justifyContent:'center',fontSize:13,fontWeight:700,flexShrink:0,transition:'all .2s',
+                          background:done?GREEN:active?'#1a1a1a':'#f0f0f0',
+                          color:done||active?'#fff':'#999',
+                          boxShadow:active?`0 0 0 3px ${GREEN}33`:'none'}}>
+                          {done?'✓':s.n}
+                        </div>
+                        <div style={{display:'flex',flexDirection:'column'}}>
+                          <span style={{fontSize:11,color:'#999',lineHeight:1}}>{s.icon}</span>
+                          <span style={{fontSize:12,fontWeight:active?600:400,color:active?'#1a1a1a':done?GREEN:'#999'}}>{s.label}</span>
+                        </div>
+                      </div>
+                      {i<STEPS.length-1&&<div style={{flex:1,height:2,background:done?GREEN:'#e8e8e8',margin:'0 10px',borderRadius:2,transition:'background .3s'}}/>}
+                    </div>
+                  );
+                })}
+              </div>
+            );
+
+            const Step1 = () => (
+              <div style={{background:'#fff',border:'1px solid #e8e8e8',borderRadius:12,padding:24}}>
+                <div style={{fontSize:16,fontWeight:600,color:'#1a1a1a',marginBottom:4}}>✍️ Write your post</div>
+                <div style={{fontSize:12,color:'#888',marginBottom:16}}>Paste AI-generated content or write from scratch. Platforms come next.</div>
+                <div style={{marginBottom:14}}>
+                  <label style={labelStyle}>Post content</label>
+                  <textarea value={wizardContent} onChange={e=>setWizardContent(e.target.value)} rows={9}
+                    style={{...inputStyle,fontSize:14,lineHeight:1.6,marginBottom:0}}
+                    placeholder={`Share something that reflects your philosophy…\n\n"Be Good. Do Good. Do Well."`} autoFocus/>
+                  <div style={{display:'flex',justifyContent:'space-between',marginTop:4}}>
+                    <span style={{fontSize:11,color:'#999'}}>{wizardContent.length} characters</span>
+                    {wizardContent.length>300&&<span style={{fontSize:11,color:'#d97706',fontWeight:500}}>⚠ Over Bluesky limit (300)</span>}
+                  </div>
+                </div>
+                <div style={{marginBottom:20}}>
+                  <label style={labelStyle}>Image URL <span style={{color:'#bbb',fontWeight:400}}>(optional)</span></label>
+                  <input value={wizardImage} onChange={e=>setWizardImage(e.target.value)} style={{...inputStyle,marginBottom:0}}
+                    placeholder="https://img.youtube.com/vi/VIDEO_ID/maxresdefault.jpg"/>
+                </div>
+                {wizardImage&&(
+                  <div style={{marginBottom:16}}>
+                    <label style={labelStyle}>Image preview</label>
+                    <img src={wizardImage} alt="Preview" style={{maxWidth:'100%',maxHeight:160,borderRadius:8,border:'1px solid #e8e8e8',objectFit:'cover'}} onError={e=>{e.target.style.display='none';}}/>
+                  </div>
+                )}
+                <div style={{marginBottom:4}}>
+                  <label style={labelStyle}>Quick fill from saved quotes</label>
+                  <div style={{display:'flex',flexWrap:'wrap',gap:6}}>
+                    {Object.entries({integrity:'Integrity edge',reputation:'Reputation asset',shortcuts:'Shortcut loans',nepal:'Nepal roots',ai:'AI & you',trust:'Trust compounds'}).map(([k,v])=>(
+                      <button key={k} onClick={()=>setWizardContent(QUOTES[k]||'')}
+                        style={{padding:'4px 10px',fontSize:11,borderRadius:16,border:'1px solid #e0e0e0',background:'#f9f9f9',cursor:'pointer',color:'#555'}}>{v}</button>
+                    ))}
+                  </div>
+                </div>
+              </div>
+            );
+
+            const Step2 = () => (
+              <div style={{background:'#fff',border:'1px solid #e8e8e8',borderRadius:12,padding:24}}>
+                <div style={{fontSize:16,fontWeight:600,color:'#1a1a1a',marginBottom:4}}>🗺 Route your content</div>
+                <div style={{fontSize:12,color:'#888',marginBottom:20}}>Pick a content type to auto-select platforms, then fine-tune manually.</div>
+                <label style={labelStyle}>Content type <span style={{color:'#bbb',fontWeight:400}}>(optional)</span></label>
+                <div style={{display:'flex',flexWrap:'wrap',gap:7,marginBottom:20}}>
+                  {CONTENT_TYPES.map(ct=>{
+                    const isActive=wizardPostType===ct.id;
+                    return (
+                      <button key={ct.id} onClick={()=>wizardSelectPostType(ct.id)}
+                        style={{display:'flex',flexDirection:'column',alignItems:'flex-start',padding:'8px 12px',borderRadius:8,cursor:'pointer',
+                          border:isActive?`1.5px solid ${GREEN}`:'1.5px solid #e8e8e8',
+                          background:isActive?'#e6f7f2':'#fafafa',minWidth:110,transition:'all .15s'}}>
+                        <span style={{fontSize:15,marginBottom:2}}>{ct.emoji}</span>
+                        <span style={{fontSize:11,fontWeight:600,color:isActive?'#0f6e56':'#1a1a1a',lineHeight:1.3}}>{ct.label}</span>
+                        <span style={{fontSize:10,color:'#999',marginTop:1}}>{ct.desc}</span>
+                      </button>
+                    );
+                  })}
+                </div>
+                <label style={labelStyle}>Platforms <span style={{color:'#bbb',fontWeight:400}}>(select at least one)</span></label>
+                <div style={{display:'grid',gridTemplateColumns:'repeat(auto-fill,minmax(140px,1fr))',gap:8}}>
+                  {CONNECTED_CHANNELS.map(ch=>{
+                    const sel=wizardSel.has(ch.id);
+                    const limit=CHAR_LIMITS[ch.id];
+                    const isOver=limit&&wizardContent.length>limit.limit;
+                    return (
+                      <div key={ch.id} onClick={()=>wizardToggleSel(ch.id)}
+                        style={{display:'flex',alignItems:'center',gap:8,padding:'10px 12px',borderRadius:8,cursor:'pointer',transition:'all .15s',
+                          border:`1.5px solid ${isOver&&limit?.hard?'#fca5a5':sel?ch.color+'66':'#e8e8e8'}`,
+                          background:isOver&&limit?.hard&&sel?'#fef2f2':sel?ch.color+'0d':'#fafafa'}}>
+                        <span style={{fontSize:16}}>{ch.icon}</span>
+                        <div style={{flex:1,minWidth:0}}>
+                          <div style={{fontSize:12,fontWeight:500,color:sel?ch.color:'#555',overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap'}}>{ch.name}</div>
+                          {limit&&<div style={{fontSize:10,color:isOver?'#dc2626':'#aaa'}}>{wizardContent.length}/{limit.limit}</div>}
+                        </div>
+                        <div style={{width:16,height:16,borderRadius:4,border:`2px solid ${sel?ch.color:'#ccc'}`,background:sel?ch.color:'transparent',display:'flex',alignItems:'center',justifyContent:'center',flexShrink:0}}>
+                          {sel&&<span style={{color:'#fff',fontSize:9,fontWeight:700}}>✓</span>}
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+                {wizardSel.size===0&&<div style={{marginTop:10,fontSize:12,color:'#d97706',padding:'8px 12px',background:'#fffbeb',borderRadius:6,border:'1px solid #fcd34d'}}>⚠ Select at least one platform to continue</div>}
+                {wizardSel.has('bs')&&wizardContent.length>300&&<div style={{marginTop:10,fontSize:12,color:'#dc2626',padding:'8px 12px',background:'#fef2f2',borderRadius:6,border:'1px solid #fca5a5'}}>🚫 Bluesky selected but post is {wizardContent.length} chars — over the 300 hard limit. Trim in Step 1 or deselect Bluesky.</div>}
+              </div>
+            );
+
+            const Step3 = () => {
+              const schedOpts=[
+                {id:'now',label:'Post now',icon:'⚡',desc:'Publish immediately'},
+                {id:'1week',label:'In 1 week',icon:'📅',desc:(()=>{const d=new Date(Date.now()+7*86400000);return d.toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});})()},
+                {id:'2weeks',label:'In 2 weeks',icon:'📅',desc:(()=>{const d=new Date(Date.now()+14*86400000);return d.toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});})()},
+                {id:'scheduled',label:'Pick date & time',icon:'🗓',desc:'Choose exact moment'},
+              ];
+              return (
+                <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:16}}>
+                  <div>
+                    <div style={{fontSize:13,fontWeight:600,color:'#1a1a1a',marginBottom:12}}>👁 Platform previews</div>
+                    <div style={{display:'flex',flexDirection:'column',gap:10}}>
+                      {[...wizardSel].map(id=>{
+                        const ch=CONNECTED_CHANNELS.find(c=>c.id===id)||ALL_PLATFORMS.find(x=>x.id===id);
+                        if(!ch)return null;
+                        const cfg=CHAR_LIMITS[id];
+                        const len=wizardContent.length;
+                        const over=cfg&&len>cfg.limit;
+                        const warn=cfg&&len>cfg.warn&&!over;
+                        const preview=wizardContent.length>220?wizardContent.slice(0,220)+'… [truncated in preview]':wizardContent;
+                        return (
+                          <div key={id} style={{border:`1px solid ${over?'#fca5a5':ch.color+'33'}`,borderRadius:10,overflow:'hidden'}}>
+                            <div style={{background:ch.color+'0f',padding:'8px 12px',display:'flex',alignItems:'center',gap:8,borderBottom:`1px solid ${ch.color+'22'}`}}>
+                              <span style={{fontSize:16}}>{ch.icon}</span>
+                              <span style={{fontSize:12,fontWeight:600,color:ch.color}}>{ch.name}</span>
+                              {cfg&&<span style={{marginLeft:'auto',fontSize:11,color:over?'#dc2626':warn?'#d97706':'#888',fontWeight:over||warn?600:400}}>{len}/{cfg.limit} {over?'🚫':warn?'⚠':'✓'}</span>}
+                            </div>
+                            <div style={{padding:12}}>
+                              {wizardImage&&<img src={wizardImage} alt="" style={{width:'100%',maxHeight:100,objectFit:'cover',borderRadius:6,marginBottom:8}} onError={e=>e.target.style.display='none'}/>}
+                              <div style={{fontSize:12,color:'#333',lineHeight:1.6,whiteSpace:'pre-wrap',wordBreak:'break-word'}}>
+                                {preview||<span style={{color:'#bbb',fontStyle:'italic'}}>No content yet</span>}
+                              </div>
+                              {over&&cfg.hard&&<div style={{marginTop:8,fontSize:11,color:'#dc2626',fontWeight:600,padding:'4px 8px',background:'#fef2f2',borderRadius:4}}>🚫 Will error — trim to {cfg.limit} chars in Step 1</div>}
+                            </div>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+                  <div>
+                    <div style={{fontSize:13,fontWeight:600,color:'#1a1a1a',marginBottom:12}}>⏱ When to publish</div>
+                    <div style={{display:'flex',flexDirection:'column',gap:8,marginBottom:16}}>
+                      {schedOpts.map(opt=>(
+                        <div key={opt.id} onClick={()=>setWizardSchedule(opt.id)}
+                          style={{display:'flex',alignItems:'center',gap:10,padding:'10px 12px',borderRadius:8,cursor:'pointer',transition:'all .15s',
+                            border:`1.5px solid ${wizardSchedule===opt.id?GREEN:'#e8e8e8'}`,
+                            background:wizardSchedule===opt.id?'#e6f7f2':'#fafafa'}}>
+                          <span style={{fontSize:18}}>{opt.icon}</span>
+                          <div style={{flex:1}}>
+                            <div style={{fontSize:12,fontWeight:600,color:wizardSchedule===opt.id?'#0f6e56':'#1a1a1a'}}>{opt.label}</div>
+                            <div style={{fontSize:11,color:'#888'}}>{opt.desc}</div>
+                          </div>
+                          <div style={{width:16,height:16,borderRadius:'50%',border:`2px solid ${wizardSchedule===opt.id?GREEN:'#ccc'}`,background:wizardSchedule===opt.id?GREEN:'transparent',display:'flex',alignItems:'center',justifyContent:'center',flexShrink:0}}>
+                            {wizardSchedule===opt.id&&<span style={{color:'#fff',fontSize:8,fontWeight:700}}>●</span>}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                    {wizardSchedule==='scheduled'&&(
+                      <div style={{marginBottom:16}}>
+                        <label style={labelStyle}>Date & time (Central Time)</label>
+                        <input type="datetime-local" value={wizardDate} onChange={e=>setWizardDate(e.target.value)}
+                          style={{...inputStyle,marginBottom:0,borderColor:!wizardDate?'#fca5a5':'#e0e0e0'}}/>
+                        {!wizardDate&&<div style={{fontSize:11,color:'#dc2626',marginTop:4}}>Required — pick a date to continue</div>}
+                      </div>
+                    )}
+                    <div style={{background:'#f8faff',border:'1px solid #e0eaff',borderRadius:8,padding:12}}>
+                      <div style={{fontSize:12,fontWeight:600,color:'#333',marginBottom:8}}>Pre-flight checklist</div>
+                      {[
+                        {ok:wizardContent.trim().length>0,label:'Content written'},
+                        {ok:wizardSel.size>0,label:`${wizardSel.size} platform${wizardSel.size!==1?'s':''} selected`},
+                        {ok:!(wizardSel.has('bs')&&wizardContent.length>300),label:'Bluesky within 300 chars'},
+                        {ok:wizardSchedule!=='scheduled'||!!wizardDate,label:'Schedule date set'},
+                        {ok:!wizardSel.has('li')||isLiConnected,label:'LinkedIn connected'},
+                        {ok:!wizardSel.has('bs')||bskyConnected,label:'Bluesky connected'},
+                      ].map((item,i)=>(
+                        <div key={i} style={{display:'flex',alignItems:'center',gap:6,marginBottom:5}}>
+                          <span style={{fontSize:13}}>{item.ok?'✅':'❌'}</span>
+                          <span style={{fontSize:12,color:item.ok?'#1a1a1a':'#dc2626'}}>{item.label}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              );
+            };
+
+            const Step4 = () => {
+              const sColor=s=>s==='ok'?'#16a34a':s==='err'?'#dc2626':s==='warn'?'#d97706':s==='sending'?'#0A66C2':'#999';
+              const sBg=s=>s==='ok'?'#dcfce7':s==='err'?'#fee2e2':s==='warn'?'#fef9c3':s==='sending'?'#eff6ff':'#f3f4f6';
+              const sIcon=s=>s==='ok'?'✓':s==='err'?'✗':s==='warn'?'⚠':s==='sending'?'…':'·';
+              return (
+                <div style={{background:'#fff',border:'1px solid #e8e8e8',borderRadius:12,padding:24}}>
+                  {!wizardPosting&&!wizardDone&&(
+                    <div style={{textAlign:'center',padding:'20px 0'}}>
+                      <div style={{fontSize:40,marginBottom:12}}>🚀</div>
+                      <div style={{fontSize:16,fontWeight:600,color:'#1a1a1a',marginBottom:6}}>Ready to publish</div>
+                      <div style={{fontSize:13,color:'#666',marginBottom:24}}>
+                        Posting to {wizardSel.size} platform{wizardSel.size!==1?'s':''} · {wizardSchedule==='now'?'immediately':wizardSchedule==='1week'?'in 1 week':wizardSchedule==='2weeks'?'in 2 weeks':`on ${new Date(wizardDate).toLocaleDateString()}`}
+                      </div>
+                      <button onClick={wizardSend} style={{padding:'12px 32px',background:GREEN,color:'#fff',border:'none',borderRadius:8,fontSize:15,fontWeight:600,cursor:'pointer',boxShadow:`0 2px 8px ${GREEN}44`}}>
+                        ⚡ Publish now
+                      </button>
+                    </div>
+                  )}
+                  {(wizardPosting||wizardDone)&&(
+                    <div>
+                      <div style={{fontSize:14,fontWeight:600,color:'#1a1a1a',marginBottom:16}}>{wizardPosting?'📡 Publishing…':'🎉 Done!'}</div>
+                      <div style={{display:'flex',flexDirection:'column',gap:10}}>
+                        {[...wizardSel].map(id=>{
+                          const ch=CONNECTED_CHANNELS.find(c=>c.id===id)||ALL_PLATFORMS.find(x=>x.id===id);
+                          if(!ch)return null;
+                          const st=wizardSendStatus[id]||{state:'pending',msg:'Waiting…'};
+                          return (
+                            <div key={id} style={{display:'flex',alignItems:'center',gap:12,padding:'12px 14px',borderRadius:8,border:'1px solid #e8e8e8',background:sBg(st.state)}}>
+                              <span style={{fontSize:20}}>{ch.icon}</span>
+                              <div style={{flex:1}}>
+                                <div style={{fontSize:13,fontWeight:500,color:'#1a1a1a'}}>{ch.name}</div>
+                                <div style={{fontSize:12,color:sColor(st.state)}}>{st.msg}</div>
+                              </div>
+                              <div style={{width:28,height:28,borderRadius:'50%',background:sColor(st.state),display:'flex',alignItems:'center',justifyContent:'center',color:'#fff',fontSize:13,fontWeight:700,flexShrink:0,
+                                animation:st.state==='sending'?'spin 1s linear infinite':'none'}}>
+                                {sIcon(st.state)}
+                              </div>
+                            </div>
+                          );
+                        })}
+                      </div>
+                      {wizardDone&&(
+                        <div style={{marginTop:20,display:'flex',gap:10,justifyContent:'center'}}>
+                          <button onClick={wizardReset} style={{padding:'9px 20px',background:GREEN,color:'#fff',border:'none',borderRadius:7,fontSize:13,fontWeight:600,cursor:'pointer'}}>✦ New post</button>
+                          <button onClick={()=>setTab('calendar')} style={{padding:'9px 20px',background:'#fff',color:'#1a1a1a',border:'1px solid #e0e0e0',borderRadius:7,fontSize:13,cursor:'pointer'}}>📅 View calendar</button>
+                        </div>
+                      )}
+                    </div>
+                  )}
+                </div>
+              );
+            };
+
+            return (
+              <div>
+                <style>{`@keyframes spin{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}`}</style>
+                <StepBar/>
+                {wizardStep===1&&<Step1/>}
+                {wizardStep===2&&<Step2/>}
+                {wizardStep===3&&<Step3/>}
+                {wizardStep===4&&<Step4/>}
+                {!(wizardStep===4&&(wizardPosting||wizardDone))&&(
+                  <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginTop:16}}>
+                    <button onClick={()=>setWizardStep(s=>Math.max(1,s-1))} disabled={wizardStep===1}
+                      style={{padding:'9px 20px',fontSize:13,border:'1px solid #e0e0e0',borderRadius:7,background:'#fff',cursor:wizardStep===1?'not-allowed':'pointer',color:wizardStep===1?'#ccc':'#444',opacity:wizardStep===1?0.5:1}}>
+                      ← Back
+                    </button>
+                    <div style={{fontSize:11,color:'#999'}}>Step {wizardStep} of 4</div>
+                    {wizardStep<4?(
+                      <button onClick={()=>{if(canAdvance)setWizardStep(s=>Math.min(4,s+1));}} disabled={!canAdvance}
+                        style={{padding:'9px 22px',fontSize:13,fontWeight:600,border:'none',borderRadius:7,
+                          background:canAdvance?'#1a1a1a':'#e0e0e0',color:canAdvance?'#fff':'#999',cursor:canAdvance?'pointer':'not-allowed',transition:'all .15s'}}>
+                        Next →
+                      </button>
+                    ):(
+                      !wizardPosting&&!wizardDone&&(
+                        <button onClick={wizardSend} style={{padding:'9px 22px',fontSize:13,fontWeight:600,border:'none',borderRadius:7,background:GREEN,color:'#fff',cursor:'pointer'}}>⚡ Publish</button>
+                      )
+                    )}
+                  </div>
+                )}
+              </div>
+            );
+          })()}
+          {/* ── END REVIEW & POST WIZARD ─────────────────────────────────── */}
 
         </div>
       </div>
