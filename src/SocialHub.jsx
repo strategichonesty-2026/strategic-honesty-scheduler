@@ -249,6 +249,7 @@ function ContentIdeasPanel({setApprovedQueue}) {
   const setCard=useCallback((iid,pid,upd)=>{const key=`${iid}_${pid}`;setCards(prev=>({...prev,[key]:{...(prev[key]||{content:'',loading:false,editing:false,editVal:'',expanded:false,actionLoading:null}),...upd}}));},[]);
 
   const runResearch=async()=>{
+      console.log('runResearch called, status:', resStatus);
     if(resStatus==='running')return;
     setResStatus('running');setResProgress(0);setFindings([]);setResLabel('Initializing research cycle…');
     const nf=[];
