@@ -253,19 +253,17 @@ function ContentIdeasPanel({setApprovedQueue}) {
     if(resStatus==='running')return;
     setResStatus('running');setResProgress(0);setFindings([]);setResLabel('Initializing research cycle…');
     const nf=[];
-    for(let i=0;i<RESEARCH_QUERIES.length;i++){
-      setResProgress(Math.round((i/RESEARCH_QUERIES.length)*65));
-      setResLabel(`Researching: ${RESEARCH_QUERIES[i].slice(0,48)}…`);
-      try{
-        const raw=await ciCallClaude(`Research viral social media content trends for leadership/integrity personal brand.\n\nTopic: "${RESEARCH_QUERIES[i]}"\n\nReturn ONLY raw JSON (no markdown):\n{"platform":"platform","trend":"trend name","hook":"viral hook example","theme":"core theme","whyItWorks":"2-3 sentence explanation","emotional":"emotional trigger","format":"content format","alignment":"Strategic Honesty fit","score":${7+Math.floor(i%3)},"gopu_angle":"angle using Nepal origin or credentials"}`,null,800);
-      const cleaned=raw.replace(/```json\n?/g,'').replace(/```\n?/g,'').trim();
-      const parsed=JSON.parse(cleaned.startsWith('[')&&cleaned||cleaned.startsWith('{')?cleaned:'{}');
-        parsed.id='f'+Date.now()+i;nf.push(parsed);setFindings([...nf]);
-        setResProgress(Math.round(((i+1)/RESEARCH_QUERIES.length)*65));
+setResLabel('Researching viral trends across all platforms…');
+setResProgress(30);
+try{
+  const raw=await ciCallClaude(`Research 6 viral social media content trends for a leadership/integrity personal brand (Gopu Shrestha, Nepal origin story, Wells Fargo PM, author).\n\nReturn ONLY a raw JSON array of exactly 6 objects (no markdown, no backticks):\n[{"platform":"LinkedIn","trend":"trend name","hook":"viral hook example","theme":"core theme","whyItWorks":"2-3 sentences","emotional":"emotional trigger","format":"content format","alignment":"Strategic Honesty fit","score":8,"gopu_angle":"specific angle using Nepal origin or credentials"}]`,null,2000);
+  const cleaned=raw.replace(/```json\n?/g,'').replace(/```\n?/g,'').trim();
+  const parsed=JSON.parse(cleaned);
+  parsed.forEach((f,i)=>{f.id='f'+Date.now()+i;nf.push(f);});
+  setFindings([...nf]);
+  setResProgress(65);
+}catch(e){console.error('Research error:',e.message);}
 
-  }catch(e){console.error('Research loop error:', e.message);}
-      await new Promise(r=>setTimeout(r,200));
-          }
     setResLabel('Generating content ideas…');setResProgress(70);
     try{
       const summary=nf.slice(0,5).map(f=>`• ${f.trend}: ${f.gopu_angle}`).join('\n');
