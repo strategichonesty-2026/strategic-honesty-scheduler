@@ -48,7 +48,6 @@ const BUFFER_PLATFORMS = {
 function generateBufferCSV(platformId, content, imageUrl, scheduleDate) {
   const cfg = BUFFER_PLATFORMS[platformId];
   if (!cfg) return null;
-  // Compute posting date
   let postingDate;
   if (scheduleDate) {
     postingDate = scheduleDate.split('T')[0];
@@ -56,12 +55,50 @@ function generateBufferCSV(platformId, content, imageUrl, scheduleDate) {
     postingDate = new Date().toISOString().split('T')[0];
   }
   const postingTime = `${postingDate} ${cfg.time}`;
-  // Escape CSV field
   const escape = v => `"${(v||'').replace(/"/g,'""')}"`;
   const header = 'Text,Image URL,Tags,Posting Time';
   const row = [escape(content), escape(imageUrl||''), '""', escape(postingTime)].join(',');
   return `${header}\n${row}`;
 }
+
+// ─── Schedule Engine ─────────────────────────────────────────────────────────
+function computeScheduleDates(pattern, startDate) {
+  // pattern: 'once' | 'weekly4' | 'biweekly4' | 'monthly3'
+  const base = new Date(startDate);
+  if (pattern === 'once') return [new Date(base)];
+  if (pattern === 'weekly4') return Array.from({length:4},(_,i)=>new Date(base.getTime()+i*7*24*60*60*1000));
+  if (pattern === 'biweekly4') return Array.from({length:4},(_,i)=>new Date(base.getTime()+i*14*24*60*60*1000));
+  if (pattern === 'monthly3') return Array.from({length:3},(_,i)=>{const d=new Date(base);d.setMonth(d.getMonth()+i);return d;});
+  return [new Date(base)];
+}
+
+function generateScheduledCSV(platformId, content, imageUrl, schedTimes, schedPattern, schedStart) {
+  const cfg = BUFFER_PLATFORMS[platformId];
+  if (!cfg) return null;
+  const timeStr = schedTimes[platformId] || cfg.time;
+  const dates = computeScheduleDates(schedPattern, schedStart);
+  const escape = v => `"${(v||'').replace(/"/g,'""')}"`;
+  const header = 'Text,Image URL,Tags,Posting Time';
+  const rows = dates.map(d => {
+    const ymd = d.toISOString().split('T')[0];
+    return [escape(content), escape(imageUrl||''), '""', escape(`${ymd} ${timeStr}`)].join(',');
+  });
+  return `${header}\n${rows.join('\n')}`;
+}
+
+function downloadScheduledCSV(platformId, content, imageUrl, schedTimes, schedPattern, schedStart) {
+  const cfg = BUFFER_PLATFORMS[platformId];
+  if (!cfg) return;
+  const csv = generateScheduledCSV(platformId, content, imageUrl, schedTimes, schedPattern, schedStart);
+  const blob = new Blob([csv], {type:'text/csv;charset=utf-8;'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `Buffer_${cfg.name}_${schedPattern}_${new Date().toISOString().split('T')[0]}.csv`;
+  a.click();
+  URL.revokeObjectURL(url);
+}
+// ─────────────────────────────────────────────────────────────────────────────
 
 function downloadCSV(platformId, content, imageUrl, scheduleDate) {
   const cfg = BUFFER_PLATFORMS[platformId];
@@ -253,6 +290,11 @@ export default function SocialHub() {
   const [wizardSendStatus, setWizardSendStatus] = useState({}); // { platformId: 'pending'|'sending'|'ok'|'err'|'warn', msg }
   const [wizardPosting, setWizardPosting] = useState(false);
   const [wizardDone, setWizardDone] = useState(false);
+  // ─── Step 5: Buffer Schedule Engine state ────────────────────────────────
+  const [schedTimes, setSchedTimes] = useState({ fb:'13:00', tt:'19:00', ig:'11:00' });
+  const [schedPattern, setSchedPattern] = useState('once');   // 'once'|'weekly4'|'biweekly4'|'monthly3'
+  const [schedStart, setSchedStart] = useState(() => new Date().toISOString().split('T')[0]);
+  // ─────────────────────────────────────────────────────────────────────────
 
   function wizardSelectPostType(typeId) {
     setWizardPostType(typeId);
@@ -349,6 +391,8 @@ export default function SocialHub() {
     setWizardStep(1); setWizardContent(''); setWizardImage('');
     setWizardSchedule('now'); setWizardDate(''); setWizardPostType(null);
     setWizardSel(new Set()); setWizardSendStatus({}); setWizardPosting(false); setWizardDone(false);
+    setSchedTimes({ fb:'13:00', tt:'19:00', ig:'11:00' });
+    setSchedPattern('once'); setSchedStart(new Date().toISOString().split('T')[0]);
   }
   // ─────────────────────────────────────────────────────────────────────────
 
@@ -1033,10 +1077,11 @@ export default function SocialHub() {
           {/* ── REVIEW & POST WIZARD ─────────────────────────────────────── */}
           {tab==='wizard' && (() => {
             const STEPS = [
-              { n:1, label:'Write',  icon:'✍️' },
-              { n:2, label:'Route',  icon:'🗺' },
-              { n:3, label:'Review', icon:'👁' },
-              { n:4, label:'Send',   icon:'🚀' },
+              { n:1, label:'Write',    icon:'✍️' },
+              { n:2, label:'Route',    icon:'🗺' },
+              { n:3, label:'Review',   icon:'👁' },
+              { n:4, label:'Send',     icon:'🚀' },
+              { n:5, label:'Schedule', icon:'📅' },
             ];
             const canAdvance = wizardCanAdvance(wizardStep);
 
@@ -1311,7 +1356,10 @@ export default function SocialHub() {
                               </div>
                             </div>
                           )}
-                          <div style={{display:'flex',gap:10,justifyContent:'center'}}>
+                          <div style={{display:'flex',gap:10,justifyContent:'center',flexWrap:'wrap'}}>
+                            {[...wizardSel].some(id=>BUFFER_PLATFORMS[id])&&(
+                              <button onClick={()=>setWizardStep(5)} style={{padding:'9px 20px',background:'#7c3aed',color:'#fff',border:'none',borderRadius:7,fontSize:13,fontWeight:600,cursor:'pointer'}}>📅 Schedule posts →</button>
+                            )}
                             <button onClick={wizardReset} style={{padding:'9px 20px',background:GREEN,color:'#fff',border:'none',borderRadius:7,fontSize:13,fontWeight:600,cursor:'pointer'}}>✦ New post</button>
                             <button onClick={()=>setTab('calendar')} style={{padding:'9px 20px',background:'#fff',color:'#1a1a1a',border:'1px solid #e0e0e0',borderRadius:7,fontSize:13,cursor:'pointer'}}>📅 View calendar</button>
                           </div>
@@ -1323,6 +1371,127 @@ export default function SocialHub() {
               );
             };
 
+
+            const Step5 = () => {
+              const bufferPlatforms = [...wizardSel].filter(id => BUFFER_PLATFORMS[id]);
+              const PATTERNS = [
+                { id:'once',      label:'Post once',            detail:'One post on your chosen date' },
+                { id:'weekly4',   label:'Weekly for 4 weeks',   detail:'Same day each week, 4 posts total' },
+                { id:'biweekly4', label:'Bi-weekly for 4 posts',detail:'Every 2 weeks, 4 posts total' },
+                { id:'monthly3',  label:'Monthly for 3 months', detail:'Same date each month, 3 posts total' },
+              ];
+              const previewDates = () => {
+                if (!schedStart) return [];
+                try { return computeScheduleDates(schedPattern, schedStart); } catch { return []; }
+              };
+              const btnStyle = (active, color='#7c3aed') => ({
+                padding:'10px 14px', border:`2px solid ${active?color:'#e0e0e0'}`,
+                borderRadius:8, background:active?color+'11':'#fff',
+                cursor:'pointer', textAlign:'left', transition:'all .15s',
+              });
+              return (
+                <div style={{background:'#fff',border:'1px solid #e8e8e8',borderRadius:12,padding:24}}>
+                  <div style={{fontSize:14,fontWeight:700,color:'#1a1a1a',marginBottom:4}}>📅 Schedule Your Posts</div>
+                  <div style={{fontSize:12,color:'#666',marginBottom:20}}>
+                    You're almost there — great content deserves the right timing. Be Good. Do Good. Do Well.
+                  </div>
+
+                  {/* ── Per-platform posting times ── */}
+                  <div style={{marginBottom:20}}>
+                    <div style={{fontSize:12,fontWeight:600,color:'#444',marginBottom:10,textTransform:'uppercase',letterSpacing:'0.05em'}}>
+                      Posting time per platform (CST)
+                    </div>
+                    <div style={{display:'flex',flexDirection:'column',gap:8}}>
+                      {bufferPlatforms.length === 0 && (
+                        <div style={{fontSize:12,color:'#999',fontStyle:'italic'}}>No Buffer platforms selected — go back to Step 2.</div>
+                      )}
+                      {bufferPlatforms.map(id => {
+                        const cfg = BUFFER_PLATFORMS[id];
+                        return (
+                          <div key={id} style={{display:'flex',alignItems:'center',gap:12,padding:'10px 14px',border:'1px solid #e8e8e8',borderRadius:8,background:'#fafafa'}}>
+                            <span style={{fontSize:20}}>{cfg.icon}</span>
+                            <div style={{flex:1}}>
+                              <div style={{fontSize:13,fontWeight:600,color:'#1a1a1a'}}>{cfg.name}</div>
+                              <div style={{fontSize:11,color:'#888'}}>Default: {BUFFER_PLATFORMS[id].time} CST</div>
+                            </div>
+                            <input type="time" value={schedTimes[id]||cfg.time}
+                              onChange={e=>setSchedTimes(prev=>({...prev,[id]:e.target.value}))}
+                              style={{padding:'6px 10px',border:'1px solid #ddd',borderRadius:6,fontSize:13,fontWeight:600,color:cfg.color,cursor:'pointer'}}
+                            />
+                          </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+
+                  {/* ── Start date ── */}
+                  <div style={{marginBottom:20}}>
+                    <div style={{fontSize:12,fontWeight:600,color:'#444',marginBottom:8,textTransform:'uppercase',letterSpacing:'0.05em'}}>
+                      Start date
+                    </div>
+                    <input type="date" value={schedStart} min={new Date().toISOString().split('T')[0]}
+                      onChange={e=>setSchedStart(e.target.value)}
+                      style={{padding:'8px 12px',border:'1px solid #ddd',borderRadius:7,fontSize:13,cursor:'pointer'}}
+                    />
+                  </div>
+
+                  {/* ── Schedule pattern ── */}
+                  <div style={{marginBottom:20}}>
+                    <div style={{fontSize:12,fontWeight:600,color:'#444',marginBottom:10,textTransform:'uppercase',letterSpacing:'0.05em'}}>
+                      Posting schedule
+                    </div>
+                    <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:8}}>
+                      {PATTERNS.map(p=>(
+                        <button key={p.id} onClick={()=>setSchedPattern(p.id)} style={btnStyle(schedPattern===p.id)}>
+                          <div style={{fontSize:13,fontWeight:600,color:schedPattern===p.id?'#7c3aed':'#1a1a1a'}}>{p.label}</div>
+                          <div style={{fontSize:11,color:'#888',marginTop:2}}>{p.detail}</div>
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* ── Date preview ── */}
+                  {schedStart && (
+                    <div style={{background:'#f5f3ff',border:'1px solid #ddd6fe',borderRadius:8,padding:'12px 16px',marginBottom:20}}>
+                      <div style={{fontSize:12,fontWeight:600,color:'#7c3aed',marginBottom:8}}>📋 Scheduled post dates</div>
+                      <div style={{display:'flex',flexDirection:'column',gap:4}}>
+                        {previewDates().map((d,i)=>(
+                          <div key={i} style={{fontSize:12,color:'#4c1d95',display:'flex',gap:8,alignItems:'center'}}>
+                            <span style={{background:'#7c3aed',color:'#fff',borderRadius:4,padding:'1px 7px',fontWeight:700,fontSize:11}}>#{i+1}</span>
+                            {d.toLocaleDateString('en-US',{weekday:'short',year:'numeric',month:'short',day:'numeric'})}
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                  {/* ── Download CSVs ── */}
+                  {bufferPlatforms.length > 0 && (
+                    <div>
+                      <div style={{fontSize:12,fontWeight:600,color:'#444',marginBottom:10,textTransform:'uppercase',letterSpacing:'0.05em'}}>
+                        Download CSVs for Buffer
+                      </div>
+                      <div style={{display:'flex',flexWrap:'wrap',gap:8,marginBottom:12}}>
+                        {bufferPlatforms.map(id=>{
+                          const cfg = BUFFER_PLATFORMS[id];
+                          return (
+                            <button key={id}
+                              onClick={()=>downloadScheduledCSV(id,wizardContent,wizardImage,schedTimes,schedPattern,schedStart)}
+                              disabled={!schedStart}
+                              style={{padding:'8px 16px',fontSize:12,fontWeight:600,background:'#7c3aed',color:'#fff',border:'none',borderRadius:7,cursor:schedStart?'pointer':'not-allowed',opacity:schedStart?1:0.5,display:'flex',alignItems:'center',gap:6}}>
+                              {cfg.icon} {cfg.name} CSV ({previewDates().length} row{previewDates().length!==1?'s':''})
+                            </button>
+                          );
+                        })}
+                      </div>
+                      <div style={{fontSize:11,color:'#6d28d9'}}>
+                        Each CSV includes all scheduled dates. Go to Buffer → Channel → Settings → Bulk Upload.
+                      </div>
+                    </div>
+                  )}
+                </div>
+              );
+            };
             return (
               <div>
                 <style>{`@keyframes spin{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}`}</style>
@@ -1331,23 +1500,26 @@ export default function SocialHub() {
                 {wizardStep===2&&<Step2/>}
                 {wizardStep===3&&<Step3/>}
                 {wizardStep===4&&<Step4/>}
+                {wizardStep===5&&<Step5/>}
                 {!(wizardStep===4&&(wizardPosting||wizardDone))&&(
                   <div style={{display:'flex',justifyContent:'space-between',alignItems:'center',marginTop:16}}>
                     <button onClick={()=>setWizardStep(s=>Math.max(1,s-1))} disabled={wizardStep===1}
                       style={{padding:'9px 20px',fontSize:13,border:'1px solid #e0e0e0',borderRadius:7,background:'#fff',cursor:wizardStep===1?'not-allowed':'pointer',color:wizardStep===1?'#ccc':'#444',opacity:wizardStep===1?0.5:1}}>
                       ← Back
                     </button>
-                    <div style={{fontSize:11,color:'#999'}}>Step {wizardStep} of 4</div>
+                    <div style={{fontSize:11,color:'#999'}}>Step {wizardStep} of 5</div>
                     {wizardStep<4?(
-                      <button onClick={()=>{if(canAdvance)setWizardStep(s=>Math.min(4,s+1));}} disabled={!canAdvance}
+                      <button onClick={()=>{if(canAdvance)setWizardStep(s=>Math.min(5,s+1));}} disabled={!canAdvance}
                         style={{padding:'9px 22px',fontSize:13,fontWeight:600,border:'none',borderRadius:7,
                           background:canAdvance?'#1a1a1a':'#e0e0e0',color:canAdvance?'#fff':'#999',cursor:canAdvance?'pointer':'not-allowed',transition:'all .15s'}}>
                         Next →
                       </button>
-                    ):(
+                    ):wizardStep===4?(
                       !wizardPosting&&!wizardDone&&(
                         <button onClick={wizardSend} style={{padding:'9px 22px',fontSize:13,fontWeight:600,border:'none',borderRadius:7,background:GREEN,color:'#fff',cursor:'pointer'}}>⚡ Publish</button>
                       )
+                    ):(
+                      null
                     )}
                   </div>
                 )}
