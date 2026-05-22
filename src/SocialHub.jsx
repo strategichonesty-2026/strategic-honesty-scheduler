@@ -172,16 +172,22 @@ const RESEARCH_QUERIES=[
   'immigrant success story leadership brand viral social media content 2026',
 ];
 async function ciCallClaude(prompt,onChunk,maxTokens=1100) {
-  const res=await fetch('https://sh-claude-proxy.strategichonesty.workers.dev/',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:maxTokens,stream:true,system:BRAND_SYSTEM,messages:[{role:'user',content:prompt}]})});
+  const res=await fetch('https://sh-claude-proxy.strategichonesty.workers.dev/',{
+    method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({
+      model:'claude-sonnet-4-20250514',
+      max_tokens:maxTokens,
+      stream:false,
+      system:BRAND_SYSTEM,
+      messages:[{role:'user',content:prompt}]
+    })
+  });
   if(!res.ok) throw new Error('API error '+res.status);
-  const reader=res.body.getReader(),dec=new TextDecoder();let full='';
-  while(true){
-    const{done,value}=await reader.read();if(done)break;
-    for(const line of dec.decode(value).split('\n').filter(l=>l.startsWith('data: '))){
-      try{const d=JSON.parse(line.slice(6));if(d.type==='content_block_delta'&&d.delta?.text){full+=d.delta.text;if(onChunk)onChunk(full);}}catch{}
-    }
-  }
-  return full;
+  const data=await res.json();
+  const text=data.content?.[0]?.text||'';
+  if(onChunk) onChunk(text);
+  return text;
 }
 
 function Avatar({ch,size=32}) {
