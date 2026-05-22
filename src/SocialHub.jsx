@@ -266,6 +266,7 @@ try{
 
     setResLabel('Generating content ideas…');setResProgress(70);
     try{
+    console.log('Starting ideas generation...');
       const summary=nf.slice(0,5).map(f=>`• ${f.trend}: ${f.gopu_angle}`).join('\n');
       const raw=await ciCallClaude(`Viral trend findings for Gopu Shrestha's Strategic Honesty brand:\n\n${summary}\n\nGenerate 8 content ideas. Return ONLY raw JSON array (no markdown):\n[{"title":"punchy title","core":"core insight 1-2 sentences rooted in Gopu's story","findingRef":"which trend","virality":"why viral potential","imageprompt":"detailed image prompt for thumbnail in dark navy and gold","pillars":"Integrity/Authenticity/Leadership/AI-Era/Nepal-Journey"}]`,null,900);
 
@@ -274,7 +275,7 @@ const parsedIdeas=JSON.parse(cleaned2);
 
       const newIdeas=parsedIdeas.map((idea,i)=>({id:'idea'+Date.now()+i,title:idea.title,core:idea.core,findingRef:idea.findingRef||'',virality:idea.virality||'',imageprompt:idea.imageprompt||'',pillars:idea.pillars||'Integrity',status:'review'}));
       setIdeas(prev=>{const existIds=new Set(prev.map(i=>i.id));return[...newIdeas.filter(i=>!existIds.has(i.id)),...prev].slice(0,30);});
-    }catch{}
+    }catch(e){console.error('Ideas error:',e.message);}
     setResProgress(100);setResLabel('Research complete');setResStatus('done');
     const lr=new Date().toISOString(),nr=new Date(Date.now()+7*24*60*60*1000).toISOString();
     setLastRun(lr);setNextRun(nr);persist(nf,ideas,queue,lr,nr,'done');
