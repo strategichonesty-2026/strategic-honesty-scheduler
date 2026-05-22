@@ -186,6 +186,19 @@ export default function SocialHub() {
   const [scheduledPosts, setScheduledPosts] = useState([]);
   const [posting, setPosting] = useState(false);
 
+  // Activity Log persisted to localStorage
+  const [activityLog, setActivityLog] = useState(() => {
+    try { return JSON.parse(localStorage.getItem('sh_activity_log') || '[]'); } catch { return []; }
+  });
+  function saveToLog(entry) {
+    const log = { id: Date.now(), ts: new Date().toISOString(), ...entry };
+    setActivityLog(prev => {
+      const next = [log, ...prev].slice(0, 100);
+      localStorage.setItem('sh_activity_log', JSON.stringify(next));
+      return next;
+    });
+  }
+
   // ─── Smart Content Router state ──────────────────────────────────────────
   const [postType, setPostType] = useState(null);
   // ─────────────────────────────────────────────────────────────────────────
@@ -259,7 +272,8 @@ export default function SocialHub() {
           if (data.success) {
             if (publishNow) {
               await fetch(`${BACKEND}/posts/${data.post.id}/publish`, { method: 'POST' });
-              update('li', 'ok', '✓ Published to LinkedIn');
+              update('li', 'ok', `✓ Published to LinkedIn — Post ID: ${data.post.id}`);
+              saveToLog({platform:'LinkedIn',type:'real',status:'ok',msg:`Published — Post ID: ${data.post.id}`,preview:wizardContent.slice(0,80)});
             } else {
               update('li', 'ok', `✓ Scheduled for ${new Date(scheduledAt).toLocaleString()}`);
               fetchScheduledPosts();
@@ -272,15 +286,17 @@ export default function SocialHub() {
         if (wizardContent.length > 300) { update('bs', 'err', `Over 300 chars (${wizardContent.length}) — skipped`); continue; }
         try {
           const session = await bskyCreateSession(localStorage.getItem('sh_bsky_handle'), localStorage.getItem('sh_bsky_apppw'));
-          await bskyPost(session.accessJwt, session.did, wizardContent);
-          update('bs', 'ok', '✓ Published to Bluesky');
+          const bskyRes = await bskyPost(session.accessJwt, session.did, wizardContent);
+          update('bs', 'ok', `✓ Published to Bluesky — URI: ${bskyRes?.uri||'posted'}`);
+          saveToLog({platform:'Bluesky',type:'real',status:'ok',msg:`Published — URI: ${bskyRes?.uri||'posted'}`,preview:wizardContent.slice(0,80)});
         } catch(e) { update('bs', 'err', `Bluesky: ${e.message}`); }
 
       } else if (platformId === 'yt') {
         update('yt', 'warn', '⚠ YouTube Community Posts deprecated — post manually');
       } else {
         await new Promise(r => setTimeout(r, 500));
-        update(platformId, 'ok', `✓ Simulated post to ${platformId.toUpperCase()}`);
+        update(platformId, 'warn', `⚠ ${platformId.toUpperCase()} — simulated only (not connected via API)`);
+        saveToLog({platform:platformId.toUpperCase(),type:'simulated',status:'warn',msg:'Simulated — not posted to real platform',preview:wizardContent.slice(0,80)});
       }
     }
     setWizardPosting(false);
@@ -413,7 +429,7 @@ export default function SocialHub() {
           try {
             const scheduledAt = new Date(Date.now() + 10000).toISOString();
             const data = await (await fetch(`${BACKEND}/posts`, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({platform:'linkedin', userId: localStorage.getItem('sh_linkedin_userId') || userId, content:testContent, mediaUrl:testImage||null, mediaType:testImage?'image':null, scheduledAt}) })).json();
-            if (data.success) { await fetch(`${BACKEND}/posts/${data.post.id}/publish`, {method:'POST'}); addLog(setLogs,'ok','✓ Sent to LinkedIn successfully'); }
+            if (data.success) { await fetch(`${BACKEND}/posts/${data.post.id}/publish`, {method:'POST'}); addLog(setLogs,'ok',`✓ Sent to LinkedIn — Post ID: ${data.post.id}`); saveToLog({platform:'LinkedIn',type:'real',status:'ok',msg:`Published — Post ID: ${data.post.id}`,preview:testContent.slice(0,80)}); }
             else { addLog(setLogs,'err',`LinkedIn: ${data.error}`); }
           } catch(e) { addLog(setLogs,'err',`LinkedIn error: ${e.message}`); }
         } else if (scheduleDate) {
@@ -429,15 +445,17 @@ export default function SocialHub() {
           addLog(setLogs,'info','Sending to Bluesky...');
           try {
             const session = await bskyCreateSession(localStorage.getItem('sh_bsky_handle'), localStorage.getItem('sh_bsky_apppw'));
-            await bskyPost(session.accessJwt, session.did, testContent);
-            addLog(setLogs,'ok','✓ Sent to Bluesky successfully');
+            const bskyResult = await bskyPost(session.accessJwt, session.did, testContent);
+            addLog(setLogs,'ok',`✓ Sent to Bluesky — URI: ${bskyResult?.uri||'posted'}`);
+            saveToLog({platform:'Bluesky',type:'real',status:'ok',msg:`Published — URI: ${bskyResult?.uri||'posted'}`,preview:testContent.slice(0,80)});
           } catch(e) { addLog(setLogs,'err',`Bluesky: ${e.message}`); }
         }
       } else if (platformId === 'yt') {
         addLog(setLogs,'warn','⚠ YouTube Community Posts deprecated by Google — post manually at youtube.com/community.');
       } else {
         await new Promise(r=>setTimeout(r,400));
-        addLog(setLogs,'ok',`✓ Sent to ${platformId} successfully`);
+        addLog(setLogs,'warn',`⚠ ${platformId.toUpperCase()} — simulated only (not connected via API)`);
+        saveToLog({platform:platformId.toUpperCase(),type:'simulated',status:'warn',msg:'Simulated — not posted to real platform',preview:testContent.slice(0,80)});
       }
     }
     setPosting(false);
@@ -569,7 +587,7 @@ export default function SocialHub() {
           <button onClick={()=>{wizardReset();setTab('wizard');}} style={{padding:'6px 14px',borderRadius:6,fontSize:13,cursor:'pointer',border:'none',background:GREEN,color:'#fff',fontWeight:500}}>✦ New post</button>
         </div>
         <div style={{display:'flex',borderBottom:'1px solid #e8e8e8',padding:'0 20px',background:'#fff',overflowX:'auto'}}>
-          {[['calendar','📅 Calendar'],['connect','🔗 Connect'],['upload','⬆ Upload CSV'],['test','✉ Quick Compose'],['wizard','🚀 Review & Post']].map(([t,label])=>(
+          {[['calendar','📅 Calendar'],['connect','🔗 Connect'],['upload','⬆ Upload CSV'],['test','✉ Quick Compose'],['wizard','🚀 Review & Post'],['log','📋 Activity Log']].map(([t,label])=>(
             <div key={t} onClick={()=>{ if(t==='wizard') wizardReset(); setTab(t); }} style={{padding:'10px 16px',fontSize:13,cursor:'pointer',borderBottom:tab===t?`2px solid ${t==='wizard'?GREEN:'#1a1a1a'}`:'2px solid transparent',color:tab===t?(t==='wizard'?GREEN:'#1a1a1a'):'#666',fontWeight:tab===t?600:400,transition:'all .15s',whiteSpace:'nowrap'}}>{label}</div>
           ))}
         </div>
@@ -892,6 +910,67 @@ export default function SocialHub() {
               </div>
             </div>
           )}
+
+          {/* ── ACTIVITY LOG ──────────────────────────────────────────────── */}
+          {tab==='log' && (
+            <div>
+              <div style={{display:'flex',alignItems:'center',justifyContent:'space-between',marginBottom:16}}>
+                <div>
+                  <div style={{fontSize:15,fontWeight:600,color:'#1a1a1a'}}>📋 Activity Log</div>
+                  <div style={{fontSize:12,color:'#888',marginTop:2}}>Every post attempt — real and simulated — with proof of delivery</div>
+                </div>
+                {activityLog.length>0&&(
+                  <button onClick={()=>{setActivityLog([]);localStorage.removeItem('sh_activity_log');}}
+                    style={{padding:'5px 12px',fontSize:11,border:'1px solid #fca5a5',borderRadius:6,background:'#fff',cursor:'pointer',color:'#dc2626'}}>
+                    🗑 Clear log
+                  </button>
+                )}
+              </div>
+              {activityLog.length===0?(
+                <div style={{background:'#fff',border:'1px solid #e8e8e8',borderRadius:10,padding:40,textAlign:'center'}}>
+                  <div style={{fontSize:32,marginBottom:8}}>📭</div>
+                  <div style={{fontSize:13,color:'#888'}}>No activity yet — posts will appear here after you publish</div>
+                </div>
+              ):(
+                <div style={{display:'flex',flexDirection:'column',gap:8}}>
+                  {activityLog.map(entry=>{
+                    const isReal=entry.type==='real';
+                    const isFail=entry.status==='err';
+                    const bg=isFail?'#fef2f2':isReal?'#f0faf6':'#fffbeb';
+                    const border=isFail?'#fca5a5':isReal?'#b6e8d6':'#fcd34d';
+                    const icon=isFail?'❌':isReal?'✅':'⚠️';
+                    const badge=isFail?{bg:'#fee2e2',color:'#dc2626',text:'Failed'}:isReal?{bg:'#dcfce7',color:'#166534',text:'Real post'}:{bg:'#fef9c3',color:'#854d0e',text:'Simulated'};
+                    return (
+                      <div key={entry.id} style={{background:bg,border:`1px solid ${border}`,borderRadius:10,padding:'12px 16px'}}>
+                        <div style={{display:'flex',alignItems:'center',gap:10,marginBottom:6}}>
+                          <span style={{fontSize:18}}>{icon}</span>
+                          <div style={{flex:1}}>
+                            <div style={{display:'flex',alignItems:'center',gap:8,flexWrap:'wrap'}}>
+                              <span style={{fontSize:13,fontWeight:600,color:'#1a1a1a'}}>{entry.platform}</span>
+                              <span style={{fontSize:10,padding:'2px 7px',borderRadius:10,background:badge.bg,color:badge.color,fontWeight:600}}>{badge.text}</span>
+                              <span style={{fontSize:11,color:'#999',marginLeft:'auto'}}>{new Date(entry.ts).toLocaleString('en-US',{month:'short',day:'numeric',hour:'numeric',minute:'2-digit',hour12:true})}</span>
+                            </div>
+                            <div style={{fontSize:12,color:isFail?'#dc2626':isReal?'#0f6e56':'#854d0e',marginTop:2,fontWeight:500}}>{entry.msg}</div>
+                          </div>
+                        </div>
+                        {entry.preview&&(
+                          <div style={{fontSize:12,color:'#555',background:'rgba(0,0,0,0.04)',borderRadius:6,padding:'6px 10px',fontStyle:'italic',overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap'}}>
+                            "{entry.preview}{entry.preview.length>=80?'…':''}"
+                          </div>
+                        )}
+                        {!isReal&&!isFail&&(
+                          <div style={{fontSize:11,color:'#92400e',marginTop:6,padding:'4px 8px',background:'#fef3c7',borderRadius:4,border:'1px solid #fcd34d'}}>
+                            ℹ️ This platform is not connected via API. Post was NOT published. Connect in the Connect tab to enable real posting.
+                          </div>
+                        )}
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
+            </div>
+          )}
+          {/* ── END ACTIVITY LOG ──────────────────────────────────────────── */}
 
           {/* ── REVIEW & POST WIZARD ─────────────────────────────────────── */}
           {tab==='wizard' && (() => {
