@@ -226,7 +226,7 @@ function CharCounter({content,selectedPlatforms}) {
 // ─── ContentIdeasPanel ────────────────────────────────────────────────────────
 function ContentIdeasPanel({setApprovedQueue}) {
   const [ciTab,setCiTab]=useState('research');
-  const [resStatus,setResStatus]=useState(()=>{try{return JSON.parse(localStorage.getItem('sh_ci_resstatus')||'"idle"');}catch{return 'idle';}});
+  const [resStatus,setResStatus]=useState('idle');
   const [resProgress,setResProgress]=useState(0);
   const [resLabel,setResLabel]=useState('');
   const [findings,setFindings]=useState(()=>{try{return JSON.parse(localStorage.getItem('sh_ci_findings')||'[]');}catch{return[];}});
