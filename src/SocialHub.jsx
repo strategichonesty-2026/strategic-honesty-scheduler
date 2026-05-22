@@ -38,6 +38,45 @@ const CHAR_LIMITS = {
 };
 // ────────────────────────────────────────────────────────────────────────────
 
+// ─── Buffer CSV platforms ────────────────────────────────────────────────────
+const BUFFER_PLATFORMS = {
+  fb: { name:'Facebook',   icon:'👥', color:'#1877F2', time:'13:00' },
+  tt: { name:'TikTok',     icon:'🎵', color:'#010101', time:'19:00' },
+  ig: { name:'Instagram',  icon:'📸', color:'#E1306C', time:'11:00' },
+};
+
+function generateBufferCSV(platformId, content, imageUrl, scheduleDate) {
+  const cfg = BUFFER_PLATFORMS[platformId];
+  if (!cfg) return null;
+  // Compute posting date
+  let postingDate;
+  if (scheduleDate) {
+    postingDate = scheduleDate.split('T')[0];
+  } else {
+    postingDate = new Date().toISOString().split('T')[0];
+  }
+  const postingTime = `${postingDate} ${cfg.time}`;
+  // Escape CSV field
+  const escape = v => `"${(v||'').replace(/"/g,'""')}"`;
+  const header = 'Text,Image URL,Tags,Posting Time';
+  const row = [escape(content), escape(imageUrl||''), '""', escape(postingTime)].join(',');
+  return `${header}\n${row}`;
+}
+
+function downloadCSV(platformId, content, imageUrl, scheduleDate) {
+  const cfg = BUFFER_PLATFORMS[platformId];
+  if (!cfg) return;
+  const csv = generateBufferCSV(platformId, content, imageUrl, scheduleDate);
+  const blob = new Blob([csv], {type:'text/csv;charset=utf-8;'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `Buffer_${cfg.name}_${new Date().toISOString().split('T')[0]}.csv`;
+  a.click();
+  URL.revokeObjectURL(url);
+}
+// ────────────────────────────────────────────────────────────────────────────
+
 function getUserId() {
   let id = localStorage.getItem('sh_user_id');
   if (!id) { id = 'user_' + Math.random().toString(36).slice(2, 10); localStorage.setItem('sh_user_id', id); }
@@ -293,10 +332,13 @@ export default function SocialHub() {
 
       } else if (platformId === 'yt') {
         update('yt', 'warn', '⚠ YouTube Community Posts deprecated — post manually');
+      } else if (BUFFER_PLATFORMS[platformId]) {
+        // Buffer platform — generate CSV, don't fake-post
+        const cfg = BUFFER_PLATFORMS[platformId];
+        update(platformId, 'csv', `📥 CSV ready — download and upload to Buffer`);
+        saveToLog({platform:cfg.name,type:'buffer',status:'csv',msg:`CSV generated — upload to Buffer to publish`,preview:wizardContent.slice(0,80),platformId});
       } else {
-        await new Promise(r => setTimeout(r, 500));
-        update(platformId, 'warn', `⚠ ${platformId.toUpperCase()} — simulated only (not connected via API)`);
-        saveToLog({platform:platformId.toUpperCase(),type:'simulated',status:'warn',msg:'Simulated — not posted to real platform',preview:wizardContent.slice(0,80)});
+        update(platformId, 'warn', `⚠ ${platformId.toUpperCase()} — not connected`);
       }
     }
     setWizardPosting(false);
@@ -453,9 +495,14 @@ export default function SocialHub() {
       } else if (platformId === 'yt') {
         addLog(setLogs,'warn','⚠ YouTube Community Posts deprecated by Google — post manually at youtube.com/community.');
       } else {
-        await new Promise(r=>setTimeout(r,400));
-        addLog(setLogs,'warn',`⚠ ${platformId.toUpperCase()} — simulated only (not connected via API)`);
-        saveToLog({platform:platformId.toUpperCase(),type:'simulated',status:'warn',msg:'Simulated — not posted to real platform',preview:testContent.slice(0,80)});
+        if (BUFFER_PLATFORMS[platformId]) {
+          const cfg = BUFFER_PLATFORMS[platformId];
+          downloadCSV(platformId, testContent, testImage, scheduleDate);
+          addLog(setLogs,'ok',`📥 ${cfg.name} CSV downloaded — upload to Buffer to publish`);
+          saveToLog({platform:cfg.name,type:'buffer',status:'csv',msg:'CSV downloaded — upload to Buffer',preview:testContent.slice(0,80),platformId});
+        } else {
+          addLog(setLogs,'warn',`⚠ ${platformId.toUpperCase()} — not connected`);
+        }
       }
     }
     setPosting(false);
@@ -917,7 +964,7 @@ export default function SocialHub() {
               <div style={{display:'flex',alignItems:'center',justifyContent:'space-between',marginBottom:16}}>
                 <div>
                   <div style={{fontSize:15,fontWeight:600,color:'#1a1a1a'}}>📋 Activity Log</div>
-                  <div style={{fontSize:12,color:'#888',marginTop:2}}>Every post attempt — real and simulated — with proof of delivery</div>
+                  <div style={{fontSize:12,color:'#888',marginTop:2}}>Real posts show proof ID · Buffer platforms show CSV download · Nothing is faked</div>
                 </div>
                 {activityLog.length>0&&(
                   <button onClick={()=>{setActivityLog([]);localStorage.removeItem('sh_activity_log');}}
@@ -939,7 +986,8 @@ export default function SocialHub() {
                     const bg=isFail?'#fef2f2':isReal?'#f0faf6':'#fffbeb';
                     const border=isFail?'#fca5a5':isReal?'#b6e8d6':'#fcd34d';
                     const icon=isFail?'❌':isReal?'✅':'⚠️';
-                    const badge=isFail?{bg:'#fee2e2',color:'#dc2626',text:'Failed'}:isReal?{bg:'#dcfce7',color:'#166534',text:'Real post'}:{bg:'#fef9c3',color:'#854d0e',text:'Simulated'};
+                    const isBuffer=entry.type==='buffer';
+                    const badge=isFail?{bg:'#fee2e2',color:'#dc2626',text:'Failed'}:isReal?{bg:'#dcfce7',color:'#166534',text:'Real post'}:isBuffer?{bg:'#f5f3ff',color:'#7c3aed',text:'Buffer CSV'}:{bg:'#fef9c3',color:'#854d0e',text:'Simulated'};
                     return (
                       <div key={entry.id} style={{background:bg,border:`1px solid ${border}`,borderRadius:10,padding:'12px 16px'}}>
                         <div style={{display:'flex',alignItems:'center',gap:10,marginBottom:6}}>
@@ -958,9 +1006,19 @@ export default function SocialHub() {
                             "{entry.preview}{entry.preview.length>=80?'…':''}"
                           </div>
                         )}
-                        {!isReal&&!isFail&&(
+                        {isBuffer&&entry.platformId&&(
+                          <div style={{marginTop:8,display:'flex',alignItems:'center',gap:8,flexWrap:'wrap'}}>
+                            <button onClick={()=>downloadCSV(entry.platformId,entry.preview,null,null)}
+                              style={{padding:'4px 12px',fontSize:11,fontWeight:600,background:'#7c3aed',color:'#fff',border:'none',borderRadius:5,cursor:'pointer'}}>
+                              📥 Re-download CSV
+                            </button>
+                            <a href="https://buffer.com" target="_blank" rel="noreferrer"
+                              style={{fontSize:11,color:'#7c3aed',fontWeight:500}}>Open Buffer →</a>
+                          </div>
+                        )}
+                        {!isReal&&!isFail&&!isBuffer&&(
                           <div style={{fontSize:11,color:'#92400e',marginTop:6,padding:'4px 8px',background:'#fef3c7',borderRadius:4,border:'1px solid #fcd34d'}}>
-                            ℹ️ This platform is not connected via API. Post was NOT published. Connect in the Connect tab to enable real posting.
+                            ℹ️ Not connected via API. Post was NOT published.
                           </div>
                         )}
                       </div>
@@ -1182,9 +1240,9 @@ export default function SocialHub() {
             };
 
             const Step4 = () => {
-              const sColor=s=>s==='ok'?'#16a34a':s==='err'?'#dc2626':s==='warn'?'#d97706':s==='sending'?'#0A66C2':'#999';
-              const sBg=s=>s==='ok'?'#dcfce7':s==='err'?'#fee2e2':s==='warn'?'#fef9c3':s==='sending'?'#eff6ff':'#f3f4f6';
-              const sIcon=s=>s==='ok'?'✓':s==='err'?'✗':s==='warn'?'⚠':s==='sending'?'…':'·';
+              const sColor=s=>s==='ok'?'#16a34a':s==='err'?'#dc2626':s==='warn'?'#d97706':s==='sending'?'#0A66C2':s==='csv'?'#7c3aed':'#999';
+              const sBg=s=>s==='ok'?'#dcfce7':s==='err'?'#fee2e2':s==='warn'?'#fef9c3':s==='sending'?'#eff6ff':s==='csv'?'#f5f3ff':'#f3f4f6';
+              const sIcon=s=>s==='ok'?'✓':s==='err'?'✗':s==='warn'?'⚠':s==='sending'?'…':s==='csv'?'📥':'·';
               return (
                 <div style={{background:'#fff',border:'1px solid #e8e8e8',borderRadius:12,padding:24}}>
                   {!wizardPosting&&!wizardDone&&(
@@ -1214,18 +1272,49 @@ export default function SocialHub() {
                                 <div style={{fontSize:13,fontWeight:500,color:'#1a1a1a'}}>{ch.name}</div>
                                 <div style={{fontSize:12,color:sColor(st.state)}}>{st.msg}</div>
                               </div>
-                              <div style={{width:28,height:28,borderRadius:'50%',background:sColor(st.state),display:'flex',alignItems:'center',justifyContent:'center',color:'#fff',fontSize:13,fontWeight:700,flexShrink:0,
-                                animation:st.state==='sending'?'spin 1s linear infinite':'none'}}>
-                                {sIcon(st.state)}
+                                <div style={{display:'flex',alignItems:'center',gap:8,flexShrink:0}}>
+                                {st.state==='csv'&&(
+                                  <button onClick={()=>downloadCSV(id,wizardContent,wizardImage,wizardDate)}
+                                    style={{padding:'5px 12px',fontSize:11,fontWeight:600,background:'#7c3aed',color:'#fff',border:'none',borderRadius:6,cursor:'pointer',whiteSpace:'nowrap'}}>
+                                    📥 Download CSV
+                                  </button>
+                                )}
+                                <div style={{width:28,height:28,borderRadius:'50%',background:sColor(st.state),display:'flex',alignItems:'center',justifyContent:'center',color:'#fff',fontSize:13,fontWeight:700,flexShrink:0,
+                                  animation:st.state==='sending'?'spin 1s linear infinite':'none'}}>
+                                  {sIcon(st.state)}
+                                </div>
                               </div>
                             </div>
                           );
                         })}
                       </div>
                       {wizardDone&&(
-                        <div style={{marginTop:20,display:'flex',gap:10,justifyContent:'center'}}>
-                          <button onClick={wizardReset} style={{padding:'9px 20px',background:GREEN,color:'#fff',border:'none',borderRadius:7,fontSize:13,fontWeight:600,cursor:'pointer'}}>✦ New post</button>
-                          <button onClick={()=>setTab('calendar')} style={{padding:'9px 20px',background:'#fff',color:'#1a1a1a',border:'1px solid #e0e0e0',borderRadius:7,fontSize:13,cursor:'pointer'}}>📅 View calendar</button>
+                        <div style={{marginTop:20}}>
+                          {[...wizardSel].some(id=>BUFFER_PLATFORMS[id])&&(
+                            <div style={{background:'#f5f3ff',border:'1px solid #ddd6fe',borderRadius:8,padding:'12px 16px',marginBottom:12}}>
+                              <div style={{fontSize:12,fontWeight:600,color:'#7c3aed',marginBottom:8}}>📥 Buffer upload ready</div>
+                              <div style={{fontSize:11,color:'#6d28d9',marginBottom:10}}>Download each CSV then go to Buffer → Channel → Settings → Bulk Upload</div>
+                              <div style={{display:'flex',flexWrap:'wrap',gap:8}}>
+                                {[...wizardSel].filter(id=>BUFFER_PLATFORMS[id]).map(id=>{
+                                  const cfg=BUFFER_PLATFORMS[id];
+                                  return (
+                                    <button key={id} onClick={()=>downloadCSV(id,wizardContent,wizardImage,wizardDate)}
+                                      style={{padding:'6px 14px',fontSize:12,fontWeight:600,background:'#7c3aed',color:'#fff',border:'none',borderRadius:6,cursor:'pointer',display:'flex',alignItems:'center',gap:6}}>
+                                      {cfg.icon} Download {cfg.name} CSV
+                                    </button>
+                                  );
+                                })}
+                                <a href="https://buffer.com" target="_blank" rel="noreferrer"
+                                  style={{padding:'6px 14px',fontSize:12,fontWeight:600,background:'#fff',color:'#7c3aed',border:'1px solid #ddd6fe',borderRadius:6,cursor:'pointer',textDecoration:'none',display:'flex',alignItems:'center',gap:4}}>
+                                  Open Buffer →
+                                </a>
+                              </div>
+                            </div>
+                          )}
+                          <div style={{display:'flex',gap:10,justifyContent:'center'}}>
+                            <button onClick={wizardReset} style={{padding:'9px 20px',background:GREEN,color:'#fff',border:'none',borderRadius:7,fontSize:13,fontWeight:600,cursor:'pointer'}}>✦ New post</button>
+                            <button onClick={()=>setTab('calendar')} style={{padding:'9px 20px',background:'#fff',color:'#1a1a1a',border:'1px solid #e0e0e0',borderRadius:7,fontSize:13,cursor:'pointer'}}>📅 View calendar</button>
+                          </div>
                         </div>
                       )}
                     </div>
