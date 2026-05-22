@@ -257,7 +257,7 @@ function ContentIdeasPanel({setApprovedQueue}) {
       setResProgress(Math.round((i/RESEARCH_QUERIES.length)*65));
       setResLabel(`Researching: ${RESEARCH_QUERIES[i].slice(0,48)}…`);
       try{
-        const raw=await ciCallClaude(`Research viral social media content trends for leadership/integrity personal brand.\n\nTopic: "${RESEARCH_QUERIES[i]}"\n\nReturn ONLY raw JSON (no markdown):\n{"platform":"platform","trend":"trend name","hook":"viral hook example","theme":"core theme","whyItWorks":"2-3 sentence explanation","emotional":"emotional trigger","format":"content format","alignment":"Strategic Honesty fit","score":${7+Math.floor(i%3)},"gopu_angle":"angle using Nepal origin or credentials"}`,null,450);
+        const raw=await ciCallClaude(`Research viral social media content trends for leadership/integrity personal brand.\n\nTopic: "${RESEARCH_QUERIES[i]}"\n\nReturn ONLY raw JSON (no markdown):\n{"platform":"platform","trend":"trend name","hook":"viral hook example","theme":"core theme","whyItWorks":"2-3 sentence explanation","emotional":"emotional trigger","format":"content format","alignment":"Strategic Honesty fit","score":${7+Math.floor(i%3)},"gopu_angle":"angle using Nepal origin or credentials"}`,null,800);
       const cleaned=raw.replace(/```json\n?/g,'').replace(/```\n?/g,'').trim();
       const parsed=JSON.parse(cleaned.startsWith('[')&&cleaned||cleaned.startsWith('{')?cleaned:'{}');
         parsed.id='f'+Date.now()+i;nf.push(parsed);setFindings([...nf]);
