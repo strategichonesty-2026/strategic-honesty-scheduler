@@ -172,7 +172,7 @@ const RESEARCH_QUERIES=[
   'immigrant success story leadership brand viral social media content 2026',
 ];
 async function ciCallClaude(prompt,onChunk,maxTokens=1100) {
-  const res=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:maxTokens,stream:true,system:BRAND_SYSTEM,messages:[{role:'user',content:prompt}]})});
+  const res=await fetch('https://sh-claude-proxy.strategichonesty.workers.dev/',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-20250514',max_tokens:maxTokens,stream:true,system:BRAND_SYSTEM,messages:[{role:'user',content:prompt}]})});
   if(!res.ok) throw new Error('API error '+res.status);
   const reader=res.body.getReader(),dec=new TextDecoder();let full='';
   while(true){
