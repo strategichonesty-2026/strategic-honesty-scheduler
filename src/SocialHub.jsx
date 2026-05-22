@@ -269,7 +269,7 @@ try{
     try{
     console.log('Starting ideas generation...');
       const summary=nf.slice(0,5).map(f=>`• ${f.trend}: ${f.gopu_angle}`).join('\n');
-      const raw=await ciCallClaude(`Viral trend findings for Gopu Shrestha's Strategic Honesty brand:\n\n${summary}\n\nGenerate 8 content ideas. Return ONLY raw JSON array (no markdown):\n[{"title":"punchy title","core":"core insight 1-2 sentences rooted in Gopu's story","findingRef":"which trend","virality":"why viral potential","imageprompt":"detailed image prompt for thumbnail in dark navy and gold","pillars":"Integrity/Authenticity/Leadership/AI-Era/Nepal-Journey"}]`,null,900);
+      const raw=await ciCallClaude(`Viral trend findings for Gopu Shrestha's Strategic Honesty brand:\n\n${summary}\n\nGenerate 8 content ideas. Return ONLY raw JSON array (no markdown):\n[{"title":"punchy title","core":"core insight 1-2 sentences rooted in Gopu's story","findingRef":"which trend","virality":"why viral potential","imageprompt":"detailed image prompt for thumbnail in dark navy and gold","pillars":"Integrity/Authenticity/Leadership/AI-Era/Nepal-Journey"}]`,null,2500);
 
 const cleaned2=raw.replace(/```json\n?/g,'').replace(/```\n?/g,'').trim();
 const parsedIdeas=JSON.parse(cleaned2);
