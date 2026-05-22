@@ -260,6 +260,7 @@ try{
   const cleaned=raw.replace(/```json\n?/g,'').replace(/```\n?/g,'').trim();
   const parsed=JSON.parse(cleaned);
   parsed.forEach((f,i)=>{f.id='f'+Date.now()+i;nf.push(f);});
+  console.log('nf length:', nf.length);
   setFindings([...nf]);
   setResProgress(65);
 }catch(e){console.error('Research error:',e.message);}
