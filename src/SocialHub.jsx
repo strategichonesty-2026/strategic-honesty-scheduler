@@ -262,9 +262,10 @@ function ContentIdeasPanel({setApprovedQueue}) {
       const parsed=JSON.parse(cleaned.startsWith('[')&&cleaned||cleaned.startsWith('{')?cleaned:'{}');
         parsed.id='f'+Date.now()+i;nf.push(parsed);setFindings([...nf]);
         setResProgress(Math.round(((i+1)/RESEARCH_QUERIES.length)*65));
-      }catch{}
+
+  }catch(e){console.error('Research loop error:', e.message);}
       await new Promise(r=>setTimeout(r,200));
-    }
+          }
     setResLabel('Generating content ideas…');setResProgress(70);
     try{
       const summary=nf.slice(0,5).map(f=>`• ${f.trend}: ${f.gopu_angle}`).join('\n');
