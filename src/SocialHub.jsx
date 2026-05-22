@@ -257,7 +257,8 @@ function ContentIdeasPanel({setApprovedQueue}) {
       setResLabel(`Researching: ${RESEARCH_QUERIES[i].slice(0,48)}…`);
       try{
         const raw=await ciCallClaude(`Research viral social media content trends for leadership/integrity personal brand.\n\nTopic: "${RESEARCH_QUERIES[i]}"\n\nReturn ONLY raw JSON (no markdown):\n{"platform":"platform","trend":"trend name","hook":"viral hook example","theme":"core theme","whyItWorks":"2-3 sentence explanation","emotional":"emotional trigger","format":"content format","alignment":"Strategic Honesty fit","score":${7+Math.floor(i%3)},"gopu_angle":"angle using Nepal origin or credentials"}`,null,450);
-        const parsed=JSON.parse(raw.replace(/```json|```/g,'').trim());
+      const cleaned=raw.replace(/```json\n?/g,'').replace(/```\n?/g,'').trim();
+      const parsed=JSON.parse(cleaned.startsWith('[')&&cleaned||cleaned.startsWith('{')?cleaned:'{}');
         parsed.id='f'+Date.now()+i;nf.push(parsed);setFindings([...nf]);
         setResProgress(Math.round(((i+1)/RESEARCH_QUERIES.length)*65));
       }catch{}
@@ -267,7 +268,10 @@ function ContentIdeasPanel({setApprovedQueue}) {
     try{
       const summary=nf.slice(0,5).map(f=>`• ${f.trend}: ${f.gopu_angle}`).join('\n');
       const raw=await ciCallClaude(`Viral trend findings for Gopu Shrestha's Strategic Honesty brand:\n\n${summary}\n\nGenerate 8 content ideas. Return ONLY raw JSON array (no markdown):\n[{"title":"punchy title","core":"core insight 1-2 sentences rooted in Gopu's story","findingRef":"which trend","virality":"why viral potential","imageprompt":"detailed image prompt for thumbnail in dark navy and gold","pillars":"Integrity/Authenticity/Leadership/AI-Era/Nepal-Journey"}]`,null,900);
-      const parsedIdeas=JSON.parse(raw.replace(/```json|```/g,'').trim());
+
+const cleaned2=raw.replace(/```json\n?/g,'').replace(/```\n?/g,'').trim();
+const parsedIdeas=JSON.parse(cleaned2);
+
       const newIdeas=parsedIdeas.map((idea,i)=>({id:'idea'+Date.now()+i,title:idea.title,core:idea.core,findingRef:idea.findingRef||'',virality:idea.virality||'',imageprompt:idea.imageprompt||'',pillars:idea.pillars||'Integrity',status:'review'}));
       setIdeas(prev=>{const existIds=new Set(prev.map(i=>i.id));return[...newIdeas.filter(i=>!existIds.has(i.id)),...prev].slice(0,30);});
     }catch{}
