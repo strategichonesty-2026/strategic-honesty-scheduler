@@ -384,7 +384,7 @@ function HelpModal({onClose}) {
 
   return(
     <div style={{position:'fixed',top:0,left:0,right:0,bottom:0,background:'rgba(0,0,0,0.55)',zIndex:1000,display:'flex',alignItems:'center',justifyContent:'center',padding:'16px',overflowY:'auto'}} onClick={onClose}>
-      <div style={{background:'#fff',borderRadius:16,width:'100%',maxWidth:760,height:'min(90vh,620px)',overflow:'hidden',display:'flex',flexDirection:'column',boxShadow:'0 20px 60px rgba(0,0,0,0.3)'}} onClick={e=>e.stopPropagation()}>
+      <div style={{background:'#fff',borderRadius:16,width:'100%',maxWidth:760,maxHeight:'90vh',overflow:'hidden',display:'flex',flexDirection:'column',boxShadow:'0 20px 60px rgba(0,0,0,0.3)'}} onClick={e=>e.stopPropagation()}>
 
         {/* Header */}
         <div style={{background:NAVY,padding:'16px 20px',display:'flex',alignItems:'center',justifyContent:'space-between',flexShrink:0}}>
