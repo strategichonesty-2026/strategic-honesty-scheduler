@@ -621,7 +621,7 @@ export default function SocialHub() {
         </div>
         <nav style={{padding:'8px',flex:1}}>
           {NAV.map(({id,icon,label})=>(
-            <div key={id} onClick={()=>{if(id==='wizard')wizardReset();setMainTab(id);}} style={{display:'flex',alignItems:'center',gap:9,padding:'7px 9px',borderRadius:8,cursor:'pointer',fontSize:13,color:mainTab===id?C.text:C.muted,fontWeight:mainTab===id?600:400,background:mainTab===id?'#f1f5f9':'transparent',marginBottom:1,transition:'all .12s',borderLeft:mainTab===id?`3px solid ${GREEN}`:'3px solid transparent'}} onMouseEnter={e=>{if(mainTab!==id)e.currentTarget.style.background='#f8fafc';}} onMouseLeave={e=>{if(mainTab!==id)e.currentTarget.style.background='transparent';}}>
+            <div key={id} onClick={()=>{if(id==='wizard')wizardReset();setMainTab(id);}} style={{display:'flex',alignItems:'center',gap:9,padding:'7px 9px',borderRadius:8,cursor:'pointer',fontSize:13,color:mainTab===id?'#fff':C.muted,fontWeight:mainTab===id?600:400,background:mainTab===id?GREEN:'transparent',marginBottom:1,transition:'all .12s',borderRadius:mainTab===id?'8px':'8px'}} onMouseEnter={e=>{if(mainTab!==id)e.currentTarget.style.background='#f8fafc';}} onMouseLeave={e=>{if(mainTab!==id)e.currentTarget.style.background='transparent';}}>
               <span style={{fontSize:15}}>{icon}</span><span style={{flex:1}}>{label}</span>
               {id==='ideas'&&approvedQueue.length>0&&<span style={{fontSize:10,padding:'1px 6px',borderRadius:10,background:C.purpleLight,color:C.purple,fontWeight:600}}>{approvedQueue.length}</span>}
             </div>
