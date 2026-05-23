@@ -201,7 +201,7 @@ function SettingsPanel() {
 
   return(
     <div style={{maxWidth:600}}>
-      <div style={{fontSize:15,fontWeight:700,color:C.text,marginBottom:16}}>⚙️ Settings</div>
+      <div style={{fontSize:15,fontWeight:700,color:C.text,marginBottom:16}}>⚙ Settings</div>
 
       {/* Profile & Brand */}
       <div style={sectionStyle}>
@@ -287,7 +287,7 @@ function HelpModal({onClose}) {
     {id:'articles',icon:'📄', label:'Articles'},
     {id:'wizard',  icon:'🚀', label:'Review & Post'},
     {id:'schedule',icon:'📅', label:'Scheduling'},
-    {id:'settings',icon:'⚙️', label:'Settings'},
+    {id:'settings',icon:'⚙', label:'Settings'},
   ];
 
   const content = {
@@ -364,10 +364,10 @@ function HelpModal({onClose}) {
       example: 'One piece of content → one CSV file → upload to Buffer → done. Buffer posts it for you at the right time.',
     },
     settings: {
-      title: '⚙️ Settings — Your Profile & Preferences',
+      title: '⚙ Settings — Your Profile & Preferences',
       intro: 'Set up your profile, default posting times, and manage your data here.',
       steps: [
-        'Click the gear icon ⚙️ at the bottom of the left sidebar.',
+        'Click the gear icon ⚙ at the bottom of the left sidebar.',
         'PROFILE & BRAND: Upload your logo. Set your display name and tagline.',
         'POSTING DEFAULTS: Set what time you want to post on each platform. This saves time when scheduling.',
         'Set your default schedule pattern (once, weekly, bi-weekly, monthly).',
@@ -1147,7 +1147,7 @@ export default function SocialHub() {
                 <div style={{fontSize:28,marginBottom:7,color:'#ccc'}}>⬆</div>
                 <div style={{fontSize:14,fontWeight:500,color:C.text,marginBottom:4}}>Drop your Buffer CSV file here</div>
                 <div style={{fontSize:12,color:C.muted}}>Text, Image URL, Tags, Posting Time · UTF-8 · Max 10 posts free plan</div>
-                <input type="file" id="csv-file" accept=".csv" style={{display:'none'}} onChange={e=>{const file=e.target.files[0];if(!file)return;addLog(setUploadLogs,'info',`Reading ${file.name}...`);const r=new FileReader();r.onload=ev=>{const lines=ev.target.result.split('\n').filter(l=>l.trim()).length-1;addLog(setUploadLogs,'ok',`✓ ${file.name} — ${lines} posts loaded`);addLog(setUploadLogs,'info','Go to Buffer → Channel → ⚙️ → Bulk Upload → Add to Queue');};r.readAsText(file);}}/>
+                <input type="file" id="csv-file" accept=".csv" style={{display:'none'}} onChange={e=>{const file=e.target.files[0];if(!file)return;addLog(setUploadLogs,'info',`Reading ${file.name}...`);const r=new FileReader();r.onload=ev=>{const lines=ev.target.result.split('\n').filter(l=>l.trim()).length-1;addLog(setUploadLogs,'ok',`✓ ${file.name} — ${lines} posts loaded`);addLog(setUploadLogs,'info','Go to Buffer → Channel → ⚙ → Bulk Upload → Add to Queue');};r.readAsText(file);}}/>
               </label>
               <div style={{background:'#f8f8f8',borderRadius:7,padding:8,fontSize:12,fontFamily:'monospace',maxHeight:90,overflowY:'auto',lineHeight:1.8}}>{uploadLogs.map((l,i)=><div key={i} style={{color:logColor(l.t)}}>» {l.m}</div>)}</div>
             </div>
