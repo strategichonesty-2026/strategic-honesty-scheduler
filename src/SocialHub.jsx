@@ -605,17 +605,6 @@ export default function SocialHub() {
           <button onClick={()=>{if(coreIdea.trim()){wizardReset();setWizardContent(coreIdea);setMainTab('wizard');}}} disabled={!coreIdea.trim()} style={{width:'100%',padding:'6px 0',fontSize:11,fontWeight:600,background:coreIdea.trim()?C.navy:'#e5e7eb',color:coreIdea.trim()?'#fff':C.muted,border:'none',borderRadius:7,cursor:coreIdea.trim()?'pointer':'not-allowed'}}>Adapt to All Platforms →</button>
         </div>
         <div style={{padding:'11px 13px',borderBottom:`1px solid ${C.border}`}}>
-          <div style={{display:'flex',alignItems:'center',justifyContent:'space-between',marginBottom:7}}>
-            <div style={{fontSize:10,fontWeight:600,color:C.muted,textTransform:'uppercase',letterSpacing:'0.07em'}}>💡 Viral Content Ideas</div>
-            <button onClick={()=>setMainTab('ideas')} style={{fontSize:10,color:C.purple,background:'none',border:'none',cursor:'pointer',fontWeight:600}}>View all</button>
-          </div>
-          {viralIdeasSidebar.length?viralIdeasSidebar.map(idea=>(
-            <div key={idea.id} onClick={()=>setMainTab('ideas')} style={{display:'flex',alignItems:'center',gap:7,padding:'5px 7px',borderRadius:7,cursor:'pointer',marginBottom:2,transition:'background .12s'}} onMouseEnter={e=>e.currentTarget.style.background='#f3f4f6'} onMouseLeave={e=>e.currentTarget.style.background='transparent'}>
-              <div style={{width:5,height:5,borderRadius:'50%',background:C.gold,flexShrink:0}}/><div style={{fontSize:12,color:C.text,flex:1,overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap'}}>{idea.title}</div><span style={{fontSize:10,color:C.muted}}>›</span>
-            </div>
-          )):<div style={{fontSize:11,color:C.muted,fontStyle:'italic',padding:'3px 0'}}>Run research to generate ideas</div>}
-        </div>
-        <div style={{padding:'11px 13px',borderBottom:`1px solid ${C.border}`}}>
           <div style={{fontSize:10,fontWeight:600,color:C.muted,textTransform:'uppercase',letterSpacing:'0.07em',marginBottom:7}}>Brand Alignment</div>
           <div style={{height:6,background:'linear-gradient(to right,#ef4444,#f59e0b,#22c55e)',borderRadius:3,marginBottom:5,position:'relative'}}>
             <div style={{position:'absolute',top:-3,left:`${brandScore}%`,transform:'translateX(-50%)',width:12,height:12,background:'#fff',border:`2px solid ${C.navy}`,borderRadius:'50%'}}/>
@@ -984,6 +973,17 @@ export default function SocialHub() {
               <div style={{flex:1,minWidth:0}}><div style={{fontSize:12,color:C.text,overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap'}}>{p.text}</div><div style={{fontSize:10,color:C.muted}}>May {p.day}</div></div>
             </div>
           ))}
+        </div>
+        <div style={{padding:'11px 13px',borderBottom:`1px solid ${C.border}`}}>
+          <div style={{display:'flex',alignItems:'center',justifyContent:'space-between',marginBottom:8}}>
+            <div style={{fontSize:11,fontWeight:600,color:C.muted,textTransform:'uppercase',letterSpacing:'0.07em'}}>💡 Viral Content Ideas</div>
+            <button onClick={()=>setMainTab('ideas')} style={{fontSize:10,color:C.purple,background:'none',border:'none',cursor:'pointer',fontWeight:600}}>View all</button>
+          </div>
+          {viralIdeasSidebar.length?viralIdeasSidebar.map(idea=>(
+            <div key={idea.id} onClick={()=>setMainTab('ideas')} style={{display:'flex',alignItems:'center',gap:7,padding:'5px 7px',borderRadius:7,cursor:'pointer',marginBottom:3,transition:'background .12s'}} onMouseEnter={e=>e.currentTarget.style.background='#f3f4f6'} onMouseLeave={e=>e.currentTarget.style.background='transparent'}>
+              <div style={{width:5,height:5,borderRadius:'50%',background:C.gold,flexShrink:0}}/><div style={{fontSize:12,color:C.text,flex:1,overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap'}}>{idea.title}</div><span style={{fontSize:10,color:C.muted}}>›</span>
+            </div>
+          )):<div style={{fontSize:11,color:C.muted,fontStyle:'italic',padding:'3px 0'}}>Run research to generate ideas</div>}
         </div>
         <div style={{padding:'11px 13px',flex:1}}>
           <div style={{display:'flex',alignItems:'center',justifyContent:'space-between',marginBottom:8}}>
