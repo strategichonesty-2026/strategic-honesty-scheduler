@@ -277,6 +277,150 @@ function SettingsPanel() {
   );
 }
 
+function SettingsPanel() {
+  const GREEN='#24b47e';
+  const C={text:'#0f172a',muted:'#64748b',border:'#E2E8F0',card:'#FFFFFF',label:'#334155',greenLight:'#E6F7F2',greenDark:'#0f6e56',navy:'#1E293B'};
+  const F='-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif';
+  const inputStyle={width:'100%',border:`1px solid ${C.border}`,borderRadius:7,padding:'8px 10px',fontSize:13,color:C.text,fontFamily:F,outline:'none',marginBottom:10,background:'#fff',boxSizing:'border-box'};
+  const labelStyle={fontSize:12,color:C.muted,marginBottom:5,display:'block',fontWeight:500};
+  const sectionStyle={background:C.card,border:`1px solid ${C.border}`,borderRadius:12,padding:18,marginBottom:14};
+
+  // Profile & Brand
+  const [displayName,setDisplayName]=useState(()=>localStorage.getItem('sh_display_name')||'Gopu Shrestha');
+  const [tagline,setTagline]=useState(()=>localStorage.getItem('sh_tagline')||'Be Good. Do Good. Do Well.');
+  const [logoSrc,setLogoSrc]=useState(()=>localStorage.getItem('sh_logo')||'');
+  const fileRef=useRef(null);
+
+  // Posting Defaults
+  const [defLiTime,setDefLiTime]=useState(()=>localStorage.getItem('sh_def_li_time')||'08:00');
+  const [defIgTime,setDefIgTime]=useState(()=>localStorage.getItem('sh_def_ig_time')||'11:00');
+  const [defTtTime,setDefTtTime]=useState(()=>localStorage.getItem('sh_def_tt_time')||'19:00');
+  const [defFbTime,setDefFbTime]=useState(()=>localStorage.getItem('sh_def_fb_time')||'13:00');
+  const [defPattern,setDefPattern]=useState(()=>localStorage.getItem('sh_def_pattern')||'weekly4');
+  const [defImageUrl,setDefImageUrl]=useState(()=>localStorage.getItem('sh_def_image_url')||'');
+
+  const [saved,setSaved]=useState(false);
+
+  const handleLogoUpload=e=>{
+    const file=e.target.files[0];if(!file)return;
+    const reader=new FileReader();
+    reader.onload=ev=>{const src=ev.target.result;setLogoSrc(src);localStorage.setItem('sh_logo',src);};
+    reader.readAsDataURL(file);
+  };
+
+  const saveProfile=()=>{
+    localStorage.setItem('sh_display_name',displayName);
+    localStorage.setItem('sh_tagline',tagline);
+    setSaved(true);setTimeout(()=>setSaved(false),2000);
+  };
+
+  const saveDefaults=()=>{
+    localStorage.setItem('sh_def_li_time',defLiTime);
+    localStorage.setItem('sh_def_ig_time',defIgTime);
+    localStorage.setItem('sh_def_tt_time',defTtTime);
+    localStorage.setItem('sh_def_fb_time',defFbTime);
+    localStorage.setItem('sh_def_pattern',defPattern);
+    localStorage.setItem('sh_def_image_url',defImageUrl);
+    setSaved(true);setTimeout(()=>setSaved(false),2000);
+  };
+
+  const exportData=()=>{
+    const data={profile:{displayName,tagline},defaults:{defLiTime,defIgTime,defTtTime,defFbTime,defPattern,defImageUrl},ideas:JSON.parse(localStorage.getItem('sh_ci_ideas')||'[]'),queue:JSON.parse(localStorage.getItem('sh_ci_queue')||'[]'),activityLog:JSON.parse(localStorage.getItem('sh_activity_log')||'[]')};
+    const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});
+    const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;
+    a.download=`strategic-honesty-export-${new Date().toISOString().split('T')[0]}.json`;
+    a.click();URL.revokeObjectURL(url);
+  };
+
+  const clearCache=()=>{
+    if(!window.confirm('Clear all cached content ideas and research? This cannot be undone.'))return;
+    ['sh_ci_findings','sh_ci_ideas','sh_ci_queue','sh_ci_lastrun','sh_ci_nextrun','sh_ci_resstatus'].forEach(k=>localStorage.removeItem(k));
+    window.location.reload();
+  };
+
+  const resetQueue=()=>{
+    if(!window.confirm('Reset the approved queue? All approved posts will be removed.'))return;
+    localStorage.removeItem('sh_ci_queue');
+    window.location.reload();
+  };
+
+  return(
+    <div style={{maxWidth:600}}>
+      <div style={{fontSize:15,fontWeight:700,color:C.text,marginBottom:16}}>⚙️ Settings</div>
+
+      {/* Profile & Brand */}
+      <div style={sectionStyle}>
+        <div style={{fontSize:13,fontWeight:700,color:C.text,marginBottom:13,paddingBottom:8,borderBottom:`1px solid ${C.border}`}}>👤 Profile & Brand</div>
+        <div style={{display:'flex',alignItems:'center',gap:14,marginBottom:16}}>
+          <div style={{width:64,height:64,borderRadius:12,background:logoSrc?'transparent':GREEN,display:'flex',alignItems:'center',justifyContent:'center',color:'#fff',fontSize:24,fontWeight:800,overflow:'hidden',border:`2px solid ${C.border}`,flexShrink:0}}>
+            {logoSrc?<img src={logoSrc} alt="Logo" style={{width:'100%',height:'100%',objectFit:'cover'}}/>:'S'}
+          </div>
+          <div style={{flex:1}}>
+            <div style={{fontSize:12,fontWeight:600,color:C.text,marginBottom:6}}>Brand Logo</div>
+            <div style={{display:'flex',gap:7}}>
+              <button onClick={()=>fileRef.current?.click()} style={{padding:'5px 12px',fontSize:12,fontWeight:600,background:GREEN,color:'#fff',border:'none',borderRadius:7,cursor:'pointer'}}>Upload Logo</button>
+              {logoSrc&&<button onClick={()=>{setLogoSrc('');localStorage.removeItem('sh_logo');}} style={{padding:'5px 12px',fontSize:12,border:`1px solid #fca5a5`,borderRadius:7,background:'#fff',cursor:'pointer',color:'#dc2626'}}>Remove</button>}
+            </div>
+            <div style={{fontSize:10,color:C.muted,marginTop:4}}>PNG or JPG · Saved locally in browser</div>
+          </div>
+          <input ref={fileRef} type="file" accept="image/*" style={{display:'none'}} onChange={handleLogoUpload}/>
+        </div>
+        <label style={labelStyle}>Display Name</label>
+        <input value={displayName} onChange={e=>setDisplayName(e.target.value)} style={inputStyle} placeholder="Gopu Shrestha"/>
+        <label style={labelStyle}>Tagline / Philosophy</label>
+        <input value={tagline} onChange={e=>setTagline(e.target.value)} style={inputStyle} placeholder="Be Good. Do Good. Do Well."/>
+        <button onClick={saveProfile} style={{padding:'7px 18px',fontSize:13,fontWeight:600,background:GREEN,color:'#fff',border:'none',borderRadius:8,cursor:'pointer'}}>
+          {saved?'✓ Saved':'Save Profile'}
+        </button>
+      </div>
+
+      {/* Posting Defaults */}
+      <div style={sectionStyle}>
+        <div style={{fontSize:13,fontWeight:700,color:C.text,marginBottom:13,paddingBottom:8,borderBottom:`1px solid ${C.border}`}}>⏰ Posting Defaults</div>
+        <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:10,marginBottom:10}}>
+          {[{label:'LinkedIn time',val:defLiTime,set:setDefLiTime},{label:'Instagram time',val:defIgTime,set:setDefIgTime},{label:'TikTok time',val:defTtTime,set:setDefTtTime},{label:'Facebook time',val:defFbTime,set:setDefFbTime}].map(({label,val,set})=>(
+            <div key={label}>
+              <label style={labelStyle}>{label} (CST)</label>
+              <input type="time" value={val} onChange={e=>set(e.target.value)} style={{...inputStyle,marginBottom:0,cursor:'pointer'}}/>
+            </div>
+          ))}
+        </div>
+        <label style={labelStyle}>Default schedule pattern</label>
+        <select value={defPattern} onChange={e=>setDefPattern(e.target.value)} style={{...inputStyle}}>
+          <option value="once">Post once</option>
+          <option value="weekly4">Weekly × 4</option>
+          <option value="biweekly4">Bi-weekly × 4</option>
+          <option value="monthly3">Monthly × 3</option>
+        </select>
+        <label style={labelStyle}>Default image URL <span style={{color:'#bbb',fontWeight:400}}>(optional)</span></label>
+        <input value={defImageUrl} onChange={e=>setDefImageUrl(e.target.value)} style={inputStyle} placeholder="https://..."/>
+        <button onClick={saveDefaults} style={{padding:'7px 18px',fontSize:13,fontWeight:600,background:GREEN,color:'#fff',border:'none',borderRadius:8,cursor:'pointer'}}>
+          {saved?'✓ Saved':'Save Defaults'}
+        </button>
+      </div>
+
+      {/* Data */}
+      <div style={sectionStyle}>
+        <div style={{fontSize:13,fontWeight:700,color:C.text,marginBottom:13,paddingBottom:8,borderBottom:`1px solid ${C.border}`}}>💾 Data</div>
+        <div style={{display:'flex',flexDirection:'column',gap:9}}>
+          <div style={{display:'flex',alignItems:'center',justifyContent:'space-between',padding:'10px 13px',background:'#f8fafc',borderRadius:9,border:`1px solid ${C.border}`}}>
+            <div><div style={{fontSize:13,fontWeight:600,color:C.text}}>Export All Data</div><div style={{fontSize:11,color:C.muted,marginTop:2}}>Download ideas, queue, activity log as JSON</div></div>
+            <button onClick={exportData} style={{padding:'6px 14px',fontSize:12,fontWeight:600,background:C.navy,color:'#fff',border:'none',borderRadius:7,cursor:'pointer',flexShrink:0}}>📥 Export</button>
+          </div>
+          <div style={{display:'flex',alignItems:'center',justifyContent:'space-between',padding:'10px 13px',background:'#fff9f9',borderRadius:9,border:'1px solid #fca5a5'}}>
+            <div><div style={{fontSize:13,fontWeight:600,color:C.text}}>Clear Content Cache</div><div style={{fontSize:11,color:C.muted,marginTop:2}}>Removes all research findings and content ideas</div></div>
+            <button onClick={clearCache} style={{padding:'6px 14px',fontSize:12,fontWeight:600,background:'#dc2626',color:'#fff',border:'none',borderRadius:7,cursor:'pointer',flexShrink:0}}>🗑 Clear</button>
+          </div>
+          <div style={{display:'flex',alignItems:'center',justifyContent:'space-between',padding:'10px 13px',background:'#fff9f9',borderRadius:9,border:'1px solid #fca5a5'}}>
+            <div><div style={{fontSize:13,fontWeight:600,color:C.text}}>Reset Approved Queue</div><div style={{fontSize:11,color:C.muted,marginTop:2}}>Removes all approved posts from the queue</div></div>
+            <button onClick={resetQueue} style={{padding:'6px 14px',fontSize:12,fontWeight:600,background:'#dc2626',color:'#fff',border:'none',borderRadius:7,cursor:'pointer',flexShrink:0}}>🗑 Reset</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 function getUserId() {
   let id=localStorage.getItem('sh_user_id');
   if(!id){id='user_'+Math.random().toString(36).slice(2,10);localStorage.setItem('sh_user_id',id);}
@@ -798,10 +942,12 @@ export default function SocialHub() {
           <LogoMenu onHome={()=>setMainTab('calendar')}/>
           <button onClick={()=>{wizardReset();setMainTab('wizard');}} style={{width:'100%',padding:'9px 0',background:GREEN,color:'#fff',border:'none',borderRadius:9,fontSize:13,fontWeight:600,cursor:'pointer',display:'flex',alignItems:'center',justifyContent:'center',gap:6,boxShadow:'0 2px 6px rgba(36,180,126,0.25)'}}>✦ New Post</button>
         </div>
-        <div style={{padding:'11px 13px',borderBottom:`1px solid ${C.border}`}}>
-          <div style={{fontSize:10,fontWeight:600,color:C.muted,textTransform:'uppercase',letterSpacing:'0.07em',marginBottom:6}}>🎯 Core Idea or Insight</div>
-          <textarea value={coreIdea} onChange={e=>setCoreIdea(e.target.value)} rows={2} placeholder="e.g. Integrity compounds faster than hustle..." style={{...inputStyle,fontSize:12,marginBottom:6,resize:'none'}}/>
-          <button onClick={()=>{if(coreIdea.trim()){wizardReset();setWizardContent(coreIdea);setMainTab('wizard');}}} disabled={!coreIdea.trim()} style={{width:'100%',padding:'6px 0',fontSize:11,fontWeight:600,background:coreIdea.trim()?C.navy:'#e5e7eb',color:coreIdea.trim()?'#fff':C.muted,border:'none',borderRadius:7,cursor:coreIdea.trim()?'pointer':'not-allowed'}}>Adapt to All Platforms →</button>
+        <div style={{padding:'11px 13px',borderBottom:`1px solid ${C.border}`,background:'#fffdf5',borderLeft:'3px solid #BA7517'}}>
+          <div style={{fontSize:10,fontWeight:700,color:'#1E293B',textTransform:'uppercase',letterSpacing:'0.08em',marginBottom:6,display:'flex',alignItems:'center',gap:5}}>
+            🎯 <span>Core Idea or Insight</span>
+          </div>
+          <textarea value={coreIdea} onChange={e=>setCoreIdea(e.target.value)} rows={2} placeholder="e.g. Integrity compounds faster than hustle..." style={{...inputStyle,fontSize:12,marginBottom:6,resize:'none',border:'1.5px solid #BA7517',borderRadius:9,background:'#fff',boxShadow:'0 1px 4px rgba(186,117,23,0.08)',outline:'none'}}/>
+          <button onClick={()=>{if(coreIdea.trim()){wizardReset();setWizardContent(coreIdea);setMainTab('wizard');}}} disabled={!coreIdea.trim()} style={{width:'100%',padding:'6px 0',fontSize:11,fontWeight:600,background:coreIdea.trim()?'#BA7517':'#e5e7eb',color:coreIdea.trim()?'#fff':C.muted,border:'none',borderRadius:7,cursor:coreIdea.trim()?'pointer':'not-allowed',boxShadow:coreIdea.trim()?'0 2px 6px rgba(186,117,23,0.25)':'none',transition:'all .15s'}}>Adapt to All Platforms →</button>
         </div>
         <div style={{padding:'11px 13px',borderBottom:`1px solid ${C.border}`}}>
           <div style={{fontSize:10,fontWeight:600,color:C.muted,textTransform:'uppercase',letterSpacing:'0.07em',marginBottom:7}}>Brand Alignment</div>
@@ -999,6 +1145,11 @@ export default function SocialHub() {
                 );})}
               </div>}
             </div>
+          )}
+
+
+          {mainTab==='settings'&&(
+            <SettingsPanel/>
           )}
 
 
