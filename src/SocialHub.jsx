@@ -276,6 +276,54 @@ function SettingsPanel() {
     </div>
   );
 }
+function HelpModal({onClose}) {
+  const [tab,setTab]=useState('core');
+  const GOLD='#BA7517';
+  const NAVY='#1E293B';
+  const Cb={text:'#0f172a',muted:'#64748b',border:'#E2E8F0'};
+  const tabs=[{id:'core',icon:'Target',label:'Core Idea'},{id:'ideas',icon:'Bulb',label:'Content Ideas'},{id:'articles',icon:'Doc',label:'Articles'},{id:'wizard',icon:'Rocket',label:'Review & Post'},{id:'schedule',icon:'Cal',label:'Scheduling'},{id:'settings',icon:'Gear',label:'Settings'}];
+  const icons={core:'🎯',ideas:'💡',articles:'📄',wizard:'🚀',schedule:'📅',settings:'⚙'};
+  const steps={core:['Think of something to share. One sentence is enough.','Type it in the gold box on the left sidebar.','Click the gold button: Adapt to All Platforms.','The app takes you to the Review and Post wizard.','Your idea becomes LinkedIn, TikTok, Instagram posts.'],ideas:['Click Content Ideas in the left sidebar.','Click Run Research. Wait 30 to 60 seconds.','The app finds 8 fresh content ideas.','Click any idea to expand it.','Pick a platform like LinkedIn or TikTok.','Click Generate. Your post is written in seconds.','Review and edit if needed.','Click Approve to add to your queue.'],articles:['Go to the Content Ideas tab.','Run research or use an existing idea.','Click on an idea to expand it.','Select LinkedIn as the platform.','Click Generate to create a short post.','Look for the Long Form button in the action row.','Click it. A full 600-word article is written.','Copy and paste into LinkedIn Articles.'],wizard:['Step 1 WRITE: Paste your content or type it fresh.','Step 2 ROUTE: Pick content type. App picks best platforms.','Step 3 REVIEW: See how post looks. Check character count.','Step 4 SEND: Choose post now or schedule later.','Step 5 SCHEDULE: Set up weekly or monthly repeating posts.'],schedule:['DIRECT: Connect LinkedIn and Bluesky in Connect tab.','BUFFER: In Step 4 of wizard, click the purple CSV button.','A file downloads to your computer.','Go to Buffer.com, pick channel, click Settings, Bulk Upload.','Upload the CSV. Buffer schedules your posts.','RECURRING: Step 5 downloads CSV with multiple dates.'],settings:['Click the gear icon at the bottom of the left sidebar.','PROFILE: Upload your logo. Set display name and tagline.','DEFAULTS: Set posting times for each platform.','Set your default schedule pattern.','DATA: Click Export to download all content as JSON.','Clear Cache to reset research findings.','Reset Queue to clear approved posts and start fresh.']};
+  const tips={core:'Keep it simple. One clear idea works better than a long paragraph.',ideas:'Run research once a week. Not every day as it uses API tokens.',articles:'Generate 4 to 8 articles in one sitting. Each costs less than $0.08. Schedule 2 to 3 weeks apart.',wizard:'Always check Step 3 Review. Bluesky limit is 300 characters. LinkedIn allows 3000.',schedule:'Best times: LinkedIn 8am Monday, Instagram 11am Tuesday, TikTok 7pm any day.',settings:'Set your posting times once and forget them. App uses them every time.'};
+  return(
+    <div onClick={onClose} style={{position:'fixed',top:0,left:0,right:0,bottom:0,background:'rgba(0,0,0,0.55)',zIndex:1000,display:'flex',alignItems:'center',justifyContent:'center',padding:16}}>
+      <div onClick={e=>e.stopPropagation()} style={{background:'#fff',borderRadius:16,width:'100%',maxWidth:740,maxHeight:'88vh',overflow:'hidden',display:'flex',flexDirection:'column',boxShadow:'0 20px 60px rgba(0,0,0,0.3)'}}>
+        <div style={{background:NAVY,padding:'14px 18px',display:'flex',alignItems:'center',justifyContent:'space-between',flexShrink:0}}>
+          <div><div style={{fontSize:15,fontWeight:700,color:'#fff'}}>User Guide</div><div style={{fontSize:11,color:'#94a3b8',marginTop:1}}>Simple steps for every feature</div></div>
+          <button onClick={onClose} style={{width:30,height:30,borderRadius:'50%',background:'rgba(255,255,255,0.15)',border:'none',color:'#fff',fontSize:16,cursor:'pointer',lineHeight:1}}>x</button>
+        </div>
+        <div style={{display:'flex',flex:1,overflow:'hidden',minHeight:0}}>
+          <div style={{width:150,background:'#f8fafc',borderRight:'1px solid #E2E8F0',flexShrink:0,overflowY:'auto'}}>
+            {tabs.map(t=>(
+              <div key={t.id} onClick={()=>setTab(t.id)} style={{padding:'11px 13px',cursor:'pointer',borderLeft:'3px solid '+(tab===t.id?GOLD:'transparent'),background:tab===t.id?'#fff':'transparent'}}>
+                <div style={{fontSize:14,marginBottom:2}}>{icons[t.id]}</div>
+                <div style={{fontSize:11,fontWeight:tab===t.id?700:400,color:tab===t.id?NAVY:Cb.muted}}>{t.label}</div>
+              </div>
+            ))}
+          </div>
+          <div style={{flex:1,overflowY:'auto',padding:20}}>
+            <div style={{fontSize:14,fontWeight:700,color:NAVY,marginBottom:12}}>{icons[tab]} {tabs.find(t=>t.id===tab).label}</div>
+            <div style={{fontSize:11,fontWeight:700,color:GOLD,textTransform:'uppercase',letterSpacing:'0.08em',marginBottom:8}}>Step by Step</div>
+            {(steps[tab]||[]).map((step,i)=>(
+              <div key={i} style={{display:'flex',gap:9,marginBottom:9,alignItems:'flex-start'}}>
+                <div style={{width:22,height:22,borderRadius:'50%',background:NAVY,color:'#fff',fontSize:11,fontWeight:700,display:'flex',alignItems:'center',justifyContent:'center',flexShrink:0,marginTop:1}}>{i+1}</div>
+                <div style={{fontSize:12,color:Cb.text,lineHeight:1.6,flex:1}}>{step}</div>
+              </div>
+            ))}
+            <div style={{background:'#f0fdf4',border:'1px solid #bbf7d0',borderRadius:8,padding:'10px 13px',marginTop:12}}>
+              <div style={{fontSize:12,color:'#166534',lineHeight:1.6}}>Tip: {tips[tab]}</div>
+            </div>
+          </div>
+        </div>
+        <div style={{padding:'10px 18px',borderTop:'1px solid #E2E8F0',background:'#f8fafc',display:'flex',alignItems:'center',justifyContent:'space-between',flexShrink:0}}>
+          <div style={{fontSize:10,color:Cb.muted}}>Be Good. Do Good. Do Well.</div>
+          <button onClick={onClose} style={{padding:'5px 16px',background:'#24b47e',color:'#fff',border:'none',borderRadius:7,fontSize:12,fontWeight:600,cursor:'pointer'}}>Got it</button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 function getUserId() {
   let id=localStorage.getItem('sh_user_id');
   if(!id){id='user_'+Math.random().toString(36).slice(2,10);localStorage.setItem('sh_user_id',id);}
@@ -698,6 +746,7 @@ export default function SocialHub() {
   const [coreIdea,setCoreIdea]=useState('');
   const [channelsOpen,setChannelsOpen]=useState(true);
   const [quickConnectOpen,setQuickConnectOpen]=useState(false);
+  const [helpOpen,setHelpOpen]=useState(false);
   const [upcomingOpen,setUpcomingOpen]=useState(true);
   const [viralIdeasOpen,setViralIdeasOpen]=useState(true);
   const [approvedOpen,setApprovedOpen]=useState(true);
@@ -783,7 +832,7 @@ export default function SocialHub() {
   const statusDot=s=>({width:8,height:8,borderRadius:'50%',flexShrink:0,background:s==='active'?'#22c55e':s==='warning'?'#f59e0b':'#ef4444'});
   const brandScore=Math.min(100,40+approvedQueue.length*8);
   const viralIdeasSidebar=(()=>{try{return JSON.parse(localStorage.getItem('sh_ci_ideas')||'[]').filter(i=>i.status==='review').slice(0,6);}catch{return[];}})();
-  const NAV=[{id:'calendar',icon:'📅',label:'Calendar'},{id:'ideas',icon:'💡',label:'Content Ideas'},{id:'wizard',icon:'🚀',label:'Review & Post'},{id:'compose',icon:'✉️',label:'Quick Compose'},{id:'connect',icon:'🔗',label:'Connect'},{id:'upload',icon:'⬆',label:'Upload CSV'},{id:'log',icon:'📋',label:'Activity Log'}];
+  const NAV=[{id:'calendar',icon:'📅',label:'Calendar'},{id:'help',icon:'❓',label:'Help & Guide'},{id:'ideas',icon:'💡',label:'Content Ideas'},{id:'wizard',icon:'🚀',label:'Review & Post'},{id:'compose',icon:'✉️',label:'Quick Compose'},{id:'connect',icon:'🔗',label:'Connect'},{id:'upload',icon:'⬆',label:'Upload CSV'},{id:'log',icon:'📋',label:'Activity Log'}];
   const previewContent=testContent||wizardContent||(approvedQueue[0]?.content||'');
   const previewPlatformMeta={li:{label:'LinkedIn',color:'#0A66C2',icon:'💼'},tt:{label:'TikTok',color:'#010101',icon:'🎵'},ig:{label:'Instagram',color:'#E1306C',icon:'📸'},fb:{label:'Facebook',color:'#1877F2',icon:'👥'},tw:{label:'X/Twitter',color:'#333',icon:'🐦'},th:{label:'Threads',color:'#444',icon:'🧵'},yt:{label:'YouTube',color:'#FF0000',icon:'▶️'}};
 
@@ -814,7 +863,7 @@ export default function SocialHub() {
         </div>
         <nav style={{padding:'8px'}}>
           {NAV.map(({id,icon,label})=>(
-            <div key={id} onClick={()=>{if(id==='wizard')wizardReset();setMainTab(id);}} style={{display:'flex',alignItems:'center',gap:9,padding:'7px 9px',borderRadius:8,cursor:'pointer',fontSize:13,color:mainTab===id?'#fff':C.muted,fontWeight:mainTab===id?600:400,background:mainTab===id?GREEN:'transparent',marginBottom:1,transition:'all .12s',borderRadius:mainTab===id?'8px':'8px'}} onMouseEnter={e=>{if(mainTab!==id)e.currentTarget.style.background='#f8fafc';}} onMouseLeave={e=>{if(mainTab!==id)e.currentTarget.style.background='transparent';}}>
+            <div key={id} onClick={()=>{if(id==='help'){setHelpOpen(true);return;}if(id==='wizard')wizardReset();setMainTab(id);}} style={{display:'flex',alignItems:'center',gap:9,padding:'7px 9px',borderRadius:8,cursor:'pointer',fontSize:13,color:mainTab===id?'#fff':C.muted,fontWeight:mainTab===id?600:400,background:mainTab===id?GREEN:'transparent',marginBottom:1,transition:'all .12s',borderRadius:mainTab===id?'8px':'8px'}} onMouseEnter={e=>{if(mainTab!==id)e.currentTarget.style.background='#f8fafc';}} onMouseLeave={e=>{if(mainTab!==id)e.currentTarget.style.background='transparent';}}>
               <span style={{fontSize:15}}>{icon}</span><span style={{flex:1}}>{label}</span>
               {id==='ideas'&&approvedQueue.length>0&&<span style={{fontSize:10,padding:'1px 6px',borderRadius:10,background:C.purpleLight,color:C.purple,fontWeight:600}}>{approvedQueue.length}</span>}
             </div>
@@ -1206,6 +1255,7 @@ export default function SocialHub() {
         </div>
       </div>
     </div>
+    {helpOpen&&<HelpModal onClose={()=>setHelpOpen(false)}/>}
   );
 }
 // Fri May 22 20:14:54 CDT 2026
