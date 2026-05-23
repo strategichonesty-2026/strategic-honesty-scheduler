@@ -1208,63 +1208,14 @@ export default function SocialHub() {
         </div>
       </div>
 
-      {/* RIGHT PANEL */}
-      <div style={{background:C.sidebar,borderLeft:,display:"flex",flexDirection:"column",height:"100vh",position:"sticky",top:0,overflowY:"auto"}}>
-        <div style={{borderBottom:}}>
-          <div style={{background:GREEN,padding:"11px 14px 0",display:"flex",alignItems:"center",justifyContent:"space-between"}}>
-            <div style={{fontSize:11,fontWeight:600,color:"#fff",textTransform:"uppercase",letterSpacing:"0.07em",marginBottom:9}}>Platform Preview</div>
-          </div>
-          <div style={{display:"flex",gap:2,overflowX:"auto",paddingBottom:0}}>
-            {PREVIEW_PLATFORMS.map(p=>{const active=previewPlatform===p.id;return(
-              <button key={p.id} onClick={()=>setPreviewPlatform(p.id)} title={p.label} style={{padding:"6px 10px",fontSize:11,background:active?p.color+"18":"#e2e8f0",border:,borderBottom:,color:active?p.color:"#64748b",cursor:"pointer",fontWeight:active?600:400,whiteSpace:"nowrap",transition:"all .15s",borderRadius:"4px 4px 0 0",display:"flex",alignItems:"center",gap:5}}>
-                <PlatformIcon id={p.id} size={14} color={active?p.color:"#64748b"}/>
-              </button>
-            );})}
-          </div>
-        </div>
-        <div style={{padding:"11px 13px",borderBottom:}}>
-          <div style={{background:"#f8fafc",border:,borderRadius:12,padding:"12px 13px",minHeight:120}}>
-            <div style={{display:"flex",alignItems:"center",gap:8,marginBottom:10}}>
-              <div style={{width:34,height:34,borderRadius:"50%",background:GREEN,display:"flex",alignItems:"center",justifyContent:"center",fontSize:13,fontWeight:700,color:"#fff",flexShrink:0}}>G</div>
-              <div style={{flex:1}}><div style={{fontSize:12,fontWeight:600,color:C.text}}>Gopu Shrestha</div><div style={{fontSize:10,color:C.muted,marginTop:1}}>{previewPlatformMeta[previewPlatform]?.label} · Just now</div></div>
-              <div style={{fontSize:16}}>{previewPlatformMeta[previewPlatform]?.icon}</div>
-            </div>
-            <div style={{fontSize:12,color:"#334155",lineHeight:1.65,whiteSpace:"pre-wrap",wordBreak:"break-word",maxHeight:165,overflow:"hidden"}}>
-              {previewContent?(previewContent.length>280?previewContent.slice(0,280)+"...":previewContent):<span style={{color:"#cbd5e1",fontStyle:"italic",fontSize:11}}>Preview appears here as you write...</span>}
-            </div>
-            {previewContent&&<div style={{marginTop:10,display:"flex",gap:12,fontSize:11,color:C.muted,borderTop:,paddingTop:8}}><span>Like</span><span>Comment</span><span>Share</span></div>}
-          </div>
-        </div>
-        <div style={{borderBottom:}}>
-          <div onClick={()=>setUpcomingOpen(o=>!o)} style={{display:"flex",alignItems:"center",justifyContent:"space-between",padding:"11px 14px",cursor:"pointer",background:GREEN}}>
-            <span style={{fontSize:11,fontWeight:600,color:C.muted,textTransform:"uppercase",letterSpacing:"0.07em"}}>Upcoming Posts</span>
-            <button onClick={e=>{e.stopPropagation();setMainTab("calendar");}} style={{fontSize:10,color:C.blue,background:"none",border:"none",cursor:"pointer",fontWeight:600}}>View all</button>
-          </div>
-          {upcomingOpen&&<div style={{padding:"0 12px 10px"}}>{SCHEDULE_POSTS.slice(0,5).map((p,i)=>(<div key={i} style={{display:"flex",alignItems:"center",gap:8,padding:"7px 9px",borderRadius:9,marginBottom:4,background:"#f8fafc",border:}}><div style={{width:3,height:32,borderRadius:2,background:p.color}}/><div style={{flex:1}}><div style={{fontSize:12,color:C.text,overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}}>{p.text}</div><div style={{fontSize:10,color:C.muted}}>May {p.day}</div></div></div>))}</div>}
-        </div>
-        <div style={{borderBottom:}}>
-          <div onClick={()=>setViralIdeasOpen(o=>!o)} style={{display:"flex",alignItems:"center",justifyContent:"space-between",padding:"11px 14px",cursor:"pointer",background:GREEN}}>
-            <span style={{fontSize:11,fontWeight:600,color:C.muted,textTransform:"uppercase",letterSpacing:"0.07em"}}>Viral Ideas</span>
-            <button onClick={e=>{e.stopPropagation();setMainTab("ideas");}} style={{fontSize:10,color:C.purple,background:"none",border:"none",cursor:"pointer",fontWeight:600}}>View all</button>
-          </div>
-          {viralIdeasOpen&&<div style={{padding:"0 12px 10px"}}>{viralIdeasSidebar.length?viralIdeasSidebar.map(idea=>(<div key={idea.id} onClick={()=>setMainTab("ideas")} style={{display:"flex",alignItems:"center",gap:8,padding:"7px 9px",borderRadius:9,cursor:"pointer",marginBottom:3,background:"#f8fafc",border:}}><div style={{width:6,height:6,borderRadius:"50%",background:C.gold}}/><div style={{fontSize:12,color:C.text,flex:1,overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}}>{idea.title}</div></div>)):<div style={{fontSize:11,color:C.muted,fontStyle:"italic",padding:"4px 2px"}}>Run research to generate ideas</div>}</div>}
-        </div>
-        <div style={{flex:1,display:"flex",flexDirection:"column"}}>
-          <div onClick={()=>setApprovedOpen(o=>!o)} style={{display:"flex",alignItems:"center",justifyContent:"space-between",padding:"11px 14px",cursor:"pointer",background:GREEN}}>
-            <div style={{display:"flex",alignItems:"center",gap:6}}><span style={{fontSize:11,fontWeight:600,color:C.muted,textTransform:"uppercase",letterSpacing:"0.07em"}}>Approved Queue</span><span style={{fontSize:10,padding:"1px 5px",borderRadius:7,background:approvedQueue.length?C.purpleLight:"#f1f5f9",color:approvedQueue.length?C.purple:C.muted,fontWeight:600}}>{approvedQueue.length}</span></div>
-            <button onClick={e=>{e.stopPropagation();setMainTab("ideas");}} style={{fontSize:10,color:C.purple,background:"none",border:"none",cursor:"pointer",fontWeight:600}}>Manage</button>
-          </div>
-          {approvedOpen&&<div style={{padding:"0 12px 14px",flex:1}}>
-            {approvedQueue.length===0&&<div style={{fontSize:11,color:C.muted,fontStyle:"italic",padding:"4px 2px"}}>No approved posts yet</div>}
-            {approvedQueue.slice(0,5).map((item,i)=>(<div key={item.id||i} style={{display:"flex",alignItems:"flex-start",gap:8,padding:"8px 10px",borderRadius:10,marginBottom:5,background:"#f8fafc",border:,borderLeft:}}><span style={{fontSize:14,flexShrink:0,marginTop:1}}>{item.icon||"📝"}</span><div style={{flex:1,minWidth:0}}><div style={{fontSize:12,fontWeight:600,color:C.text,overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}}>{item.title||"Approved post"}</div><div style={{fontSize:10,color:C.muted,marginTop:2}}>{item.platform} Approved</div><div style={{fontSize:10,color:"#94a3b8",overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap",marginTop:2}}>{(item.content||"").slice(0,48)}...</div></div></div>))}
-            {approvedQueue.length>5&&<div style={{fontSize:11,color:C.muted,textAlign:"center",padding:"4px 0"}}>+{approvedQueue.length-5} more</div>}
-            {approvedQueue.length>0&&<button onClick={()=>setMainTab("ideas")} style={{width:"100%",marginTop:8,padding:"8px 0",fontSize:12,fontWeight:600,background:C.purple,color:"#fff",border:"none",borderRadius:9,cursor:"pointer"}}>Export and Publish</button>}
-          </div>}
-        </div>
-      </div>
-    </div>
-    </div>
-    {helpOpen&&<HelpModal onClose={()=>setHelpOpen(false)}/>}
+      <RightPanel
+        previewContent={previewContent}
+        approvedQueue={approvedQueue}
+        viralIdeasSidebar={viralIdeasSidebar}
+        schedulePosts={SCHEDULE_POSTS}
+        setMainTab={setMainTab}
+      />
+        {helpOpen&&<HelpModal onClose={()=>setHelpOpen(false)}/>}
   );
 }
 // Fri May 22 20:14:54 CDT 2026
