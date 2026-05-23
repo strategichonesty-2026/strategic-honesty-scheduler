@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback, useRef } from "react";
+import MediaStudio from "./MediaStudio";
 
 const BUILD_TIME = process.env.REACT_APP_BUILD_TIME || 'dev';
 const GREEN = "#24b47e";
@@ -832,7 +833,7 @@ export default function SocialHub() {
   const statusDot=s=>({width:8,height:8,borderRadius:'50%',flexShrink:0,background:s==='active'?'#22c55e':s==='warning'?'#f59e0b':'#ef4444'});
   const brandScore=Math.min(100,40+approvedQueue.length*8);
   const viralIdeasSidebar=(()=>{try{return JSON.parse(localStorage.getItem('sh_ci_ideas')||'[]').filter(i=>i.status==='review').slice(0,6);}catch{return[];}})();
-  const NAV=[{id:'calendar',icon:'📅',label:'Calendar'},{id:'help',icon:'❓',label:'Help & Guide'},{id:'ideas',icon:'💡',label:'Content Ideas'},{id:'wizard',icon:'🚀',label:'Review & Post'},{id:'compose',icon:'✉️',label:'Quick Compose'},{id:'connect',icon:'🔗',label:'Connect'},{id:'upload',icon:'⬆',label:'Upload CSV'},{id:'log',icon:'📋',label:'Activity Log'}];
+  const NAV=[{id:'calendar',icon:'📅',label:'Calendar'},{id:'help',icon:'❓',label:'Help & Guide'},{id:'ideas',icon:'💡',label:'Content Ideas'},{id:'wizard',icon:'🚀',label:'Review & Post'},{id:'compose',icon:'✉️',label:'Quick Compose'},{id:'media',icon:'🎨',label:'Media Studio'},{id:'connect',icon:'🔗',label:'Connect'},{id:'upload',icon:'⬆',label:'Upload CSV'},{id:'log',icon:'📋',label:'Activity Log'}];
   const previewContent=testContent||wizardContent||(approvedQueue[0]?.content||'');
   const previewPlatformMeta={li:{label:'LinkedIn',color:'#0A66C2',icon:'💼'},tt:{label:'TikTok',color:'#010101',icon:'🎵'},ig:{label:'Instagram',color:'#E1306C',icon:'📸'},fb:{label:'Facebook',color:'#1877F2',icon:'👥'},tw:{label:'X/Twitter',color:'#333',icon:'🐦'},th:{label:'Threads',color:'#444',icon:'🧵'},yt:{label:'YouTube',color:'#FF0000',icon:'▶️'}};
 
@@ -932,6 +933,16 @@ export default function SocialHub() {
               </div>
               {scheduledPosts.length>0&&<div style={{marginTop:18}}><div style={{fontSize:14,fontWeight:700,color:C.text,marginBottom:9}}>Scheduled via backend ({scheduledPosts.length})</div>{scheduledPosts.map(p=><div key={p.id} style={{background:C.card,border:`1px solid ${C.border}`,borderRadius:9,padding:'10px 13px',marginBottom:7,display:'flex',alignItems:'center',gap:11}}><div style={{fontSize:18}}>{p.platform==='linkedin'?'💼':'▶️'}</div><div style={{flex:1}}><div style={{fontSize:13,color:C.text,marginBottom:2}}>{p.content.slice(0,70)}...</div><div style={{fontSize:11,color:C.muted}}>{new Date(p.scheduled_at).toLocaleString()} · {p.status}</div></div><span style={{fontSize:11,padding:'3px 8px',borderRadius:10,background:p.status==='posted'?'#dcfce7':p.status==='failed'?'#fee2e2':'#fef9c3',color:p.status==='posted'?'#166534':p.status==='failed'?'#dc2626':'#854d0e',fontWeight:500}}>{p.status}</span></div>)}</div>}
             </div>
+          )}
+
+          {mainTab==='media'&&(
+            <MediaStudio
+              approvedQueue={approvedQueue}
+              onAttachToPost={(url)=>{
+                setWizardImage(url);
+                setMainTab('wizard');
+              }}
+            />
           )}
 
           {mainTab==='ideas'&&<ContentIdeasPanel setApprovedQueue={setApprovedQueue}/>}

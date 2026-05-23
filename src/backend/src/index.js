@@ -7,6 +7,7 @@ const { initDb } = require("./db");
 const { startScheduler } = require("./scheduler");
 const authRoutes = require("./routes/auth");
 const postsRoutes = require("./routes/posts");
+const mediaRoutes = require("./routes/media");
 
 const app = express();
 const PORT = process.env.PORT || 3001;
@@ -23,6 +24,7 @@ app.get("/health", (req, res) => res.json({ status: "ok", service: "strategic-ho
 app.get("/", (req, res) => res.json({ name: "Strategic Honesty Scheduler API", tagline: "Be Good. Do Good. Do Well." }));
 app.use("/auth", authRoutes);
 app.use("/posts", postsRoutes);
+app.use("/media", mediaRoutes);
 app.use((err, req, res, next) => res.status(500).json({ error: err.message }));
 
 async function boot() {
