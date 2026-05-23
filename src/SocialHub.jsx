@@ -117,18 +117,10 @@ function PlatformIcon({id,size=16,color='currentColor'}) {
 
 function LogoMenu({onHome}) {
   const [hover,setHover]=useState(false);
-  const [menuOpen,setMenuOpen]=useState(false);
-  const [logoSrc,setLogoSrc]=useState(()=>localStorage.getItem('sh_logo')||'');
-  const fileRef=useRef(null);
-  const handleUpload=e=>{
-    const file=e.target.files[0];if(!file)return;
-    const reader=new FileReader();
-    reader.onload=ev=>{const src=ev.target.result;setLogoSrc(src);localStorage.setItem('sh_logo',src);setMenuOpen(false);};
-    reader.readAsDataURL(file);
-  };
+  const logoSrc=localStorage.getItem('sh_logo')||'';
   return(
-    <div style={{position:'relative',marginBottom:14}} onMouseEnter={()=>setHover(true)} onMouseLeave={()=>{setHover(false);setMenuOpen(false);}}>
-      <div onClick={onHome} style={{display:'flex',alignItems:'center',gap:10,cursor:'pointer',borderRadius:10,padding:'4px 6px',background:hover?'#f1f5f9':'transparent',transition:'background .15s'}}>
+    <div style={{marginBottom:14}}>
+      <div onClick={onHome} title="Go to Dashboard" style={{display:'flex',alignItems:'center',gap:10,cursor:'pointer',borderRadius:10,padding:'4px 6px',background:hover?'#f1f5f9':'transparent',transition:'background .15s'}} onMouseEnter={()=>setHover(true)} onMouseLeave={()=>setHover(false)}>
         <div style={{width:38,height:38,background:logoSrc?'transparent':'#24b47e',borderRadius:10,display:'flex',alignItems:'center',justifyContent:'center',color:'#fff',fontSize:17,fontWeight:800,flexShrink:0,boxShadow:'0 2px 6px rgba(36,180,126,0.3)',overflow:'hidden'}}>
           {logoSrc?<img src={logoSrc} alt="Logo" style={{width:'100%',height:'100%',objectFit:'cover'}}/>:'S'}
         </div>
@@ -136,22 +128,151 @@ function LogoMenu({onHome}) {
           <div style={{fontSize:13,fontWeight:700,color:'#0f172a',lineHeight:1.2}}>Strategic Honesty</div>
           <div style={{fontSize:10,color:'#64748b',marginTop:1}}>Content Platform v3</div>
         </div>
-        {hover&&<div style={{fontSize:10,color:'#94a3b8'}}>▾</div>}
       </div>
-      {hover&&(
-        <div style={{position:'absolute',top:'100%',left:6,right:6,background:'#fff',border:'1px solid #E2E8F0',borderRadius:8,boxShadow:'0 4px 12px rgba(0,0,0,0.1)',zIndex:100,overflow:'hidden',animation:'fadeIn .12s ease'}}>
-          <div onClick={()=>{onHome();setMenuOpen(false);}} style={{padding:'8px 12px',fontSize:12,cursor:'pointer',color:'#0f172a',display:'flex',alignItems:'center',gap:7,transition:'background .1s'}} onMouseEnter={e=>e.currentTarget.style.background='#f8fafc'} onMouseLeave={e=>e.currentTarget.style.background='#fff'}>
-            🏠 <span>Go to Home</span>
+    </div>
+  );
+}
+
+function SettingsPanel() {
+  const GREEN='#24b47e';
+  const C={text:'#0f172a',muted:'#64748b',border:'#E2E8F0',card:'#FFFFFF',label:'#334155',greenLight:'#E6F7F2',greenDark:'#0f6e56',navy:'#1E293B'};
+  const F='-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif';
+  const inputStyle={width:'100%',border:`1px solid ${C.border}`,borderRadius:7,padding:'8px 10px',fontSize:13,color:C.text,fontFamily:F,outline:'none',marginBottom:10,background:'#fff',boxSizing:'border-box'};
+  const labelStyle={fontSize:12,color:C.muted,marginBottom:5,display:'block',fontWeight:500};
+  const sectionStyle={background:C.card,border:`1px solid ${C.border}`,borderRadius:12,padding:18,marginBottom:14};
+
+  // Profile & Brand
+  const [displayName,setDisplayName]=useState(()=>localStorage.getItem('sh_display_name')||'Gopu Shrestha');
+  const [tagline,setTagline]=useState(()=>localStorage.getItem('sh_tagline')||'Be Good. Do Good. Do Well.');
+  const [logoSrc,setLogoSrc]=useState(()=>localStorage.getItem('sh_logo')||'');
+  const fileRef=useRef(null);
+
+  // Posting Defaults
+  const [defLiTime,setDefLiTime]=useState(()=>localStorage.getItem('sh_def_li_time')||'08:00');
+  const [defIgTime,setDefIgTime]=useState(()=>localStorage.getItem('sh_def_ig_time')||'11:00');
+  const [defTtTime,setDefTtTime]=useState(()=>localStorage.getItem('sh_def_tt_time')||'19:00');
+  const [defFbTime,setDefFbTime]=useState(()=>localStorage.getItem('sh_def_fb_time')||'13:00');
+  const [defPattern,setDefPattern]=useState(()=>localStorage.getItem('sh_def_pattern')||'weekly4');
+  const [defImageUrl,setDefImageUrl]=useState(()=>localStorage.getItem('sh_def_image_url')||'');
+
+  const [saved,setSaved]=useState(false);
+
+  const handleLogoUpload=e=>{
+    const file=e.target.files[0];if(!file)return;
+    const reader=new FileReader();
+    reader.onload=ev=>{const src=ev.target.result;setLogoSrc(src);localStorage.setItem('sh_logo',src);};
+    reader.readAsDataURL(file);
+  };
+
+  const saveProfile=()=>{
+    localStorage.setItem('sh_display_name',displayName);
+    localStorage.setItem('sh_tagline',tagline);
+    setSaved(true);setTimeout(()=>setSaved(false),2000);
+  };
+
+  const saveDefaults=()=>{
+    localStorage.setItem('sh_def_li_time',defLiTime);
+    localStorage.setItem('sh_def_ig_time',defIgTime);
+    localStorage.setItem('sh_def_tt_time',defTtTime);
+    localStorage.setItem('sh_def_fb_time',defFbTime);
+    localStorage.setItem('sh_def_pattern',defPattern);
+    localStorage.setItem('sh_def_image_url',defImageUrl);
+    setSaved(true);setTimeout(()=>setSaved(false),2000);
+  };
+
+  const exportData=()=>{
+    const data={profile:{displayName,tagline},defaults:{defLiTime,defIgTime,defTtTime,defFbTime,defPattern,defImageUrl},ideas:JSON.parse(localStorage.getItem('sh_ci_ideas')||'[]'),queue:JSON.parse(localStorage.getItem('sh_ci_queue')||'[]'),activityLog:JSON.parse(localStorage.getItem('sh_activity_log')||'[]')};
+    const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});
+    const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;
+    a.download=`strategic-honesty-export-${new Date().toISOString().split('T')[0]}.json`;
+    a.click();URL.revokeObjectURL(url);
+  };
+
+  const clearCache=()=>{
+    if(!window.confirm('Clear all cached content ideas and research? This cannot be undone.'))return;
+    ['sh_ci_findings','sh_ci_ideas','sh_ci_queue','sh_ci_lastrun','sh_ci_nextrun','sh_ci_resstatus'].forEach(k=>localStorage.removeItem(k));
+    window.location.reload();
+  };
+
+  const resetQueue=()=>{
+    if(!window.confirm('Reset the approved queue? All approved posts will be removed.'))return;
+    localStorage.removeItem('sh_ci_queue');
+    window.location.reload();
+  };
+
+  return(
+    <div style={{maxWidth:600}}>
+      <div style={{fontSize:15,fontWeight:700,color:C.text,marginBottom:16}}>⚙️ Settings</div>
+
+      {/* Profile & Brand */}
+      <div style={sectionStyle}>
+        <div style={{fontSize:13,fontWeight:700,color:C.text,marginBottom:13,paddingBottom:8,borderBottom:`1px solid ${C.border}`}}>👤 Profile & Brand</div>
+        <div style={{display:'flex',alignItems:'center',gap:14,marginBottom:16}}>
+          <div style={{width:64,height:64,borderRadius:12,background:logoSrc?'transparent':GREEN,display:'flex',alignItems:'center',justifyContent:'center',color:'#fff',fontSize:24,fontWeight:800,overflow:'hidden',border:`2px solid ${C.border}`,flexShrink:0}}>
+            {logoSrc?<img src={logoSrc} alt="Logo" style={{width:'100%',height:'100%',objectFit:'cover'}}/>:'S'}
           </div>
-          <div onClick={()=>fileRef.current?.click()} style={{padding:'8px 12px',fontSize:12,cursor:'pointer',color:'#0f172a',display:'flex',alignItems:'center',gap:7,borderTop:'1px solid #f1f5f9',transition:'background .1s'}} onMouseEnter={e=>e.currentTarget.style.background='#f8fafc'} onMouseLeave={e=>e.currentTarget.style.background='#fff'}>
-            🖼 <span>Change Logo</span>
+          <div style={{flex:1}}>
+            <div style={{fontSize:12,fontWeight:600,color:C.text,marginBottom:6}}>Brand Logo</div>
+            <div style={{display:'flex',gap:7}}>
+              <button onClick={()=>fileRef.current?.click()} style={{padding:'5px 12px',fontSize:12,fontWeight:600,background:GREEN,color:'#fff',border:'none',borderRadius:7,cursor:'pointer'}}>Upload Logo</button>
+              {logoSrc&&<button onClick={()=>{setLogoSrc('');localStorage.removeItem('sh_logo');}} style={{padding:'5px 12px',fontSize:12,border:`1px solid #fca5a5`,borderRadius:7,background:'#fff',cursor:'pointer',color:'#dc2626'}}>Remove</button>}
+            </div>
+            <div style={{fontSize:10,color:C.muted,marginTop:4}}>PNG or JPG · Saved locally in browser</div>
           </div>
-          {logoSrc&&<div onClick={()=>{setLogoSrc('');localStorage.removeItem('sh_logo');setMenuOpen(false);}} style={{padding:'8px 12px',fontSize:12,cursor:'pointer',color:'#dc2626',display:'flex',alignItems:'center',gap:7,borderTop:'1px solid #f1f5f9',transition:'background .1s'}} onMouseEnter={e=>e.currentTarget.style.background='#fef2f2'} onMouseLeave={e=>e.currentTarget.style.background='#fff'}>
-            🗑 <span>Remove Logo</span>
-          </div>}
+          <input ref={fileRef} type="file" accept="image/*" style={{display:'none'}} onChange={handleLogoUpload}/>
         </div>
-      )}
-      <input ref={fileRef} type="file" accept="image/*" style={{display:'none'}} onChange={handleUpload}/>
+        <label style={labelStyle}>Display Name</label>
+        <input value={displayName} onChange={e=>setDisplayName(e.target.value)} style={inputStyle} placeholder="Gopu Shrestha"/>
+        <label style={labelStyle}>Tagline / Philosophy</label>
+        <input value={tagline} onChange={e=>setTagline(e.target.value)} style={inputStyle} placeholder="Be Good. Do Good. Do Well."/>
+        <button onClick={saveProfile} style={{padding:'7px 18px',fontSize:13,fontWeight:600,background:GREEN,color:'#fff',border:'none',borderRadius:8,cursor:'pointer'}}>
+          {saved?'✓ Saved':'Save Profile'}
+        </button>
+      </div>
+
+      {/* Posting Defaults */}
+      <div style={sectionStyle}>
+        <div style={{fontSize:13,fontWeight:700,color:C.text,marginBottom:13,paddingBottom:8,borderBottom:`1px solid ${C.border}`}}>⏰ Posting Defaults</div>
+        <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:10,marginBottom:10}}>
+          {[{label:'LinkedIn time',val:defLiTime,set:setDefLiTime},{label:'Instagram time',val:defIgTime,set:setDefIgTime},{label:'TikTok time',val:defTtTime,set:setDefTtTime},{label:'Facebook time',val:defFbTime,set:setDefFbTime}].map(({label,val,set})=>(
+            <div key={label}>
+              <label style={labelStyle}>{label} (CST)</label>
+              <input type="time" value={val} onChange={e=>set(e.target.value)} style={{...inputStyle,marginBottom:0,cursor:'pointer'}}/>
+            </div>
+          ))}
+        </div>
+        <label style={labelStyle}>Default schedule pattern</label>
+        <select value={defPattern} onChange={e=>setDefPattern(e.target.value)} style={{...inputStyle}}>
+          <option value="once">Post once</option>
+          <option value="weekly4">Weekly × 4</option>
+          <option value="biweekly4">Bi-weekly × 4</option>
+          <option value="monthly3">Monthly × 3</option>
+        </select>
+        <label style={labelStyle}>Default image URL <span style={{color:'#bbb',fontWeight:400}}>(optional)</span></label>
+        <input value={defImageUrl} onChange={e=>setDefImageUrl(e.target.value)} style={inputStyle} placeholder="https://..."/>
+        <button onClick={saveDefaults} style={{padding:'7px 18px',fontSize:13,fontWeight:600,background:GREEN,color:'#fff',border:'none',borderRadius:8,cursor:'pointer'}}>
+          {saved?'✓ Saved':'Save Defaults'}
+        </button>
+      </div>
+
+      {/* Data */}
+      <div style={sectionStyle}>
+        <div style={{fontSize:13,fontWeight:700,color:C.text,marginBottom:13,paddingBottom:8,borderBottom:`1px solid ${C.border}`}}>💾 Data</div>
+        <div style={{display:'flex',flexDirection:'column',gap:9}}>
+          <div style={{display:'flex',alignItems:'center',justifyContent:'space-between',padding:'10px 13px',background:'#f8fafc',borderRadius:9,border:`1px solid ${C.border}`}}>
+            <div><div style={{fontSize:13,fontWeight:600,color:C.text}}>Export All Data</div><div style={{fontSize:11,color:C.muted,marginTop:2}}>Download ideas, queue, activity log as JSON</div></div>
+            <button onClick={exportData} style={{padding:'6px 14px',fontSize:12,fontWeight:600,background:C.navy,color:'#fff',border:'none',borderRadius:7,cursor:'pointer',flexShrink:0}}>📥 Export</button>
+          </div>
+          <div style={{display:'flex',alignItems:'center',justifyContent:'space-between',padding:'10px 13px',background:'#fff9f9',borderRadius:9,border:'1px solid #fca5a5'}}>
+            <div><div style={{fontSize:13,fontWeight:600,color:C.text}}>Clear Content Cache</div><div style={{fontSize:11,color:C.muted,marginTop:2}}>Removes all research findings and content ideas</div></div>
+            <button onClick={clearCache} style={{padding:'6px 14px',fontSize:12,fontWeight:600,background:'#dc2626',color:'#fff',border:'none',borderRadius:7,cursor:'pointer',flexShrink:0}}>🗑 Clear</button>
+          </div>
+          <div style={{display:'flex',alignItems:'center',justifyContent:'space-between',padding:'10px 13px',background:'#fff9f9',borderRadius:9,border:'1px solid #fca5a5'}}>
+            <div><div style={{fontSize:13,fontWeight:600,color:C.text}}>Reset Approved Queue</div><div style={{fontSize:11,color:C.muted,marginTop:2}}>Removes all approved posts from the queue</div></div>
+            <button onClick={resetQueue} style={{padding:'6px 14px',fontSize:12,fontWeight:600,background:'#dc2626',color:'#fff',border:'none',borderRadius:7,cursor:'pointer',flexShrink:0}}>🗑 Reset</button>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }
@@ -880,6 +1001,11 @@ export default function SocialHub() {
             </div>
           )}
 
+
+          {mainTab==='settings'&&(
+            <SettingsPanel/>
+          )}
+
           {mainTab==='wizard'&&(()=>{
             const STEPS=[{n:1,label:'Write',icon:'✍️'},{n:2,label:'Route',icon:'🗺'},{n:3,label:'Review',icon:'👁'},{n:4,label:'Send',icon:'🚀'},{n:5,label:'Schedule',icon:'📅'}];
             const canAdvance=wizardCanAdvance(wizardStep);
@@ -1018,13 +1144,15 @@ export default function SocialHub() {
 
       {/* RIGHT PANEL */}
       <div style={{background:C.sidebar,borderLeft:`1px solid ${C.border}`,display:'flex',flexDirection:'column',height:'100vh',position:'sticky',top:0,overflowY:'auto'}}>
-        <div style={{padding:'13px 13px 0',borderBottom:`1px solid ${C.border}`}}>
-          <div style={{fontSize:11,fontWeight:600,color:C.muted,textTransform:'uppercase',letterSpacing:'0.07em',marginBottom:9}}>Platform Preview</div>
+        <div style={{borderBottom:`1px solid ${C.border}`}}>
+          <div style={{background:GREEN,padding:'11px 14px 0',display:'flex',alignItems:'center',justifyContent:'space-between'}}>
+          <div style={{fontSize:11,fontWeight:600,color:'#fff',textTransform:'uppercase',letterSpacing:'0.07em',marginBottom:9}}>Platform Preview</div>
+          </div>
           <div style={{display:'flex',gap:2,overflowX:'auto',paddingBottom:0}}>
             {PREVIEW_PLATFORMS.map(p=>{
               const active=previewPlatform===p.id;
               return(
-              <button key={p.id} onClick={()=>setPreviewPlatform(p.id)} title={p.label} style={{padding:'6px 10px',fontSize:11,background:active?p.color+'18':'#f8fafc',border:'none',borderBottom:`2px solid ${active?p.color:'transparent'}`,color:active?p.color:'#64748b',cursor:'pointer',fontWeight:active?600:400,whiteSpace:'nowrap',transition:'all .15s',borderRadius:'4px 4px 0 0',display:'flex',alignItems:'center',gap:5}}>
+              <button key={p.id} onClick={()=>setPreviewPlatform(p.id)} title={p.label} style={{padding:'6px 10px',fontSize:11,background:active?p.color+'18':'#e2e8f0',border:`1px solid ${active?p.color+'44':'#cbd5e1'}`,borderBottom:`2px solid ${active?p.color:'#94a3b8'}`,color:active?p.color:'#64748b',cursor:'pointer',fontWeight:active?600:400,whiteSpace:'nowrap',transition:'all .15s',borderRadius:'4px 4px 0 0',display:'flex',alignItems:'center',gap:5}}>
                 <PlatformIcon id={p.id} size={14} color={active?p.color:'#64748b'}/>
                 <span style={{display:'none'}}>{p.label}</span>
               </button>
