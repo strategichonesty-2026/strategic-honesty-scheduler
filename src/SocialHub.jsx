@@ -134,6 +134,7 @@ function LogoMenu({onHome}) {
 }
 
 function SettingsPanel() {
+  const GREEN='#24b47e';
   const C={text:'#0f172a',muted:'#64748b',border:'#E2E8F0',card:'#FFFFFF',label:'#334155',greenLight:'#E6F7F2',greenDark:'#0f6e56',navy:'#1E293B'};
   const F='-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif';
   const inputStyle={width:'100%',border:`1px solid ${C.border}`,borderRadius:7,padding:'8px 10px',fontSize:13,color:C.text,fontFamily:F,outline:'none',marginBottom:10,background:'#fff',boxSizing:'border-box'};
@@ -201,7 +202,7 @@ function SettingsPanel() {
 
   return(
     <div style={{maxWidth:600}}>
-      <div style={{fontSize:15,fontWeight:700,color:C.text,marginBottom:16}}>⚙ Settings</div>
+      <div style={{fontSize:15,fontWeight:700,color:C.text,marginBottom:16}}>⚙️ Settings</div>
 
       {/* Profile & Brand */}
       <div style={sectionStyle}>
@@ -275,173 +276,146 @@ function SettingsPanel() {
     </div>
   );
 }
-function HelpModal({onClose}) {
-  const [tab, setTab] = useState('core');
-  const GOLD = '#BA7517';
-  const NAVY = '#1E293B';
-  const C = {text:'#0f172a', muted:'#64748b', border:'#E2E8F0', card:'#FFFFFF'};
 
-  const tabs = [
-    {id:'core',    icon:'🎯', label:'Core Idea'},
-    {id:'ideas',   icon:'💡', label:'Content Ideas'},
-    {id:'articles',icon:'📄', label:'Articles'},
-    {id:'wizard',  icon:'🚀', label:'Review & Post'},
-    {id:'schedule',icon:'📅', label:'Scheduling'},
-    {id:'settings',icon:'⚙', label:'Settings'},
-  ];
+function SettingsPanel() {
+  const GREEN='#24b47e';
+  const C={text:'#0f172a',muted:'#64748b',border:'#E2E8F0',card:'#FFFFFF',label:'#334155',greenLight:'#E6F7F2',greenDark:'#0f6e56',navy:'#1E293B'};
+  const F='-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif';
+  const inputStyle={width:'100%',border:`1px solid ${C.border}`,borderRadius:7,padding:'8px 10px',fontSize:13,color:C.text,fontFamily:F,outline:'none',marginBottom:10,background:'#fff',boxSizing:'border-box'};
+  const labelStyle={fontSize:12,color:C.muted,marginBottom:5,display:'block',fontWeight:500};
+  const sectionStyle={background:C.card,border:`1px solid ${C.border}`,borderRadius:12,padding:18,marginBottom:14};
 
-  const content = {
-    core: {
-      title: '🎯 Core Idea — Your Command Center',
-      intro: 'This is the most important box in the app. Every post starts here.',
-      steps: [
-        'Think of something you want to share. It can be one sentence.',
-        'Type it in the "Core Idea or Insight" box on the left sidebar.',
-        'Click the gold button "Adapt to All Platforms →"',
-        'The app will take you to the Review & Post wizard.',
-        'Your idea is now ready to be turned into LinkedIn, TikTok, Instagram posts — all at once.',
-      ],
-      tip: '💡 Pro Tip: Keep it simple. One clear idea works better than a long paragraph. Example: "Trust breaks down quietly before it breaks down loudly."',
-      example: 'Example: "Integrity is not a soft skill. It is the hardest competitive edge in business."',
-    },
-    ideas: {
-      title: '💡 Content Ideas — Research & Generate',
-      intro: 'This tab finds trending topics and turns them into content ideas for you.',
-      steps: [
-        'Click "Content Ideas" in the left sidebar menu.',
-        'Click the green "Run Research" button. Wait 30-60 seconds.',
-        'The app will find 8 fresh content ideas based on real trends.',
-        'Click on any idea to expand it.',
-        'Pick a platform (LinkedIn, TikTok, Instagram, etc.)',
-        'Click "Generate" — your post is written in seconds.',
-        'Review the post. Edit if needed.',
-        'Click "✓ Approve" to add it to your Approved Queue.',
-      ],
-      tip: '💡 Pro Tip: Run research once a week. Do not click it every day — it uses API tokens each time.',
-      example: 'The research engine looks for leadership pain points, AI anxieties, and workplace frustrations — then turns them into Strategic Honesty content.',
-    },
-    articles: {
-      title: '📄 Articles — Long-Form Content for LinkedIn',
-      intro: 'You can turn any idea into a full 600-word LinkedIn article in one click.',
-      steps: [
-        'Go to "Content Ideas" tab.',
-        'Run research or use an existing idea.',
-        'Click on an idea to expand it.',
-        'Select "LinkedIn" as the platform.',
-        'Click "Generate" to create a short post first.',
-        'Look for the "→ Long Form" button in the action row.',
-        'Click it — the app writes a full article with headline, sections, and a closing question.',
-        'Copy the article and paste it into LinkedIn Articles.',
-      ],
-      tip: '💡 Pro Tip: Generate 4-8 articles in one sitting. Each article costs less than $0.08 in API tokens. Schedule them 2-3 weeks apart on LinkedIn.',
-      example: 'Each article includes: a strong hook, 4 titled sections, a pull quote, and a reflection question at the end.',
-    },
-    wizard: {
-      title: '🚀 Review & Post — The 5-Step Wizard',
-      intro: 'This is where you review, finalize, and publish your content.',
-      steps: [
-        'Step 1 — WRITE: Paste your content or type it fresh. You can also pick a saved quote.',
-        'Step 2 — ROUTE: Pick your content type (text, image, video). The app picks the best platforms for you.',
-        'Step 3 — REVIEW: See how your post looks on each platform. Check the character count.',
-        'Step 4 — SEND: Choose to post now or schedule for later. Click Publish.',
-        'Step 5 — SCHEDULE: Set up repeating posts (weekly, bi-weekly, monthly).',
-      ],
-      tip: '💡 Pro Tip: Always check Step 3 (Review). Bluesky has a hard 300 character limit. LinkedIn allows 3000 characters.',
-      example: 'LinkedIn and Bluesky post directly from the app. Facebook, TikTok, and Instagram use Buffer CSV — download the file and upload it to Buffer.com.',
-    },
-    schedule: {
-      title: '📅 Scheduling — Post at the Right Time',
-      intro: 'You have two ways to post: directly from the app, or through Buffer.',
-      steps: [
-        'DIRECT POSTING (LinkedIn & Bluesky): Connect your accounts in the "Connect" tab. Then use the wizard to post directly.',
-        'BUFFER POSTING (Facebook, TikTok, Instagram): In Step 4 of the wizard, click the purple CSV button.',
-        'A file will download to your computer.',
-        'Go to Buffer.com → pick your channel → Settings → Bulk Upload.',
-        'Upload the CSV file. Buffer will schedule your posts.',
-        'RECURRING POSTS: Use Step 5 of the wizard to set weekly or monthly schedules. Download the CSV with multiple dates already filled in.',
-      ],
-      tip: '💡 Pro Tip: Best times — LinkedIn 8am Monday, Instagram 11am Tuesday, TikTok 7pm any day. You can set your default times in Settings.',
-      example: 'One piece of content → one CSV file → upload to Buffer → done. Buffer posts it for you at the right time.',
-    },
-    settings: {
-      title: '⚙ Settings — Your Profile & Preferences',
-      intro: 'Set up your profile, default posting times, and manage your data here.',
-      steps: [
-        'Click the gear icon ⚙ at the bottom of the left sidebar.',
-        'PROFILE & BRAND: Upload your logo. Set your display name and tagline.',
-        'POSTING DEFAULTS: Set what time you want to post on each platform. This saves time when scheduling.',
-        'Set your default schedule pattern (once, weekly, bi-weekly, monthly).',
-        'DATA: Click "Export" to download all your content ideas and activity as a JSON file.',
-        'Click "Clear Cache" to reset research findings if they feel outdated.',
-        'Click "Reset Queue" to clear your approved posts and start fresh.',
-      ],
-      tip: '💡 Pro Tip: Set your posting times once and forget them. The app will use them every time you schedule a post.',
-      example: 'Your logo and name appear in the sidebar. Upload a clean square image for best results.',
-    },
+  // Profile & Brand
+  const [displayName,setDisplayName]=useState(()=>localStorage.getItem('sh_display_name')||'Gopu Shrestha');
+  const [tagline,setTagline]=useState(()=>localStorage.getItem('sh_tagline')||'Be Good. Do Good. Do Well.');
+  const [logoSrc,setLogoSrc]=useState(()=>localStorage.getItem('sh_logo')||'');
+  const fileRef=useRef(null);
+
+  // Posting Defaults
+  const [defLiTime,setDefLiTime]=useState(()=>localStorage.getItem('sh_def_li_time')||'08:00');
+  const [defIgTime,setDefIgTime]=useState(()=>localStorage.getItem('sh_def_ig_time')||'11:00');
+  const [defTtTime,setDefTtTime]=useState(()=>localStorage.getItem('sh_def_tt_time')||'19:00');
+  const [defFbTime,setDefFbTime]=useState(()=>localStorage.getItem('sh_def_fb_time')||'13:00');
+  const [defPattern,setDefPattern]=useState(()=>localStorage.getItem('sh_def_pattern')||'weekly4');
+  const [defImageUrl,setDefImageUrl]=useState(()=>localStorage.getItem('sh_def_image_url')||'');
+
+  const [saved,setSaved]=useState(false);
+
+  const handleLogoUpload=e=>{
+    const file=e.target.files[0];if(!file)return;
+    const reader=new FileReader();
+    reader.onload=ev=>{const src=ev.target.result;setLogoSrc(src);localStorage.setItem('sh_logo',src);};
+    reader.readAsDataURL(file);
   };
 
-  const current = content[tab];
+  const saveProfile=()=>{
+    localStorage.setItem('sh_display_name',displayName);
+    localStorage.setItem('sh_tagline',tagline);
+    setSaved(true);setTimeout(()=>setSaved(false),2000);
+  };
+
+  const saveDefaults=()=>{
+    localStorage.setItem('sh_def_li_time',defLiTime);
+    localStorage.setItem('sh_def_ig_time',defIgTime);
+    localStorage.setItem('sh_def_tt_time',defTtTime);
+    localStorage.setItem('sh_def_fb_time',defFbTime);
+    localStorage.setItem('sh_def_pattern',defPattern);
+    localStorage.setItem('sh_def_image_url',defImageUrl);
+    setSaved(true);setTimeout(()=>setSaved(false),2000);
+  };
+
+  const exportData=()=>{
+    const data={profile:{displayName,tagline},defaults:{defLiTime,defIgTime,defTtTime,defFbTime,defPattern,defImageUrl},ideas:JSON.parse(localStorage.getItem('sh_ci_ideas')||'[]'),queue:JSON.parse(localStorage.getItem('sh_ci_queue')||'[]'),activityLog:JSON.parse(localStorage.getItem('sh_activity_log')||'[]')};
+    const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});
+    const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;
+    a.download=`strategic-honesty-export-${new Date().toISOString().split('T')[0]}.json`;
+    a.click();URL.revokeObjectURL(url);
+  };
+
+  const clearCache=()=>{
+    if(!window.confirm('Clear all cached content ideas and research? This cannot be undone.'))return;
+    ['sh_ci_findings','sh_ci_ideas','sh_ci_queue','sh_ci_lastrun','sh_ci_nextrun','sh_ci_resstatus'].forEach(k=>localStorage.removeItem(k));
+    window.location.reload();
+  };
+
+  const resetQueue=()=>{
+    if(!window.confirm('Reset the approved queue? All approved posts will be removed.'))return;
+    localStorage.removeItem('sh_ci_queue');
+    window.location.reload();
+  };
 
   return(
-    <div style={{position:'fixed',top:0,left:0,right:0,bottom:0,background:'rgba(0,0,0,0.55)',zIndex:1000,display:'flex',alignItems:'center',justifyContent:'center',padding:'16px',overflowY:'auto'}} onClick={onClose}>
-      <div style={{background:'#fff',borderRadius:16,width:'100%',maxWidth:760,maxHeight:'90vh',overflow:'hidden',display:'flex',flexDirection:'column',boxShadow:'0 20px 60px rgba(0,0,0,0.3)'}} onClick={e=>e.stopPropagation()}>
+    <div style={{maxWidth:600}}>
+      <div style={{fontSize:15,fontWeight:700,color:C.text,marginBottom:16}}>⚙️ Settings</div>
 
-        {/* Header */}
-        <div style={{background:NAVY,padding:'16px 20px',display:'flex',alignItems:'center',justifyContent:'space-between',flexShrink:0}}>
-          <div>
-            <div style={{fontSize:16,fontWeight:700,color:'#fff'}}>📖 User Guide</div>
-            <div style={{fontSize:11,color:'#94a3b8',marginTop:2}}>Strategic Honesty Scheduler — How to use every feature</div>
+      {/* Profile & Brand */}
+      <div style={sectionStyle}>
+        <div style={{fontSize:13,fontWeight:700,color:C.text,marginBottom:13,paddingBottom:8,borderBottom:`1px solid ${C.border}`}}>👤 Profile & Brand</div>
+        <div style={{display:'flex',alignItems:'center',gap:14,marginBottom:16}}>
+          <div style={{width:64,height:64,borderRadius:12,background:logoSrc?'transparent':GREEN,display:'flex',alignItems:'center',justifyContent:'center',color:'#fff',fontSize:24,fontWeight:800,overflow:'hidden',border:`2px solid ${C.border}`,flexShrink:0}}>
+            {logoSrc?<img src={logoSrc} alt="Logo" style={{width:'100%',height:'100%',objectFit:'cover'}}/>:'S'}
           </div>
-          <button onClick={onClose} style={{width:32,height:32,borderRadius:'50%',background:'rgba(255,255,255,0.1)',border:'none',color:'#fff',fontSize:18,cursor:'pointer',display:'flex',alignItems:'center',justifyContent:'center',flexShrink:0}}>×</button>
-        </div>
-
-        <div style={{display:'flex',flex:1,overflow:'hidden'}}>
-
-          {/* Left tabs */}
-          <div style={{width:160,background:'#f8fafc',borderRight:`1px solid ${C.border}`,flexShrink:0,overflowY:'auto'}}>
-            {tabs.map(t=>(
-              <div key={t.id} onClick={()=>setTab(t.id)} style={{padding:'12px 14px',cursor:'pointer',borderLeft:`3px solid ${tab===t.id?GOLD:'transparent'}`,background:tab===t.id?'#fff':'transparent',transition:'all .12s'}}>
-                <div style={{fontSize:16,marginBottom:3}}>{t.icon}</div>
-                <div style={{fontSize:12,fontWeight:tab===t.id?700:400,color:tab===t.id?NAVY:C.muted,lineHeight:1.3}}>{t.label}</div>
-              </div>
-            ))}
+          <div style={{flex:1}}>
+            <div style={{fontSize:12,fontWeight:600,color:C.text,marginBottom:6}}>Brand Logo</div>
+            <div style={{display:'flex',gap:7}}>
+              <button onClick={()=>fileRef.current?.click()} style={{padding:'5px 12px',fontSize:12,fontWeight:600,background:GREEN,color:'#fff',border:'none',borderRadius:7,cursor:'pointer'}}>Upload Logo</button>
+              {logoSrc&&<button onClick={()=>{setLogoSrc('');localStorage.removeItem('sh_logo');}} style={{padding:'5px 12px',fontSize:12,border:`1px solid #fca5a5`,borderRadius:7,background:'#fff',cursor:'pointer',color:'#dc2626'}}>Remove</button>}
+            </div>
+            <div style={{fontSize:10,color:C.muted,marginTop:4}}>PNG or JPG · Saved locally in browser</div>
           </div>
+          <input ref={fileRef} type="file" accept="image/*" style={{display:'none'}} onChange={handleLogoUpload}/>
+        </div>
+        <label style={labelStyle}>Display Name</label>
+        <input value={displayName} onChange={e=>setDisplayName(e.target.value)} style={inputStyle} placeholder="Gopu Shrestha"/>
+        <label style={labelStyle}>Tagline / Philosophy</label>
+        <input value={tagline} onChange={e=>setTagline(e.target.value)} style={inputStyle} placeholder="Be Good. Do Good. Do Well."/>
+        <button onClick={saveProfile} style={{padding:'7px 18px',fontSize:13,fontWeight:600,background:GREEN,color:'#fff',border:'none',borderRadius:8,cursor:'pointer'}}>
+          {saved?'✓ Saved':'Save Profile'}
+        </button>
+      </div>
 
-          {/* Content */}
-          <div style={{flex:1,overflowY:'auto',padding:24}}>
-            <div style={{fontSize:15,fontWeight:700,color:NAVY,marginBottom:6}}>{current.title}</div>
-            <div style={{fontSize:13,color:C.muted,marginBottom:16,lineHeight:1.6}}>{current.intro}</div>
-
-            {/* Steps */}
-            <div style={{marginBottom:16}}>
-              <div style={{fontSize:11,fontWeight:700,color:GOLD,textTransform:'uppercase',letterSpacing:'0.08em',marginBottom:10}}>Step by Step</div>
-              {current.steps.map((step,i)=>(
-                <div key={i} style={{display:'flex',gap:10,marginBottom:10,alignItems:'flex-start'}}>
-                  <div style={{width:24,height:24,borderRadius:'50%',background:NAVY,color:'#fff',fontSize:11,fontWeight:700,display:'flex',alignItems:'center',justifyContent:'center',flexShrink:0,marginTop:1}}>{i+1}</div>
-                  <div style={{fontSize:13,color:C.text,lineHeight:1.6,flex:1}}>{step}</div>
-                </div>
-              ))}
+      {/* Posting Defaults */}
+      <div style={sectionStyle}>
+        <div style={{fontSize:13,fontWeight:700,color:C.text,marginBottom:13,paddingBottom:8,borderBottom:`1px solid ${C.border}`}}>⏰ Posting Defaults</div>
+        <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:10,marginBottom:10}}>
+          {[{label:'LinkedIn time',val:defLiTime,set:setDefLiTime},{label:'Instagram time',val:defIgTime,set:setDefIgTime},{label:'TikTok time',val:defTtTime,set:setDefTtTime},{label:'Facebook time',val:defFbTime,set:setDefFbTime}].map(({label,val,set})=>(
+            <div key={label}>
+              <label style={labelStyle}>{label} (CST)</label>
+              <input type="time" value={val} onChange={e=>set(e.target.value)} style={{...inputStyle,marginBottom:0,cursor:'pointer'}}/>
             </div>
+          ))}
+        </div>
+        <label style={labelStyle}>Default schedule pattern</label>
+        <select value={defPattern} onChange={e=>setDefPattern(e.target.value)} style={{...inputStyle}}>
+          <option value="once">Post once</option>
+          <option value="weekly4">Weekly × 4</option>
+          <option value="biweekly4">Bi-weekly × 4</option>
+          <option value="monthly3">Monthly × 3</option>
+        </select>
+        <label style={labelStyle}>Default image URL <span style={{color:'#bbb',fontWeight:400}}>(optional)</span></label>
+        <input value={defImageUrl} onChange={e=>setDefImageUrl(e.target.value)} style={inputStyle} placeholder="https://..."/>
+        <button onClick={saveDefaults} style={{padding:'7px 18px',fontSize:13,fontWeight:600,background:GREEN,color:'#fff',border:'none',borderRadius:8,cursor:'pointer'}}>
+          {saved?'✓ Saved':'Save Defaults'}
+        </button>
+      </div>
 
-            {/* Example */}
-            <div style={{background:'#fffdf5',border:`1px solid ${GOLD}44`,borderLeft:`3px solid ${GOLD}`,borderRadius:8,padding:'10px 14px',marginBottom:12}}>
-              <div style={{fontSize:11,fontWeight:700,color:GOLD,marginBottom:4}}>HOW IT WORKS</div>
-              <div style={{fontSize:12,color:'#78350f',lineHeight:1.6}}>{current.example}</div>
-            </div>
-
-            {/* Tip */}
-            <div style={{background:'#f0fdf4',border:'1px solid #bbf7d0',borderRadius:8,padding:'10px 14px'}}>
-              <div style={{fontSize:13,color:'#166534',lineHeight:1.6}}>{current.tip}</div>
-            </div>
+      {/* Data */}
+      <div style={sectionStyle}>
+        <div style={{fontSize:13,fontWeight:700,color:C.text,marginBottom:13,paddingBottom:8,borderBottom:`1px solid ${C.border}`}}>💾 Data</div>
+        <div style={{display:'flex',flexDirection:'column',gap:9}}>
+          <div style={{display:'flex',alignItems:'center',justifyContent:'space-between',padding:'10px 13px',background:'#f8fafc',borderRadius:9,border:`1px solid ${C.border}`}}>
+            <div><div style={{fontSize:13,fontWeight:600,color:C.text}}>Export All Data</div><div style={{fontSize:11,color:C.muted,marginTop:2}}>Download ideas, queue, activity log as JSON</div></div>
+            <button onClick={exportData} style={{padding:'6px 14px',fontSize:12,fontWeight:600,background:C.navy,color:'#fff',border:'none',borderRadius:7,cursor:'pointer',flexShrink:0}}>📥 Export</button>
+          </div>
+          <div style={{display:'flex',alignItems:'center',justifyContent:'space-between',padding:'10px 13px',background:'#fff9f9',borderRadius:9,border:'1px solid #fca5a5'}}>
+            <div><div style={{fontSize:13,fontWeight:600,color:C.text}}>Clear Content Cache</div><div style={{fontSize:11,color:C.muted,marginTop:2}}>Removes all research findings and content ideas</div></div>
+            <button onClick={clearCache} style={{padding:'6px 14px',fontSize:12,fontWeight:600,background:'#dc2626',color:'#fff',border:'none',borderRadius:7,cursor:'pointer',flexShrink:0}}>🗑 Clear</button>
+          </div>
+          <div style={{display:'flex',alignItems:'center',justifyContent:'space-between',padding:'10px 13px',background:'#fff9f9',borderRadius:9,border:'1px solid #fca5a5'}}>
+            <div><div style={{fontSize:13,fontWeight:600,color:C.text}}>Reset Approved Queue</div><div style={{fontSize:11,color:C.muted,marginTop:2}}>Removes all approved posts from the queue</div></div>
+            <button onClick={resetQueue} style={{padding:'6px 14px',fontSize:12,fontWeight:600,background:'#dc2626',color:'#fff',border:'none',borderRadius:7,cursor:'pointer',flexShrink:0}}>🗑 Reset</button>
           </div>
         </div>
-
-        {/* Footer */}
-        <div style={{padding:'12px 20px',borderTop:`1px solid ${C.border}`,background:'#f8fafc',display:'flex',alignItems:'center',justifyContent:'space-between',flexShrink:0}}>
-          <div style={{fontSize:11,color:C.muted}}>Be Good. Do Good. Do Well. — StrategicHonesty.com</div>
-          <button onClick={onClose} style={{padding:'6px 18px',background:'#24b47e',color:'#fff',border:'none',borderRadius:7,fontSize:12,fontWeight:600,cursor:'pointer'}}>Got it ✓</button>
-        </div>
-
       </div>
     </div>
   );
@@ -501,15 +475,7 @@ const QUOTES={
 };
 
 // ─── Content Ideas constants ──────────────────────────────────────────────────
-const BRAND_SYSTEM = "You are the Strategic Honesty Content Intelligence Engine for Gopu Shrestha. " +
-  "BACKGROUND: Grew up in rural Nepal, Senior Program Manager at Wells Fargo Minneapolis, PMP/PgMP/PMI-ACP/PSM II, PhD candidate, Distinguished Toastmaster, District Director District 106, author of 7 books including Unlocking Integrity-Centered Leadership, You Still Matter, The Strategic Honesty Playbook. Two sons: US Army veteran and Environmental Engineer. StrategicHonesty.com. Philosophy: Be Good. Do Good. Do Well. " +
-  "ROLE: You are NOT a generic viral content generator. Analyze emotionally resonant workplace, leadership, AI, productivity, trust, and organizational trends. Transform them into Strategic Honesty thought leadership content. " +
-  "REPRESENTS: Trust-centered leadership, emotionally intelligent systems, transparent communication, sustainable productivity, human-centered execution, psychological safety, practical leadership wisdom, systems thinking, ethical AI, authentic transformation. " +
-  "POSITIONING: Reflective thought leader, trusted systems thinker, strategic program leadership voice, human-centered advisor. NOT an influencer, motivational guru, or aggressive consultant. " +
-  "PROCESS: 1. IDENTIFY emotional reactions, frustrations, leadership pain points, trust breakdowns, AI anxieties, burnout themes. 2. ANALYZE why it resonates, what leaders miss, what systemic issue exists. 3. TRANSFORM into thoughtful, practical, calm, actionable Strategic Honesty perspectives. 4. CONNECT back to Strategic Honesty frameworks. " +
-  "STYLE: Intelligent but accessible. Emotionally aware but professional. Systems-oriented, slightly contrarian. Practical, authentic, calm. Never sensational, never clickbait, never fake motivation. First-person as Gopu. Anchor in Nepal journey. Mix short punchy and longer reflective sentences. 8th-10th grade reading level. Hashtags: #StrategicHonesty #Integrity #Leadership #BeGoodDoGoodDoWell. " +
-  "GOAL: Build long-term trust, credibility, authority supporting consulting, speaking, workshops, books, community influence. Mission: help people think honestly, lead effectively, build healthier systems. " +
-  "Respond ONLY with requested content, no preamble, no labels, no meta-commentary.";
+const BRAND_SYSTEM=`You are the Strategic Honesty Content Engine — personal AI editorial board for Gopu Shrestha. Background: grew up in rural Nepal (no running water, no plan B), Senior Program Manager at Wells Fargo Minneapolis, PMP/PgMP/PMI-ACP/PSM II certified, PhD candidate, Distinguished Toastmaster, District Director Toastmasters International District 106, author of 7 books including "Unlocking Integrity-Centered Leadership" "You Still Matter" "The Strategic Honesty Playbook". Two sons: US Army veteran and Environmental Engineer. Runs StrategicHonesty.com. Philosophy: "Be Good. Do Good. Do Well." Voice: warm mentor-toned conversational, mix short punchy and longer reflective sentences, anchor in Nepal/immigration journey, avoid jargon cold minimalism hype passive voice, 8th-10th grade reading level. Hashtags: #StrategicHonesty #Integrity #Leadership #BeGoodDoGoodDoWell. Write first-person as Gopu. Never generic motivation. Root everything in lived experience or concrete professional insight. Respond ONLY with requested content — no preamble, no labels.`;
 const CI_PLATFORMS=[
   {id:'li',label:'LinkedIn',icon:'💼',color:'#0A66C2',fmt:'Thought-leadership post 150–300 words, line breaks, strong opening hook, no external links in body'},
   {id:'tt',label:'TikTok',icon:'🎵',color:'#333',fmt:'45–60 sec script [0-3sec HOOK] [3-15sec PROBLEM] [15-40sec STORY] [40-55sec CTA], raw authentic tone'},
@@ -877,7 +843,6 @@ export default function SocialHub() {
   const [coreIdea,setCoreIdea]=useState('');
   const [channelsOpen,setChannelsOpen]=useState(true);
   const [quickConnectOpen,setQuickConnectOpen]=useState(false);
-  const [helpOpen,setHelpOpen]=useState(false);
   const [upcomingOpen,setUpcomingOpen]=useState(true);
   const [viralIdeasOpen,setViralIdeasOpen]=useState(true);
   const [approvedOpen,setApprovedOpen]=useState(true);
@@ -1016,10 +981,6 @@ export default function SocialHub() {
         </div>
         {/* Settings + Footer */}
         <div style={{marginTop:'auto',borderTop:`1px solid ${C.border}`}}>
-          <div onClick={()=>setHelpOpen(true)} style={{display:'flex',alignItems:'center',gap:9,padding:'10px 13px',cursor:'pointer',fontSize:13,color:C.muted,fontWeight:400,background:'transparent',transition:'all .12s'}} onMouseEnter={e=>e.currentTarget.style.background='#f8fafc'} onMouseLeave={e=>e.currentTarget.style.background='transparent'}>
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
-            <span style={{flex:1}}>Help & Guide</span>
-          </div>
           <div onClick={()=>setMainTab('settings')} style={{display:'flex',alignItems:'center',gap:9,padding:'10px 13px',cursor:'pointer',fontSize:13,color:mainTab==='settings'?'#fff':C.muted,fontWeight:mainTab==='settings'?600:400,background:mainTab==='settings'?GREEN:'transparent',transition:'all .12s'}} onMouseEnter={e=>{if(mainTab!=='settings')e.currentTarget.style.background='#f8fafc';}} onMouseLeave={e=>{if(mainTab!=='settings')e.currentTarget.style.background='transparent';}}>
             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
             <span style={{flex:1}}>Settings</span>
@@ -1129,7 +1090,7 @@ export default function SocialHub() {
                 <div style={{fontSize:28,marginBottom:7,color:'#ccc'}}>⬆</div>
                 <div style={{fontSize:14,fontWeight:500,color:C.text,marginBottom:4}}>Drop your Buffer CSV file here</div>
                 <div style={{fontSize:12,color:C.muted}}>Text, Image URL, Tags, Posting Time · UTF-8 · Max 10 posts free plan</div>
-                <input type="file" id="csv-file" accept=".csv" style={{display:'none'}} onChange={e=>{const file=e.target.files[0];if(!file)return;addLog(setUploadLogs,'info',`Reading ${file.name}...`);const r=new FileReader();r.onload=ev=>{const lines=ev.target.result.split('\n').filter(l=>l.trim()).length-1;addLog(setUploadLogs,'ok',`✓ ${file.name} — ${lines} posts loaded`);addLog(setUploadLogs,'info','Go to Buffer → Channel → ⚙ → Bulk Upload → Add to Queue');};r.readAsText(file);}}/>
+                <input type="file" id="csv-file" accept=".csv" style={{display:'none'}} onChange={e=>{const file=e.target.files[0];if(!file)return;addLog(setUploadLogs,'info',`Reading ${file.name}...`);const r=new FileReader();r.onload=ev=>{const lines=ev.target.result.split('\n').filter(l=>l.trim()).length-1;addLog(setUploadLogs,'ok',`✓ ${file.name} — ${lines} posts loaded`);addLog(setUploadLogs,'info','Go to Buffer → Channel → ⚙️ → Bulk Upload → Add to Queue');};r.readAsText(file);}}/>
               </label>
               <div style={{background:'#f8f8f8',borderRadius:7,padding:8,fontSize:12,fontFamily:'monospace',maxHeight:90,overflowY:'auto',lineHeight:1.8}}>{uploadLogs.map((l,i)=><div key={i} style={{color:logColor(l.t)}}>» {l.m}</div>)}</div>
             </div>
@@ -1390,7 +1351,6 @@ export default function SocialHub() {
         </div>
       </div>
     </div>
-    {helpOpen&&<HelpModal onClose={()=>setHelpOpen(false)}/>}
   );
 }
 // Fri May 22 20:14:54 CDT 2026
