@@ -276,6 +276,179 @@ function SettingsPanel() {
     </div>
   );
 }
+function HelpModal({onClose}) {
+  const [tab, setTab] = useState('core');
+  const GREEN = '#24b47e';
+  const GOLD = '#BA7517';
+  const NAVY = '#1E293B';
+  const C = {text:'#0f172a', muted:'#64748b', border:'#E2E8F0', card:'#FFFFFF'};
+
+  const tabs = [
+    {id:'core',    icon:'🎯', label:'Core Idea'},
+    {id:'ideas',   icon:'💡', label:'Content Ideas'},
+    {id:'articles',icon:'📄', label:'Articles'},
+    {id:'wizard',  icon:'🚀', label:'Review & Post'},
+    {id:'schedule',icon:'📅', label:'Scheduling'},
+    {id:'settings',icon:'⚙️', label:'Settings'},
+  ];
+
+  const content = {
+    core: {
+      title: '🎯 Core Idea — Your Command Center',
+      intro: 'This is the most important box in the app. Every post starts here.',
+      steps: [
+        'Think of something you want to share. It can be one sentence.',
+        'Type it in the "Core Idea or Insight" box on the left sidebar.',
+        'Click the gold button "Adapt to All Platforms →"',
+        'The app will take you to the Review & Post wizard.',
+        'Your idea is now ready to be turned into LinkedIn, TikTok, Instagram posts — all at once.',
+      ],
+      tip: '💡 Pro Tip: Keep it simple. One clear idea works better than a long paragraph. Example: "Trust breaks down quietly before it breaks down loudly."',
+      example: 'Example: "Integrity is not a soft skill. It is the hardest competitive edge in business."',
+    },
+    ideas: {
+      title: '💡 Content Ideas — Research & Generate',
+      intro: 'This tab finds trending topics and turns them into content ideas for you.',
+      steps: [
+        'Click "Content Ideas" in the left sidebar menu.',
+        'Click the green "Run Research" button. Wait 30-60 seconds.',
+        'The app will find 8 fresh content ideas based on real trends.',
+        'Click on any idea to expand it.',
+        'Pick a platform (LinkedIn, TikTok, Instagram, etc.)',
+        'Click "Generate" — your post is written in seconds.',
+        'Review the post. Edit if needed.',
+        'Click "✓ Approve" to add it to your Approved Queue.',
+      ],
+      tip: '💡 Pro Tip: Run research once a week. Do not click it every day — it uses API tokens each time.',
+      example: 'The research engine looks for leadership pain points, AI anxieties, and workplace frustrations — then turns them into Strategic Honesty content.',
+    },
+    articles: {
+      title: '📄 Articles — Long-Form Content for LinkedIn',
+      intro: 'You can turn any idea into a full 600-word LinkedIn article in one click.',
+      steps: [
+        'Go to "Content Ideas" tab.',
+        'Run research or use an existing idea.',
+        'Click on an idea to expand it.',
+        'Select "LinkedIn" as the platform.',
+        'Click "Generate" to create a short post first.',
+        'Look for the "→ Long Form" button in the action row.',
+        'Click it — the app writes a full article with headline, sections, and a closing question.',
+        'Copy the article and paste it into LinkedIn Articles.',
+      ],
+      tip: '💡 Pro Tip: Generate 4-8 articles in one sitting. Each article costs less than $0.08 in API tokens. Schedule them 2-3 weeks apart on LinkedIn.',
+      example: 'Each article includes: a strong hook, 4 titled sections, a pull quote, and a reflection question at the end.',
+    },
+    wizard: {
+      title: '🚀 Review & Post — The 5-Step Wizard',
+      intro: 'This is where you review, finalize, and publish your content.',
+      steps: [
+        'Step 1 — WRITE: Paste your content or type it fresh. You can also pick a saved quote.',
+        'Step 2 — ROUTE: Pick your content type (text, image, video). The app picks the best platforms for you.',
+        'Step 3 — REVIEW: See how your post looks on each platform. Check the character count.',
+        'Step 4 — SEND: Choose to post now or schedule for later. Click Publish.',
+        'Step 5 — SCHEDULE: Set up repeating posts (weekly, bi-weekly, monthly).',
+      ],
+      tip: '💡 Pro Tip: Always check Step 3 (Review). Bluesky has a hard 300 character limit. LinkedIn allows 3000 characters.',
+      example: 'LinkedIn and Bluesky post directly from the app. Facebook, TikTok, and Instagram use Buffer CSV — download the file and upload it to Buffer.com.',
+    },
+    schedule: {
+      title: '📅 Scheduling — Post at the Right Time',
+      intro: 'You have two ways to post: directly from the app, or through Buffer.',
+      steps: [
+        'DIRECT POSTING (LinkedIn & Bluesky): Connect your accounts in the "Connect" tab. Then use the wizard to post directly.',
+        'BUFFER POSTING (Facebook, TikTok, Instagram): In Step 4 of the wizard, click the purple CSV button.',
+        'A file will download to your computer.',
+        'Go to Buffer.com → pick your channel → Settings → Bulk Upload.',
+        'Upload the CSV file. Buffer will schedule your posts.',
+        'RECURRING POSTS: Use Step 5 of the wizard to set weekly or monthly schedules. Download the CSV with multiple dates already filled in.',
+      ],
+      tip: '💡 Pro Tip: Best times — LinkedIn 8am Monday, Instagram 11am Tuesday, TikTok 7pm any day. You can set your default times in Settings.',
+      example: 'One piece of content → one CSV file → upload to Buffer → done. Buffer posts it for you at the right time.',
+    },
+    settings: {
+      title: '⚙️ Settings — Your Profile & Preferences',
+      intro: 'Set up your profile, default posting times, and manage your data here.',
+      steps: [
+        'Click the gear icon ⚙️ at the bottom of the left sidebar.',
+        'PROFILE & BRAND: Upload your logo. Set your display name and tagline.',
+        'POSTING DEFAULTS: Set what time you want to post on each platform. This saves time when scheduling.',
+        'Set your default schedule pattern (once, weekly, bi-weekly, monthly).',
+        'DATA: Click "Export" to download all your content ideas and activity as a JSON file.',
+        'Click "Clear Cache" to reset research findings if they feel outdated.',
+        'Click "Reset Queue" to clear your approved posts and start fresh.',
+      ],
+      tip: '💡 Pro Tip: Set your posting times once and forget them. The app will use them every time you schedule a post.',
+      example: 'Your logo and name appear in the sidebar. Upload a clean square image for best results.',
+    },
+  };
+
+  const current = content[tab];
+
+  return(
+    <div style={{position:'fixed',top:0,left:0,right:0,bottom:0,background:'rgba(0,0,0,0.55)',zIndex:1000,display:'flex',alignItems:'center',justifyContent:'center',padding:16}} onClick={onClose}>
+      <div style={{background:'#fff',borderRadius:16,width:'100%',maxWidth:760,maxHeight:'90vh',overflow:'hidden',display:'flex',flexDirection:'column',boxShadow:'0 20px 60px rgba(0,0,0,0.3)'}} onClick={e=>e.stopPropagation()}>
+
+        {/* Header */}
+        <div style={{background:NAVY,padding:'16px 20px',display:'flex',alignItems:'center',justifyContent:'space-between',flexShrink:0}}>
+          <div>
+            <div style={{fontSize:16,fontWeight:700,color:'#fff'}}>📖 User Guide</div>
+            <div style={{fontSize:11,color:'#94a3b8',marginTop:2}}>Strategic Honesty Scheduler — How to use every feature</div>
+          </div>
+          <button onClick={onClose} style={{width:32,height:32,borderRadius:'50%',background:'rgba(255,255,255,0.1)',border:'none',color:'#fff',fontSize:18,cursor:'pointer',display:'flex',alignItems:'center',justifyContent:'center',flexShrink:0}}>×</button>
+        </div>
+
+        <div style={{display:'flex',flex:1,overflow:'hidden'}}>
+
+          {/* Left tabs */}
+          <div style={{width:160,background:'#f8fafc',borderRight:`1px solid ${C.border}`,flexShrink:0,overflowY:'auto'}}>
+            {tabs.map(t=>(
+              <div key={t.id} onClick={()=>setTab(t.id)} style={{padding:'12px 14px',cursor:'pointer',borderLeft:`3px solid ${tab===t.id?GOLD:'transparent'}`,background:tab===t.id?'#fff':'transparent',transition:'all .12s'}}>
+                <div style={{fontSize:16,marginBottom:3}}>{t.icon}</div>
+                <div style={{fontSize:12,fontWeight:tab===t.id?700:400,color:tab===t.id?NAVY:C.muted,lineHeight:1.3}}>{t.label}</div>
+              </div>
+            ))}
+          </div>
+
+          {/* Content */}
+          <div style={{flex:1,overflowY:'auto',padding:24}}>
+            <div style={{fontSize:15,fontWeight:700,color:NAVY,marginBottom:6}}>{current.title}</div>
+            <div style={{fontSize:13,color:C.muted,marginBottom:16,lineHeight:1.6}}>{current.intro}</div>
+
+            {/* Steps */}
+            <div style={{marginBottom:16}}>
+              <div style={{fontSize:11,fontWeight:700,color:GOLD,textTransform:'uppercase',letterSpacing:'0.08em',marginBottom:10}}>Step by Step</div>
+              {current.steps.map((step,i)=>(
+                <div key={i} style={{display:'flex',gap:10,marginBottom:10,alignItems:'flex-start'}}>
+                  <div style={{width:24,height:24,borderRadius:'50%',background:NAVY,color:'#fff',fontSize:11,fontWeight:700,display:'flex',alignItems:'center',justifyContent:'center',flexShrink:0,marginTop:1}}>{i+1}</div>
+                  <div style={{fontSize:13,color:C.text,lineHeight:1.6,flex:1}}>{step}</div>
+                </div>
+              ))}
+            </div>
+
+            {/* Example */}
+            <div style={{background:'#fffdf5',border:`1px solid ${GOLD}44`,borderLeft:`3px solid ${GOLD}`,borderRadius:8,padding:'10px 14px',marginBottom:12}}>
+              <div style={{fontSize:11,fontWeight:700,color:GOLD,marginBottom:4}}>HOW IT WORKS</div>
+              <div style={{fontSize:12,color:'#78350f',lineHeight:1.6}}>{current.example}</div>
+            </div>
+
+            {/* Tip */}
+            <div style={{background:'#f0fdf4',border:'1px solid #bbf7d0',borderRadius:8,padding:'10px 14px'}}>
+              <div style={{fontSize:13,color:'#166534',lineHeight:1.6}}>{current.tip}</div>
+            </div>
+          </div>
+        </div>
+
+        {/* Footer */}
+        <div style={{padding:'12px 20px',borderTop:`1px solid ${C.border}`,background:'#f8fafc',display:'flex',alignItems:'center',justifyContent:'space-between',flexShrink:0}}>
+          <div style={{fontSize:11,color:C.muted}}>Be Good. Do Good. Do Well. — StrategicHonesty.com</div>
+          <button onClick={onClose} style={{padding:'6px 18px',background:GREEN,color:'#fff',border:'none',borderRadius:7,fontSize:12,fontWeight:600,cursor:'pointer'}}>Got it ✓</button>
+        </div>
+
+      </div>
+    </div>
+  );
+}
+
 function getUserId() {
   let id=localStorage.getItem('sh_user_id');
   if(!id){id='user_'+Math.random().toString(36).slice(2,10);localStorage.setItem('sh_user_id',id);}
@@ -724,6 +897,7 @@ export default function SocialHub() {
   const [coreIdea,setCoreIdea]=useState('');
   const [channelsOpen,setChannelsOpen]=useState(true);
   const [quickConnectOpen,setQuickConnectOpen]=useState(false);
+  const [helpOpen,setHelpOpen]=useState(false);
   const [upcomingOpen,setUpcomingOpen]=useState(true);
   const [viralIdeasOpen,setViralIdeasOpen]=useState(true);
   const [approvedOpen,setApprovedOpen]=useState(true);
@@ -862,6 +1036,10 @@ export default function SocialHub() {
         </div>
         {/* Settings + Footer */}
         <div style={{marginTop:'auto',borderTop:`1px solid ${C.border}`}}>
+          <div onClick={()=>setHelpOpen(true)} style={{display:'flex',alignItems:'center',gap:9,padding:'10px 13px',cursor:'pointer',fontSize:13,color:C.muted,fontWeight:400,background:'transparent',transition:'all .12s'}} onMouseEnter={e=>e.currentTarget.style.background='#f8fafc'} onMouseLeave={e=>e.currentTarget.style.background='transparent'}>
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+            <span style={{flex:1}}>Help & Guide</span>
+          </div>
           <div onClick={()=>setMainTab('settings')} style={{display:'flex',alignItems:'center',gap:9,padding:'10px 13px',cursor:'pointer',fontSize:13,color:mainTab==='settings'?'#fff':C.muted,fontWeight:mainTab==='settings'?600:400,background:mainTab==='settings'?GREEN:'transparent',transition:'all .12s'}} onMouseEnter={e=>{if(mainTab!=='settings')e.currentTarget.style.background='#f8fafc';}} onMouseLeave={e=>{if(mainTab!=='settings')e.currentTarget.style.background='transparent';}}>
             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
             <span style={{flex:1}}>Settings</span>
@@ -1232,6 +1410,7 @@ export default function SocialHub() {
         </div>
       </div>
     </div>
+    {helpOpen&&<HelpModal onClose={()=>setHelpOpen(false)}/>}
   );
 }
 // Fri May 22 20:14:54 CDT 2026
