@@ -134,7 +134,6 @@ function LogoMenu({onHome}) {
 }
 
 function SettingsPanel() {
-  const GREEN='#24b47e';
   const C={text:'#0f172a',muted:'#64748b',border:'#E2E8F0',card:'#FFFFFF',label:'#334155',greenLight:'#E6F7F2',greenDark:'#0f6e56',navy:'#1E293B'};
   const F='-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif';
   const inputStyle={width:'100%',border:`1px solid ${C.border}`,borderRadius:7,padding:'8px 10px',fontSize:13,color:C.text,fontFamily:F,outline:'none',marginBottom:10,background:'#fff',boxSizing:'border-box'};
