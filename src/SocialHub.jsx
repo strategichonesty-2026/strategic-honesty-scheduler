@@ -1,4 +1,3 @@
-/* eslint-disable */
 import { useState, useEffect, useCallback, useRef } from "react";
 import MediaStudio from "./MediaStudio";
 
@@ -114,7 +113,7 @@ function PlatformIcon({id,size=16,color='currentColor'}) {
     <svg style={s} viewBox="0 0 192 192" fill={color}><path d="M141.537 88.988a66.667 66.667 0 0 0-2.518-1.143c-1.482-27.307-16.403-42.94-41.457-43.1h-.34c-14.986 0-27.449 6.396-35.12 18.036l13.779 9.452c5.73-8.695 14.724-10.548 21.348-10.548h.23c8.249.053 14.474 2.452 18.502 7.13 2.932 3.405 4.893 8.111 5.864 14.05-7.314-1.243-15.224-1.626-23.68-1.14-23.82 1.371-39.134 15.264-38.105 34.568.522 9.792 5.4 18.216 13.735 23.719 7.047 4.652 16.124 6.927 25.557 6.412 12.458-.683 22.231-5.436 29.049-14.127 5.178-6.6 8.453-15.153 9.899-25.93 5.937 3.583 10.337 8.298 12.767 13.966 4.132 9.635 4.373 25.468-8.546 38.376C123.553 163.2 108.228 168.915 88 169.02c-22.22-.12-39.015-7.285-49.892-21.305C28.615 134.27 23.536 116.38 23.333 94c.203-22.379 5.282-40.269 15.076-53.715C49.185 26.715 65.98 19.55 88.2 19.43c22.389.12 39.353 7.295 50.408 21.325 5.486 6.944 9.579 15.64 12.208 25.755l16.17-4.322c-3.164-12.003-8.312-22.597-15.498-31.58C136.642 13.586 115.612 3.634 88.363 3.5h-.37C61.12 3.634 40.257 13.636 26.5 30.573 14.343 45.446 8.08 66.25 7.9 93.934L7.9 94l.002.066c.18 27.684 6.443 48.488 18.6 63.361C40.256 174.364 61.12 184.366 88 184.5h.37c23.863-.12 40.697-6.42 54.488-20.2 18.421-18.414 17.843-41.485 11.802-55.649-4.413-10.289-12.809-18.593-23.123-23.663zm-40.24 40.498c-10.45.588-21.286-4.098-21.82-14.135-.397-7.442 5.296-15.746 22.461-16.735 1.966-.114 3.895-.169 5.79-.169 6.235 0 12.068.606 17.371 1.765-1.978 24.702-13.574 28.674-23.802 29.274z"/></svg>
   );
   // fallback
-  return <span style={{fontSize:size,lineHeight:1}}>{id==='li'?'💼':id==='tt'?'🎵':id==='ig'?'📸':id==='fb'?'👥':id==='tw'?'𝕏':'🧵'}</span>;
+  return <span style={{fontSize:size,lineHeight:1}}>{id==='li'?'💼':id==='tt'?'🎵':id==='ig'?'📸':id==='fb'?'👥':id==='tw'?'X':'🧵'}</span>;
 }
 
 function LogoMenu({onHome}) {
@@ -940,7 +939,7 @@ export default function SocialHub() {
             <MediaStudio
               approvedQueue={approvedQueue}
               onAttachToPost={(url)=>{
-                setWizardImage(url);
+                setWizardImageUrl(url);
                 setMainTab('wizard');
               }}
             />
@@ -1248,7 +1247,7 @@ export default function SocialHub() {
         </div>
         <div style={{borderBottom:`1px solid ${C.border}`}}>
           <div onClick={()=>setViralIdeasOpen(o=>!o)} style={{display:'flex',alignItems:'center',justifyContent:'space-between',padding:'11px 14px',cursor:'pointer',background:GREEN,borderRadius:'0',transition:'background .12s'}}>
-            <div style={{display:'flex',alignItems:'center',gap:6}}><span style={{fontSize:11,fontWeight:600,color:C.muted,textTransform:'uppercase',letterSpacing:'0.07em'}}>💡 Viral Ideas</span>{viralIdeasSidebar.length>0&&<span style={{fontSize:10,padding:'1px 5px',borderRadius:7,background:C.purpleLight,color:C.purple,fontWeight:600}}>{viralIdeasSidebar.length}</span>}</div>
+            <div style={{display:'flex',alignItems:'center',gap:6}}><span style={{fontSize:11,fontWeight:600,color:C.muted,textTransform:'uppercase',letterSpacing:'0.07em'}}>Viral Ideas</span>{viralIdeasSidebar.length>0&&<span style={{fontSize:10,padding:'1px 5px',borderRadius:7,background:C.purpleLight,color:C.purple,fontWeight:600}}>{viralIdeasSidebar.length}</span>}</div>
             <div style={{display:'flex',alignItems:'center',gap:6}}><button onClick={e=>{e.stopPropagation();setMainTab('ideas');}} style={{fontSize:10,color:C.purple,background:'none',border:'none',cursor:'pointer',fontWeight:600,padding:0}}>View all</button><span style={{fontSize:9,color:C.muted,transform:viralIdeasOpen?'rotate(180deg)':'rotate(0)',transition:'transform .2s',display:'inline-block'}}>▼</span></div>
           </div>
           {viralIdeasOpen&&<div className='accordion-content' style={{padding:'0 12px 10px'}}>{viralIdeasSidebar.length?viralIdeasSidebar.map(idea=>(<div key={idea.id} onClick={()=>setMainTab('ideas')} style={{display:'flex',alignItems:'center',gap:8,padding:'7px 9px',borderRadius:9,cursor:'pointer',marginBottom:3,background:'#f8fafc',border:`1px solid ${C.border}`,transition:'all .12s'}} onMouseEnter={e=>e.currentTarget.style.background='#f1f5f9'} onMouseLeave={e=>e.currentTarget.style.background='#f8fafc'}><div style={{width:6,height:6,borderRadius:'50%',background:C.gold,flexShrink:0}}/><div style={{fontSize:12,color:C.text,flex:1,overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap',fontWeight:500}}>{idea.title}</div><span style={{fontSize:11,color:C.muted}}>›</span></div>)):<div style={{fontSize:11,color:C.muted,fontStyle:'italic',padding:'4px 2px'}}>Run research to generate ideas</div>}</div>}
@@ -1262,7 +1261,7 @@ export default function SocialHub() {
             {approvedQueue.length===0&&<div style={{fontSize:11,color:C.muted,fontStyle:'italic',padding:'4px 2px'}}>No approved posts yet</div>}
             {approvedQueue.slice(0,5).map((item,i)=>(<div key={item.id||i} style={{display:'flex',alignItems:'flex-start',gap:8,padding:'8px 10px',borderRadius:10,marginBottom:5,background:'#f8fafc',border:`1px solid ${C.border}`,borderLeft:`3px solid ${item.color||C.purple}`,transition:'all .12s'}} onMouseEnter={e=>e.currentTarget.style.background='#f1f5f9'} onMouseLeave={e=>e.currentTarget.style.background='#f8fafc'}><span style={{fontSize:14,flexShrink:0,marginTop:1}}>{item.icon||'📝'}</span><div style={{flex:1,minWidth:0}}><div style={{fontSize:12,fontWeight:600,color:C.text,overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap'}}>{item.title||'Approved post'}</div><div style={{fontSize:10,color:C.muted,marginTop:2}}>{item.platform} · Approved</div><div style={{fontSize:10,color:'#94a3b8',overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap',marginTop:2}}>{(item.content||'').slice(0,48)}…</div></div></div>))}
             {approvedQueue.length>5&&<div style={{fontSize:11,color:C.muted,textAlign:'center',padding:'4px 0'}}>+{approvedQueue.length-5} more</div>}
-            {approvedQueue.length>0&&<button onClick={()=>setMainTab('ideas')} style={{width:'100%',marginTop:8,padding:'8px 0',fontSize:12,fontWeight:600,background:C.purple,color:'#fff',border:'none',borderRadius:9,cursor:'pointer',boxShadow:'0 2px 6px rgba(124,58,237,0.25)'}}>📥 Export & Publish</button>}
+            {approvedQueue.length>0&&<button onClick={()=>setMainTab('ideas')} style={{width:'100%',marginTop:8,padding:'8px 0',fontSize:12,fontWeight:600,background:C.purple,color:'#fff',border:'none',borderRadius:9,cursor:'pointer',boxShadow:'0 2px 6px rgba(124,58,237,0.25)'}}>Export & Publish</button>}
           </div>}
         </div>
       </div>
