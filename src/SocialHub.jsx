@@ -1207,6 +1207,14 @@ export default function SocialHub() {
 
         </div>
       </div>
+      </div>
+      </div>
+      </div>
+      </div>
+      </div>
+      </div>
+      </div>
+      </div>
 
       <RightPanel
         previewContent={previewContent}
