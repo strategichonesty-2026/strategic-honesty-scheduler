@@ -7,7 +7,7 @@ const BACKEND = 'https://strategic-honesty-scheduler-production.up.railway.app';
 const F = '-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif';
 
 const C = {
-  bg:'#F7F8FA', sidebar:'#FFFFFF', card:'#FFFFFF', border:'#E5E7EB',
+  bg:'#F4F6F8', sidebar:'#FFFFFF', card:'#FFFFFF', border:'#E2E8F0',
   text:'#0f172a', muted:'#64748b', label:'#334155',
   green:'#24b47e', greenLight:'#E6F7F2', greenDark:'#0f6e56',
   gold:'#BA7517', goldLight:'#FEF3C7',
@@ -15,6 +15,8 @@ const C = {
   blue:'#0A66C2', blueLight:'#EFF6FF',
   red:'#DC2626', redLight:'#FEE2E2',
   navy:'#1E293B',
+  shadow:'0 1px 3px rgba(0,0,0,0.07)',
+  shadowMd:'0 4px 12px rgba(0,0,0,0.08)',
 };
 
 const CONTENT_TYPES = [
@@ -500,6 +502,11 @@ export default function SocialHub() {
   const [previewPlatform,setPreviewPlatform]=useState('li');
   const [approvedQueue,setApprovedQueue]=useState(()=>{try{return JSON.parse(localStorage.getItem('sh_ci_queue')||'[]');}catch{return[];}});
   const [coreIdea,setCoreIdea]=useState('');
+  const [channelsOpen,setChannelsOpen]=useState(true);
+  const [quickConnectOpen,setQuickConnectOpen]=useState(false);
+  const [upcomingOpen,setUpcomingOpen]=useState(true);
+  const [viralIdeasOpen,setViralIdeasOpen]=useState(true);
+  const [approvedOpen,setApprovedOpen]=useState(true);
   const [activityLog,setActivityLog]=useState(()=>{try{return JSON.parse(localStorage.getItem('sh_activity_log')||'[]');}catch{return[];}});
   function saveToLog(entry){const log={id:Date.now(),ts:new Date().toISOString(),...entry};setActivityLog(prev=>{const next=[log,...prev].slice(0,100);localStorage.setItem('sh_activity_log',JSON.stringify(next));return next;});}
   const [postType,setPostType]=useState(null);
@@ -588,16 +595,16 @@ export default function SocialHub() {
 
   return (
     <div style={{display:'grid',gridTemplateColumns:'220px 1fr 280px',minHeight:'100vh',background:C.bg,fontFamily:F,fontSize:14}}>
-      <style>{`@keyframes spin{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}@keyframes blink{0%,100%{opacity:1}50%{opacity:0}}*{box-sizing:border-box}::-webkit-scrollbar{width:4px;height:4px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:#d1d5db;border-radius:2px}`}</style>
+      <style>{`@keyframes spin{from{transform:rotate(0deg)}to{transform:rotate(360deg)}}@keyframes blink{0%,100%{opacity:1}50%{opacity:0}}@keyframes fadeIn{from{opacity:0;transform:translateY(-4px)}to{opacity:1;transform:translateY(0)}}*{box-sizing:border-box}::-webkit-scrollbar{width:4px;height:4px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:#cbd5e1;border-radius:4px}.accordion-content{animation:fadeIn 0.15s ease}.nav-item:hover{background:#f1f5f9!important}`}</style>
 
       {/* LEFT SIDEBAR */}
       <div style={{background:C.sidebar,borderRight:`1px solid ${C.border}`,display:'flex',flexDirection:'column',height:'100vh',position:'sticky',top:0,overflowY:'auto'}}>
-        <div style={{padding:'16px 14px 12px',borderBottom:`1px solid ${C.border}`}}>
-          <div style={{display:'flex',alignItems:'center',gap:10,marginBottom:14}}>
-            <div style={{width:36,height:36,background:GREEN,borderRadius:9,display:'flex',alignItems:'center',justifyContent:'center',color:'#fff',fontSize:16,fontWeight:700,flexShrink:0}}>S</div>
-            <div><div style={{fontSize:14,fontWeight:700,color:C.text,lineHeight:1.2}}>Strategic Honesty</div><div style={{fontSize:10,color:C.muted}}>Content Platform</div></div>
+        <div style={{padding:'16px 14px 14px',borderBottom:`1px solid ${C.border}`}}>
+          <div onClick={()=>setMainTab('calendar')} title='Go to Dashboard' style={{display:'flex',alignItems:'center',gap:10,marginBottom:14,cursor:'pointer',borderRadius:10,padding:'4px 6px',transition:'background .15s'}} onMouseEnter={e=>e.currentTarget.style.background='#f1f5f9'} onMouseLeave={e=>e.currentTarget.style.background='transparent'}>
+            <div style={{width:38,height:38,background:GREEN,borderRadius:10,display:'flex',alignItems:'center',justifyContent:'center',color:'#fff',fontSize:17,fontWeight:800,flexShrink:0,boxShadow:'0 2px 6px rgba(36,180,126,0.3)'}}>S</div>
+            <div><div style={{fontSize:13,fontWeight:700,color:C.text,lineHeight:1.2}}>Strategic Honesty</div><div style={{fontSize:10,color:C.muted,marginTop:1}}>Content Platform</div></div>
           </div>
-          <button onClick={()=>{wizardReset();setMainTab('wizard');}} style={{width:'100%',padding:'9px 0',background:GREEN,color:'#fff',border:'none',borderRadius:8,fontSize:13,fontWeight:600,cursor:'pointer',display:'flex',alignItems:'center',justifyContent:'center',gap:6}}>✦ New Post</button>
+          <button onClick={()=>{wizardReset();setMainTab('wizard');}} style={{width:'100%',padding:'9px 0',background:GREEN,color:'#fff',border:'none',borderRadius:9,fontSize:13,fontWeight:600,cursor:'pointer',display:'flex',alignItems:'center',justifyContent:'center',gap:6,boxShadow:'0 2px 6px rgba(36,180,126,0.25)'}}>✦ New Post</button>
         </div>
         <div style={{padding:'11px 13px',borderBottom:`1px solid ${C.border}`}}>
           <div style={{fontSize:10,fontWeight:600,color:C.muted,textTransform:'uppercase',letterSpacing:'0.07em',marginBottom:6}}>🎯 Core Idea or Insight</div>
@@ -620,35 +627,25 @@ export default function SocialHub() {
             </div>
           ))}
         </nav>
-        <div style={{borderTop:`1px solid ${C.border}`,padding:'9px 8px'}}>
-          <div style={{display:'flex',alignItems:'center',justifyContent:'space-between',padding:'3px 5px',marginBottom:5}}>
-            <span style={{fontSize:10,fontWeight:600,color:C.muted,textTransform:'uppercase',letterSpacing:'0.07em'}}>Channels</span>
-            <button onClick={()=>setMainTab('connect')} style={{background:'none',border:'none',cursor:'pointer',color:GREEN,fontSize:16,fontWeight:'bold',padding:'0 2px',lineHeight:1}}>+</button>
+        <div style={{borderTop:`1px solid ${C.border}`}}>
+          <div onClick={()=>setChannelsOpen(o=>!o)} style={{display:'flex',alignItems:'center',justifyContent:'space-between',padding:'10px 13px',cursor:'pointer',transition:'background .12s'}} onMouseEnter={e=>e.currentTarget.style.background='#f8fafc'} onMouseLeave={e=>e.currentTarget.style.background='transparent'}>
+            <div style={{display:'flex',alignItems:'center',gap:6}}><span style={{fontSize:10,fontWeight:600,color:C.muted,textTransform:'uppercase',letterSpacing:'0.07em'}}>Channels</span><span style={{fontSize:10,padding:'1px 5px',borderRadius:7,background:'#f1f5f9',color:C.muted,fontWeight:500}}>{CONNECTED_CHANNELS.length}</span></div>
+            <div style={{display:'flex',alignItems:'center',gap:4}}><button onClick={e=>{e.stopPropagation();setMainTab('connect');}} style={{background:'none',border:'none',cursor:'pointer',color:GREEN,fontSize:16,fontWeight:'bold',padding:'0 2px',lineHeight:1}}>+</button><span style={{fontSize:9,color:C.muted,transform:channelsOpen?'rotate(180deg)':'rotate(0)',transition:'transform .2s',display:'inline-block'}}>▼</span></div>
           </div>
-          {CONNECTED_CHANNELS.map(ch=>(
-            <div key={ch.id} onClick={()=>setSelectedChannel(selectedChannel===ch.id?null:ch.id)} style={{display:'flex',alignItems:'center',gap:8,padding:'6px 7px',borderRadius:8,cursor:'pointer',background:selectedChannel===ch.id?C.bg:'transparent',marginBottom:2,transition:'background .12s'}} onMouseEnter={e=>{if(selectedChannel!==ch.id)e.currentTarget.style.background='#f9fafb';}} onMouseLeave={e=>{if(selectedChannel!==ch.id)e.currentTarget.style.background='transparent';}}>
-              <Avatar ch={ch} size={28}/><div style={{flex:1,minWidth:0}}><div style={{fontSize:12,fontWeight:500,color:C.text,overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap'}}>{ch.name}</div><div style={{fontSize:10,color:C.muted}}>{ch.type}</div></div><div style={{...statusDot(ch.status)}}/>
-            </div>
-          ))}
+          {channelsOpen&&<div className='accordion-content' style={{padding:'0 8px 8px'}}>{CONNECTED_CHANNELS.map(ch=>(<div key={ch.id} onClick={()=>setSelectedChannel(selectedChannel===ch.id?null:ch.id)} style={{display:'flex',alignItems:'center',gap:8,padding:'7px 8px',borderRadius:9,cursor:'pointer',background:selectedChannel===ch.id?'#f1f5f9':'transparent',marginBottom:2,transition:'background .12s'}} onMouseEnter={e=>{if(selectedChannel!==ch.id)e.currentTarget.style.background='#f8fafc';}} onMouseLeave={e=>{if(selectedChannel!==ch.id)e.currentTarget.style.background='transparent';}}><Avatar ch={ch} size={28}/><div style={{flex:1,minWidth:0}}><div style={{fontSize:12,fontWeight:500,color:C.text,overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap'}}>{ch.name}</div><div style={{fontSize:10,color:C.muted}}>{ch.type}</div></div><div style={{...statusDot(ch.status)}}/></div>))}</div>}
         </div>
-        <div style={{borderTop:`1px solid ${C.border}`,padding:'9px 8px',paddingBottom:12}}>
-          <div style={{fontSize:10,fontWeight:600,color:C.muted,textTransform:'uppercase',letterSpacing:'0.07em',padding:'0 5px',marginBottom:5}}>Quick Connect</div>
-          {[{id:'li',name:'LinkedIn',icon:'💼',connected:isLiConnected,fn:connectLinkedIn},{id:'yt',name:'YouTube',icon:'▶️',connected:isYtConnected,fn:connectYouTube},{id:'bs',name:'Bluesky',icon:'🦋',connected:bskyConnected,fn:()=>setMainTab('connect')}].map(p=>(
-            <div key={p.id} onClick={p.connected?null:p.fn} style={{display:'flex',alignItems:'center',gap:8,padding:'5px 7px',borderRadius:8,cursor:p.connected?'default':'pointer',marginBottom:2,opacity:p.connected?0.7:1}}>
-              <div style={{width:26,height:26,borderRadius:7,background:'#f3f4f6',border:`1px solid ${C.border}`,display:'flex',alignItems:'center',justifyContent:'center',fontSize:13,position:'relative',flexShrink:0}}>
-                {p.icon}
-                {p.connected&&<span style={{position:'absolute',bottom:-3,right:-3,width:11,height:11,borderRadius:'50%',background:'#22c55e',display:'flex',alignItems:'center',justifyContent:'center',fontSize:7,color:'#fff',border:'1.5px solid #fff'}}>✓</span>}
-                {!p.connected&&<span style={{position:'absolute',bottom:-3,right:-3,width:11,height:11,borderRadius:'50%',background:'#e5e7eb',display:'flex',alignItems:'center',justifyContent:'center',fontSize:8,color:C.muted,border:'1.5px solid #fff',fontWeight:'bold'}}>+</span>}
-              </div>
-              <span style={{fontSize:12,color:p.connected?'#16a34a':C.muted}}>{p.connected?`${p.name} ✓`:p.name}</span>
-            </div>
-          ))}
+        <div style={{borderTop:`1px solid ${C.border}`,paddingBottom:8}}>
+          <div onClick={()=>setQuickConnectOpen(o=>!o)} style={{display:'flex',alignItems:'center',justifyContent:'space-between',padding:'10px 13px',cursor:'pointer',transition:'background .12s'}} onMouseEnter={e=>e.currentTarget.style.background='#f8fafc'} onMouseLeave={e=>e.currentTarget.style.background='transparent'}>
+            <span style={{fontSize:10,fontWeight:600,color:C.muted,textTransform:'uppercase',letterSpacing:'0.07em'}}>Quick Connect</span>
+            <span style={{fontSize:9,color:C.muted,transform:quickConnectOpen?'rotate(180deg)':'rotate(0)',transition:'transform .2s',display:'inline-block'}}>▼</span>
+          </div>
+          {quickConnectOpen&&<div className='accordion-content' style={{padding:'0 8px 4px'}}>{[{id:'li',name:'LinkedIn',icon:'💼',connected:isLiConnected,fn:connectLinkedIn},{id:'yt',name:'YouTube',icon:'▶️',connected:isYtConnected,fn:connectYouTube},{id:'bs',name:'Bluesky',icon:'🦋',connected:bskyConnected,fn:()=>setMainTab('connect')}].map(p=>(<div key={p.id} onClick={p.connected?null:p.fn} style={{display:'flex',alignItems:'center',gap:8,padding:'6px 8px',borderRadius:8,cursor:p.connected?'default':'pointer',marginBottom:2,opacity:p.connected?0.75:1,transition:'all .12s'}} onMouseEnter={e=>{if(!p.connected)e.currentTarget.style.background='#f8fafc';}} onMouseLeave={e=>{e.currentTarget.style.background='transparent';}}><div style={{width:27,height:27,borderRadius:8,background:'#f8fafc',border:`1px solid ${C.border}`,display:'flex',alignItems:'center',justifyContent:'center',fontSize:13,position:'relative',flexShrink:0}}>{p.icon}{p.connected&&<span style={{position:'absolute',bottom:-3,right:-3,width:11,height:11,borderRadius:'50%',background:'#22c55e',display:'flex',alignItems:'center',justifyContent:'center',fontSize:7,color:'#fff',border:'1.5px solid #fff'}}>✓</span>}{!p.connected&&<span style={{position:'absolute',bottom:-3,right:-3,width:11,height:11,borderRadius:'50%',background:'#e2e8f0',display:'flex',alignItems:'center',justifyContent:'center',fontSize:8,color:C.muted,border:'1.5px solid #fff',fontWeight:'bold'}}>+</span>}</div><span style={{fontSize:12,color:p.connected?'#16a34a':C.muted,fontWeight:p.connected?500:400}}>{p.connected?`${p.name} ✓`:p.name}</span></div>))}</div>}
         </div>
       </div>
 
       {/* CENTER PANEL */}
       <div style={{display:'flex',flexDirection:'column',minHeight:'100vh',overflow:'hidden'}}>
-        <div style={{background:C.sidebar,borderBottom:`1px solid ${C.border}`,padding:'12px 20px',display:'flex',alignItems:'center',gap:12,flexShrink:0}}>
+        <div style={{background:C.sidebar,borderBottom:`1px solid ${C.border}`,padding:'12px 20px',display:'flex',alignItems:'center',gap:12,flexShrink:0,boxShadow:'0 1px 0 #E2E8F0'}}>
           <div style={{fontSize:15,fontWeight:700,color:C.text,flex:1}}>{NAV.find(n=>n.id===mainTab)?.icon} {NAV.find(n=>n.id===mainTab)?.label||'Dashboard'}</div>
           <div style={{fontSize:11,color:C.muted}}>{new Date().toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric',year:'numeric'})}</div>
           <button onClick={()=>{wizardReset();setMainTab('wizard');}} style={{padding:'6px 14px',borderRadius:7,fontSize:12,cursor:'pointer',border:'none',background:GREEN,color:'#fff',fontWeight:600}}>✦ New post</button>
@@ -941,68 +938,52 @@ export default function SocialHub() {
       <div style={{background:C.sidebar,borderLeft:`1px solid ${C.border}`,display:'flex',flexDirection:'column',height:'100vh',position:'sticky',top:0,overflowY:'auto'}}>
         <div style={{padding:'13px 13px 0',borderBottom:`1px solid ${C.border}`}}>
           <div style={{fontSize:11,fontWeight:600,color:C.muted,textTransform:'uppercase',letterSpacing:'0.07em',marginBottom:9}}>Platform Preview</div>
-          <div style={{display:'flex',gap:0,overflowX:'auto',paddingBottom:1}}>
-            {['li','tt','ig','fb','tw','th'].map(pid=>(
-              <button key={pid} onClick={()=>setPreviewPlatform(pid)} style={{padding:'5px 8px',fontSize:11,background:'transparent',border:'none',borderBottom:`2px solid ${previewPlatform===pid?C.blue:'transparent'}`,color:previewPlatform===pid?C.blue:C.muted,cursor:'pointer',fontWeight:previewPlatform===pid?600:400,whiteSpace:'nowrap',transition:'all .12s'}}>
-                {previewPlatformMeta[pid]?.label}
+          <div style={{display:'flex',gap:2,overflowX:'auto',paddingBottom:0}}>
+            {[{id:'li',label:'LinkedIn',color:'#0A66C2'},{id:'tt',label:'TikTok',color:'#010101'},{id:'ig',label:'Instagram',color:'#E1306C'},{id:'fb',label:'Facebook',color:'#1877F2'},{id:'tw',label:'X',color:'#333'},{id:'th',label:'Threads',color:'#444'}].map(p=>(
+              <button key={p.id} onClick={()=>setPreviewPlatform(p.id)} style={{padding:'5px 9px',fontSize:11,background:previewPlatform===p.id?p.color+'15':'transparent',border:'none',borderBottom:`2px solid ${previewPlatform===p.id?p.color:'transparent'}`,color:previewPlatform===p.id?p.color:C.muted,cursor:'pointer',fontWeight:previewPlatform===p.id?600:400,whiteSpace:'nowrap',transition:'all .15s',borderRadius:'4px 4px 0 0'}}>
+                {p.label}
               </button>
             ))}
           </div>
         </div>
         <div style={{padding:'11px 13px',borderBottom:`1px solid ${C.border}`}}>
-          <div style={{background:'#f9fafb',border:`1px solid ${C.border}`,borderRadius:10,padding:'10px 11px',minHeight:110}}>
-            <div style={{display:'flex',alignItems:'center',gap:7,marginBottom:8}}>
-              <div style={{width:32,height:32,borderRadius:'50%',background:'#e5e7eb',display:'flex',alignItems:'center',justifyContent:'center',fontSize:13,fontWeight:700,color:C.muted,flexShrink:0}}>G</div>
-              <div><div style={{fontSize:12,fontWeight:600,color:C.text}}>Gopu Shrestha</div><div style={{fontSize:10,color:C.muted}}>{previewPlatformMeta[previewPlatform]?.label} · Just now</div></div>
-              <div style={{marginLeft:'auto',fontSize:15}}>{previewPlatformMeta[previewPlatform]?.icon}</div>
+          <div style={{background:'#f8fafc',border:`1px solid ${C.border}`,borderRadius:12,padding:'12px 13px',minHeight:120,boxShadow:'inset 0 1px 3px rgba(0,0,0,0.03)'}}>
+            <div style={{display:'flex',alignItems:'center',gap:8,marginBottom:10}}>
+              <div style={{width:34,height:34,borderRadius:'50%',background:GREEN,display:'flex',alignItems:'center',justifyContent:'center',fontSize:13,fontWeight:700,color:'#fff',flexShrink:0}}>G</div>
+              <div style={{flex:1}}><div style={{fontSize:12,fontWeight:600,color:C.text}}>Gopu Shrestha</div><div style={{fontSize:10,color:C.muted,marginTop:1}}>{previewPlatformMeta[previewPlatform]?.label} · Just now</div></div>
+              <div style={{fontSize:16}}>{previewPlatformMeta[previewPlatform]?.icon}</div>
             </div>
-            <div style={{fontSize:12,color:C.text,lineHeight:1.6,whiteSpace:'pre-wrap',wordBreak:'break-word',maxHeight:170,overflow:'hidden'}}>
-              {previewContent?(previewContent.length>280?previewContent.slice(0,280)+'…':previewContent):<span style={{color:'#ccc',fontStyle:'italic'}}>Preview appears here as you write</span>}
+            <div style={{fontSize:12,color:'#334155',lineHeight:1.65,whiteSpace:'pre-wrap',wordBreak:'break-word',maxHeight:165,overflow:'hidden'}}>
+              {previewContent?(previewContent.length>280?previewContent.slice(0,280)+'…':previewContent):<span style={{color:'#cbd5e1',fontStyle:'italic',fontSize:11}}>Preview appears here as you write…</span>}
             </div>
-            {previewContent&&<div style={{marginTop:8,display:'flex',gap:10,fontSize:11,color:C.muted,borderTop:`1px solid ${C.border}`,paddingTop:6}}><span>👍 Like</span><span>💬 Comment</span><span>↗️ Share</span></div>}
+            {previewContent&&<div style={{marginTop:10,display:'flex',gap:12,fontSize:11,color:C.muted,borderTop:`1px solid ${C.border}`,paddingTop:8}}><span style={{cursor:'pointer'}}>👍 Like</span><span style={{cursor:'pointer'}}>💬 Comment</span><span style={{cursor:'pointer'}}>↗️ Share</span></div>}
           </div>
         </div>
-        <div style={{padding:'11px 13px',borderBottom:`1px solid ${C.border}`}}>
-          <div style={{display:'flex',alignItems:'center',justifyContent:'space-between',marginBottom:8}}>
-            <div style={{fontSize:11,fontWeight:600,color:C.muted,textTransform:'uppercase',letterSpacing:'0.07em'}}>Upcoming Posts</div>
-            <button onClick={()=>setMainTab('calendar')} style={{fontSize:10,color:C.blue,background:'none',border:'none',cursor:'pointer',fontWeight:600}}>View all</button>
+        <div style={{borderBottom:`1px solid ${C.border}`}}>
+          <div onClick={()=>setUpcomingOpen(o=>!o)} style={{display:'flex',alignItems:'center',justifyContent:'space-between',padding:'11px 14px',cursor:'pointer',transition:'background .12s'}} onMouseEnter={e=>e.currentTarget.style.background='#f8fafc'} onMouseLeave={e=>e.currentTarget.style.background='transparent'}>
+            <div style={{display:'flex',alignItems:'center',gap:6}}><span style={{fontSize:11,fontWeight:600,color:C.muted,textTransform:'uppercase',letterSpacing:'0.07em'}}>Upcoming Posts</span><span style={{fontSize:10,padding:'1px 5px',borderRadius:7,background:'#f1f5f9',color:C.muted,fontWeight:500}}>{SCHEDULE_POSTS.length}</span></div>
+            <div style={{display:'flex',alignItems:'center',gap:6}}><button onClick={e=>{e.stopPropagation();setMainTab('calendar');}} style={{fontSize:10,color:C.blue,background:'none',border:'none',cursor:'pointer',fontWeight:600,padding:0}}>View all</button><span style={{fontSize:9,color:C.muted,transform:upcomingOpen?'rotate(180deg)':'rotate(0)',transition:'transform .2s',display:'inline-block'}}>▼</span></div>
           </div>
-          {SCHEDULE_POSTS.slice(0,5).map((p,i)=>(
-            <div key={i} style={{display:'flex',alignItems:'center',gap:7,padding:'5px 7px',borderRadius:7,marginBottom:3,background:'#fafafa',border:`1px solid ${C.border}`}}>
-              <div style={{width:3,height:28,borderRadius:2,background:p.color,flexShrink:0}}/>
-              <div style={{flex:1,minWidth:0}}><div style={{fontSize:12,color:C.text,overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap'}}>{p.text}</div><div style={{fontSize:10,color:C.muted}}>May {p.day}</div></div>
-            </div>
-          ))}
+          {upcomingOpen&&<div className='accordion-content' style={{padding:'0 12px 10px'}}>{SCHEDULE_POSTS.slice(0,5).map((p,i)=>(<div key={i} style={{display:'flex',alignItems:'center',gap:8,padding:'7px 9px',borderRadius:9,marginBottom:4,background:'#f8fafc',border:`1px solid ${C.border}`,transition:'all .12s'}} onMouseEnter={e=>e.currentTarget.style.background='#f1f5f9'} onMouseLeave={e=>e.currentTarget.style.background='#f8fafc'}><div style={{width:3,height:32,borderRadius:2,background:p.color,flexShrink:0}}/><div style={{flex:1,minWidth:0}}><div style={{fontSize:12,color:C.text,overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap',fontWeight:500}}>{p.text}</div><div style={{fontSize:10,color:C.muted,marginTop:2}}>May {p.day}</div></div></div>))}</div>}
         </div>
-        <div style={{padding:'11px 13px',borderBottom:`1px solid ${C.border}`}}>
-          <div style={{display:'flex',alignItems:'center',justifyContent:'space-between',marginBottom:8}}>
-            <div style={{fontSize:11,fontWeight:600,color:C.muted,textTransform:'uppercase',letterSpacing:'0.07em'}}>💡 Viral Content Ideas</div>
-            <button onClick={()=>setMainTab('ideas')} style={{fontSize:10,color:C.purple,background:'none',border:'none',cursor:'pointer',fontWeight:600}}>View all</button>
+        <div style={{borderBottom:`1px solid ${C.border}`}}>
+          <div onClick={()=>setViralIdeasOpen(o=>!o)} style={{display:'flex',alignItems:'center',justifyContent:'space-between',padding:'11px 14px',cursor:'pointer',transition:'background .12s'}} onMouseEnter={e=>e.currentTarget.style.background='#f8fafc'} onMouseLeave={e=>e.currentTarget.style.background='transparent'}>
+            <div style={{display:'flex',alignItems:'center',gap:6}}><span style={{fontSize:11,fontWeight:600,color:C.muted,textTransform:'uppercase',letterSpacing:'0.07em'}}>💡 Viral Ideas</span>{viralIdeasSidebar.length>0&&<span style={{fontSize:10,padding:'1px 5px',borderRadius:7,background:C.purpleLight,color:C.purple,fontWeight:600}}>{viralIdeasSidebar.length}</span>}</div>
+            <div style={{display:'flex',alignItems:'center',gap:6}}><button onClick={e=>{e.stopPropagation();setMainTab('ideas');}} style={{fontSize:10,color:C.purple,background:'none',border:'none',cursor:'pointer',fontWeight:600,padding:0}}>View all</button><span style={{fontSize:9,color:C.muted,transform:viralIdeasOpen?'rotate(180deg)':'rotate(0)',transition:'transform .2s',display:'inline-block'}}>▼</span></div>
           </div>
-          {viralIdeasSidebar.length?viralIdeasSidebar.map(idea=>(
-            <div key={idea.id} onClick={()=>setMainTab('ideas')} style={{display:'flex',alignItems:'center',gap:7,padding:'5px 7px',borderRadius:7,cursor:'pointer',marginBottom:3,transition:'background .12s'}} onMouseEnter={e=>e.currentTarget.style.background='#f3f4f6'} onMouseLeave={e=>e.currentTarget.style.background='transparent'}>
-              <div style={{width:5,height:5,borderRadius:'50%',background:C.gold,flexShrink:0}}/><div style={{fontSize:12,color:C.text,flex:1,overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap'}}>{idea.title}</div><span style={{fontSize:10,color:C.muted}}>›</span>
-            </div>
-          )):<div style={{fontSize:11,color:C.muted,fontStyle:'italic',padding:'3px 0'}}>Run research to generate ideas</div>}
+          {viralIdeasOpen&&<div className='accordion-content' style={{padding:'0 12px 10px'}}>{viralIdeasSidebar.length?viralIdeasSidebar.map(idea=>(<div key={idea.id} onClick={()=>setMainTab('ideas')} style={{display:'flex',alignItems:'center',gap:8,padding:'7px 9px',borderRadius:9,cursor:'pointer',marginBottom:3,background:'#f8fafc',border:`1px solid ${C.border}`,transition:'all .12s'}} onMouseEnter={e=>e.currentTarget.style.background='#f1f5f9'} onMouseLeave={e=>e.currentTarget.style.background='#f8fafc'}><div style={{width:6,height:6,borderRadius:'50%',background:C.gold,flexShrink:0}}/><div style={{fontSize:12,color:C.text,flex:1,overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap',fontWeight:500}}>{idea.title}</div><span style={{fontSize:11,color:C.muted}}>›</span></div>)):<div style={{fontSize:11,color:C.muted,fontStyle:'italic',padding:'4px 2px'}}>Run research to generate ideas</div>}</div>}
         </div>
-        <div style={{padding:'11px 13px',flex:1}}>
-          <div style={{display:'flex',alignItems:'center',justifyContent:'space-between',marginBottom:8}}>
-            <div style={{fontSize:11,fontWeight:600,color:C.muted,textTransform:'uppercase',letterSpacing:'0.07em'}}>Approved Queue ({approvedQueue.length})</div>
-            <button onClick={()=>setMainTab('ideas')} style={{fontSize:10,color:C.purple,background:'none',border:'none',cursor:'pointer',fontWeight:600}}>Manage</button>
+        <div style={{flex:1,display:'flex',flexDirection:'column'}}>
+          <div onClick={()=>setApprovedOpen(o=>!o)} style={{display:'flex',alignItems:'center',justifyContent:'space-between',padding:'11px 14px',cursor:'pointer',transition:'background .12s'}} onMouseEnter={e=>e.currentTarget.style.background='#f8fafc'} onMouseLeave={e=>e.currentTarget.style.background='transparent'}>
+            <div style={{display:'flex',alignItems:'center',gap:6}}><span style={{fontSize:11,fontWeight:600,color:C.muted,textTransform:'uppercase',letterSpacing:'0.07em'}}>Approved Queue</span><span style={{fontSize:10,padding:'1px 5px',borderRadius:7,background:approvedQueue.length?C.purpleLight:'#f1f5f9',color:approvedQueue.length?C.purple:C.muted,fontWeight:600}}>{approvedQueue.length}</span></div>
+            <div style={{display:'flex',alignItems:'center',gap:6}}><button onClick={e=>{e.stopPropagation();setMainTab('ideas');}} style={{fontSize:10,color:C.purple,background:'none',border:'none',cursor:'pointer',fontWeight:600,padding:0}}>Manage</button><span style={{fontSize:9,color:C.muted,transform:approvedOpen?'rotate(180deg)':'rotate(0)',transition:'transform .2s',display:'inline-block'}}>▼</span></div>
           </div>
-          {approvedQueue.length===0&&<div style={{fontSize:11,color:C.muted,fontStyle:'italic',padding:'3px 0'}}>No approved posts yet</div>}
-          {approvedQueue.slice(0,5).map((item,i)=>(
-            <div key={item.id||i} style={{display:'flex',alignItems:'flex-start',gap:7,padding:'6px 8px',borderRadius:8,marginBottom:4,background:'#fafafa',border:`1px solid ${C.border}`,borderLeft:`3px solid ${item.color||C.purple}`}}>
-              <span style={{fontSize:13,flexShrink:0,marginTop:1}}>{item.icon||'📝'}</span>
-              <div style={{flex:1,minWidth:0}}>
-                <div style={{fontSize:11,fontWeight:600,color:C.text,overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap'}}>{item.title||'Approved post'}</div>
-                <div style={{fontSize:10,color:C.muted}}>{item.platform} · Approved</div>
-                <div style={{fontSize:10,color:C.muted,overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap',marginTop:1}}>{(item.content||'').slice(0,50)}…</div>
-              </div>
-            </div>
-          ))}
-          {approvedQueue.length>5&&<div style={{fontSize:11,color:C.muted,textAlign:'center',padding:'3px 0'}}>+{approvedQueue.length-5} more</div>}
-          {approvedQueue.length>0&&<button onClick={()=>setMainTab('ideas')} style={{width:'100%',marginTop:7,padding:'7px 0',fontSize:12,fontWeight:600,background:C.purple,color:'#fff',border:'none',borderRadius:8,cursor:'pointer'}}>📥 Export & Publish</button>}
+          {approvedOpen&&<div className='accordion-content' style={{padding:'0 12px 14px',flex:1}}>
+            {approvedQueue.length===0&&<div style={{fontSize:11,color:C.muted,fontStyle:'italic',padding:'4px 2px'}}>No approved posts yet</div>}
+            {approvedQueue.slice(0,5).map((item,i)=>(<div key={item.id||i} style={{display:'flex',alignItems:'flex-start',gap:8,padding:'8px 10px',borderRadius:10,marginBottom:5,background:'#f8fafc',border:`1px solid ${C.border}`,borderLeft:`3px solid ${item.color||C.purple}`,transition:'all .12s'}} onMouseEnter={e=>e.currentTarget.style.background='#f1f5f9'} onMouseLeave={e=>e.currentTarget.style.background='#f8fafc'}><span style={{fontSize:14,flexShrink:0,marginTop:1}}>{item.icon||'📝'}</span><div style={{flex:1,minWidth:0}}><div style={{fontSize:12,fontWeight:600,color:C.text,overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap'}}>{item.title||'Approved post'}</div><div style={{fontSize:10,color:C.muted,marginTop:2}}>{item.platform} · Approved</div><div style={{fontSize:10,color:'#94a3b8',overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap',marginTop:2}}>{(item.content||'').slice(0,48)}…</div></div></div>))}
+            {approvedQueue.length>5&&<div style={{fontSize:11,color:C.muted,textAlign:'center',padding:'4px 0'}}>+{approvedQueue.length-5} more</div>}
+            {approvedQueue.length>0&&<button onClick={()=>setMainTab('ideas')} style={{width:'100%',marginTop:8,padding:'8px 0',fontSize:12,fontWeight:600,background:C.purple,color:'#fff',border:'none',borderRadius:9,cursor:'pointer',boxShadow:'0 2px 6px rgba(124,58,237,0.25)'}}>📥 Export & Publish</button>}
+          </div>}
         </div>
       </div>
     </div>
