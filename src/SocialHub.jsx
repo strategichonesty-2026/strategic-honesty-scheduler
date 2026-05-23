@@ -1215,7 +1215,8 @@ export default function SocialHub() {
         schedulePosts={SCHEDULE_POSTS}
         setMainTab={setMainTab}
       />
-        {helpOpen&&<HelpModal onClose={()=>setHelpOpen(false)}/>}
+    </div>
+    {helpOpen&&<HelpModal onClose={()=>setHelpOpen(false)}/>}
   );
 }
 // Fri May 22 20:14:54 CDT 2026
