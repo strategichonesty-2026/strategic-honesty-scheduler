@@ -278,7 +278,6 @@ function SettingsPanel() {
 }
 function HelpModal({onClose}) {
   const [tab, setTab] = useState('core');
-  const GREEN = '#24b47e';
   const GOLD = '#BA7517';
   const NAVY = '#1E293B';
   const C = {text:'#0f172a', muted:'#64748b', border:'#E2E8F0', card:'#FFFFFF'};
@@ -385,8 +384,8 @@ function HelpModal({onClose}) {
   const current = content[tab];
 
   return(
-    <div style={{position:'fixed',top:0,left:0,right:0,bottom:0,background:'rgba(0,0,0,0.55)',zIndex:1000,display:'flex',alignItems:'center',justifyContent:'center',padding:16}} onClick={onClose}>
-      <div style={{background:'#fff',borderRadius:16,width:'100%',maxWidth:760,maxHeight:'90vh',overflow:'hidden',display:'flex',flexDirection:'column',boxShadow:'0 20px 60px rgba(0,0,0,0.3)'}} onClick={e=>e.stopPropagation()}>
+    <div style={{position:'fixed',top:0,left:0,right:0,bottom:0,background:'rgba(0,0,0,0.55)',zIndex:1000,display:'flex',alignItems:'center',justifyContent:'center',padding:'16px',overflowY:'auto'}} onClick={onClose}>
+      <div style={{background:'#fff',borderRadius:16,width:'100%',maxWidth:760,height:'min(90vh,620px)',overflow:'hidden',display:'flex',flexDirection:'column',boxShadow:'0 20px 60px rgba(0,0,0,0.3)'}} onClick={e=>e.stopPropagation()}>
 
         {/* Header */}
         <div style={{background:NAVY,padding:'16px 20px',display:'flex',alignItems:'center',justifyContent:'space-between',flexShrink:0}}>
