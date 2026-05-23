@@ -276,6 +276,129 @@ function SettingsPanel() {
     </div>
   );
 }
+
+function HelpModal({onClose}) {
+  const [tab,setTab]=useState('core');
+  const GOLD='#BA7517';
+  const NAVY='#1E293B';
+  const Cb={text:'#0f172a',muted:'#64748b',border:'#E2E8F0'};
+
+  const tabs=[
+    {id:'core',icon:'Target',label:'Core Idea'},
+    {id:'ideas',icon:'Bulb',label:'Content Ideas'},
+    {id:'articles',icon:'Doc',label:'Articles'},
+    {id:'wizard',icon:'Rocket',label:'Review & Post'},
+    {id:'schedule',icon:'Cal',label:'Scheduling'},
+    {id:'settings',icon:'Gear',label:'Settings'},
+  ];
+
+  const steps={
+    core:[
+      'Think of something you want to share. One sentence is enough.',
+      'Type it in the gold box on the left sidebar labeled Core Idea or Insight.',
+      'Click the gold button: Adapt to All Platforms.',
+      'The app takes you to the Review and Post wizard.',
+      'Your idea is now ready to become LinkedIn, TikTok, and Instagram posts.',
+    ],
+    ideas:[
+      'Click Content Ideas in the left sidebar menu.',
+      'Click the green Run Research button. Wait 30 to 60 seconds.',
+      'The app finds 8 fresh content ideas based on real trends.',
+      'Click any idea to expand it.',
+      'Pick a platform like LinkedIn or TikTok.',
+      'Click Generate. Your post is written in seconds.',
+      'Review the post. Edit if needed.',
+      'Click Approve to add it to your Approved Queue.',
+    ],
+    articles:[
+      'Go to the Content Ideas tab.',
+      'Run research or use an existing idea.',
+      'Click on an idea to expand it.',
+      'Select LinkedIn as the platform.',
+      'Click Generate to create a short post first.',
+      'Look for the Long Form button in the action row.',
+      'Click it. The app writes a full 600-word article.',
+      'Copy the article and paste it into LinkedIn Articles.',
+    ],
+    wizard:[
+      'Step 1 WRITE: Paste your content or type it fresh.',
+      'Step 2 ROUTE: Pick your content type. The app picks the best platforms.',
+      'Step 3 REVIEW: See how your post looks on each platform. Check character count.',
+      'Step 4 SEND: Choose to post now or schedule for later. Click Publish.',
+      'Step 5 SCHEDULE: Set up repeating posts weekly, bi-weekly, or monthly.',
+    ],
+    schedule:[
+      'DIRECT: Connect LinkedIn and Bluesky in the Connect tab. Post directly from the wizard.',
+      'BUFFER: In Step 4 of the wizard, click the purple CSV button.',
+      'A file downloads to your computer.',
+      'Go to Buffer.com, pick your channel, click Settings, then Bulk Upload.',
+      'Upload the CSV file. Buffer schedules your posts automatically.',
+      'RECURRING: Use Step 5 to download a CSV with multiple dates already filled in.',
+    ],
+    settings:[
+      'Click Help and Guide or the gear icon at the bottom of the left sidebar.',
+      'PROFILE: Upload your logo. Set your display name and tagline.',
+      'DEFAULTS: Set posting times for each platform. Saves time every session.',
+      'Set your default schedule pattern: once, weekly, bi-weekly, or monthly.',
+      'DATA: Click Export to download all your content as a JSON file.',
+      'Click Clear Cache to reset research if it feels outdated.',
+      'Click Reset Queue to clear your approved posts and start fresh.',
+    ],
+  };
+
+  const tips={
+    core:'Pro Tip: Keep it simple. One clear idea works better than a long paragraph.',
+    ideas:'Pro Tip: Run research once a week. Do not click it every day as it uses API tokens each time.',
+    articles:'Pro Tip: Generate 4 to 8 articles in one sitting. Each article costs less than $0.08. Schedule them 2 to 3 weeks apart on LinkedIn.',
+    wizard:'Pro Tip: Always check Step 3 Review. Bluesky has a hard 300 character limit. LinkedIn allows 3000 characters.',
+    schedule:'Pro Tip: Best times are LinkedIn 8am Monday, Instagram 11am Tuesday, TikTok 7pm any day. Set your defaults in Settings.',
+    settings:'Pro Tip: Set your posting times once and forget them. The app uses them every time you schedule.',
+  };
+
+  const icons={core:'🎯',ideas:'💡',articles:'📄',wizard:'🚀',schedule:'📅',settings:'⚙'};
+
+  return(
+    <div onClick={onClose} style={{position:'fixed',top:0,left:0,right:0,bottom:0,background:'rgba(0,0,0,0.55)',zIndex:1000,display:'flex',alignItems:'center',justifyContent:'center',padding:16}}>
+      <div onClick={e=>e.stopPropagation()} style={{background:'#fff',borderRadius:16,width:'100%',maxWidth:740,maxHeight:'88vh',overflow:'hidden',display:'flex',flexDirection:'column',boxShadow:'0 20px 60px rgba(0,0,0,0.3)'}}>
+        <div style={{background:NAVY,padding:'14px 18px',display:'flex',alignItems:'center',justifyContent:'space-between',flexShrink:0}}>
+          <div>
+            <div style={{fontSize:15,fontWeight:700,color:'#fff'}}>User Guide</div>
+            <div style={{fontSize:11,color:'#94a3b8',marginTop:1}}>How to use every feature — simple steps</div>
+          </div>
+          <button onClick={onClose} style={{width:30,height:30,borderRadius:'50%',background:'rgba(255,255,255,0.15)',border:'none',color:'#fff',fontSize:16,cursor:'pointer',lineHeight:1}}>x</button>
+        </div>
+        <div style={{display:'flex',flex:1,overflow:'hidden',minHeight:0}}>
+          <div style={{width:150,background:'#f8fafc',borderRight:'1px solid #E2E8F0',flexShrink:0,overflowY:'auto'}}>
+            {tabs.map(t=>(
+              <div key={t.id} onClick={()=>setTab(t.id)} style={{padding:'11px 13px',cursor:'pointer',borderLeft:'3px solid '+(tab===t.id?GOLD:'transparent'),background:tab===t.id?'#fff':'transparent'}}>
+                <div style={{fontSize:14,marginBottom:2}}>{icons[t.id]}</div>
+                <div style={{fontSize:11,fontWeight:tab===t.id?700:400,color:tab===t.id?NAVY:Cb.muted}}>{t.label}</div>
+              </div>
+            ))}
+          </div>
+          <div style={{flex:1,overflowY:'auto',padding:20}}>
+            <div style={{fontSize:14,fontWeight:700,color:NAVY,marginBottom:5}}>{icons[tab]} {tabs.find(t=>t.id===tab)?.label}</div>
+            <div style={{fontSize:11,fontWeight:700,color:GOLD,textTransform:'uppercase',letterSpacing:'0.08em',marginTop:12,marginBottom:8}}>Step by Step</div>
+            {(steps[tab]||[]).map((step,i)=>(
+              <div key={i} style={{display:'flex',gap:9,marginBottom:9,alignItems:'flex-start'}}>
+                <div style={{width:22,height:22,borderRadius:'50%',background:NAVY,color:'#fff',fontSize:11,fontWeight:700,display:'flex',alignItems:'center',justifyContent:'center',flexShrink:0,marginTop:1}}>{i+1}</div>
+                <div style={{fontSize:12,color:Cb.text,lineHeight:1.6,flex:1}}>{step}</div>
+              </div>
+            ))}
+            <div style={{background:'#f0fdf4',border:'1px solid #bbf7d0',borderRadius:8,padding:'10px 13px',marginTop:12}}>
+              <div style={{fontSize:12,color:'#166534',lineHeight:1.6}}>{'Tip: '+(tips[tab]||'')}</div>
+            </div>
+          </div>
+        </div>
+        <div style={{padding:'10px 18px',borderTop:'1px solid #E2E8F0',background:'#f8fafc',display:'flex',alignItems:'center',justifyContent:'space-between',flexShrink:0}}>
+          <div style={{fontSize:10,color:Cb.muted}}>Be Good. Do Good. Do Well. — StrategicHonesty.com</div>
+          <button onClick={onClose} style={{padding:'5px 16px',background:'#24b47e',color:'#fff',border:'none',borderRadius:7,fontSize:12,fontWeight:600,cursor:'pointer'}}>Got it</button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 function getUserId() {
   let id=localStorage.getItem('sh_user_id');
   if(!id){id='user_'+Math.random().toString(36).slice(2,10);localStorage.setItem('sh_user_id',id);}
@@ -698,6 +821,7 @@ export default function SocialHub() {
   const [coreIdea,setCoreIdea]=useState('');
   const [channelsOpen,setChannelsOpen]=useState(true);
   const [quickConnectOpen,setQuickConnectOpen]=useState(false);
+  const [helpOpen,setHelpOpen]=useState(false);
   const [upcomingOpen,setUpcomingOpen]=useState(true);
   const [viralIdeasOpen,setViralIdeasOpen]=useState(true);
   const [approvedOpen,setApprovedOpen]=useState(true);
@@ -836,6 +960,9 @@ export default function SocialHub() {
         </div>
         {/* Settings + Footer */}
         <div style={{marginTop:'auto',borderTop:`1px solid ${C.border}`}}>
+          <div onClick={()=>setHelpOpen(true)} style={{display:'flex',alignItems:'center',gap:9,padding:'10px 13px',cursor:'pointer',fontSize:13,color:C.muted,background:'transparent',transition:'all .12s'}} onMouseEnter={e=>e.currentTarget.style.background='#f8fafc'} onMouseLeave={e=>e.currentTarget.style.background='transparent'}>
+            <span style={{fontSize:15}}>?</span><span style={{flex:1}}>Help & Guide</span>
+          </div>
           <div onClick={()=>setMainTab('settings')} style={{display:'flex',alignItems:'center',gap:9,padding:'10px 13px',cursor:'pointer',fontSize:13,color:mainTab==='settings'?'#fff':C.muted,fontWeight:mainTab==='settings'?600:400,background:mainTab==='settings'?GREEN:'transparent',transition:'all .12s'}} onMouseEnter={e=>{if(mainTab!=='settings')e.currentTarget.style.background='#f8fafc';}} onMouseLeave={e=>{if(mainTab!=='settings')e.currentTarget.style.background='transparent';}}>
             <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
             <span style={{flex:1}}>Settings</span>
@@ -1206,6 +1333,7 @@ export default function SocialHub() {
         </div>
       </div>
     </div>
+    {helpOpen&&<HelpModal onClose={()=>setHelpOpen(false)}/>}
   );
 }
 // Fri May 22 20:14:54 CDT 2026
