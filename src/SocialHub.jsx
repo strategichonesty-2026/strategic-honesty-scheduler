@@ -356,7 +356,7 @@ Intelligent but accessible. Emotionally aware but professional. Systems-oriented
 CONTENT OBJECTIVE:
 Build long-term trust, credibility, authority, and meaningful audience connection supporting leadership opportunities, consulting, speaking, workshops, executive advisory, books, and community influence. The mission is not to chase attention. The mission is to help people think more honestly, lead more effectively, and build healthier systems.
 
-Respond ONLY with requested content — no preamble, no labels, no meta-commentary.\`;
+Respond ONLY with requested content — no preamble, no labels, no meta-commentary.`;
 const CI_PLATFORMS=[
   {id:'li',label:'LinkedIn',icon:'💼',color:'#0A66C2',fmt:'Thought-leadership post 150–300 words, line breaks, strong opening hook, no external links in body'},
   {id:'tt',label:'TikTok',icon:'🎵',color:'#333',fmt:'45–60 sec script [0-3sec HOOK] [3-15sec PROBLEM] [15-40sec STORY] [40-55sec CTA], raw authentic tone'},
