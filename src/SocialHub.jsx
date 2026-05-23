@@ -82,6 +82,80 @@ function downloadCSV(platformId,content,imageUrl,scheduleDate) {
   a.download=`Buffer_${cfg.name}_${new Date().toISOString().split('T')[0]}.csv`;
   a.click();URL.revokeObjectURL(url);
 }
+const PREVIEW_PLATFORMS=[
+  {id:'li',label:'LinkedIn',color:'#0A66C2'},
+  {id:'tt',label:'TikTok',color:'#010101'},
+  {id:'ig',label:'Instagram',color:'#E1306C'},
+  {id:'fb',label:'Facebook',color:'#1877F2'},
+  {id:'tw',label:'X',color:'#333'},
+  {id:'th',label:'Threads',color:'#444'},
+];
+
+function PlatformIcon({id,size=16,color='currentColor'}) {
+  const s={width:size,height:size,display:'inline-block',flexShrink:0};
+  if(id==='li') return(
+    <svg style={s} viewBox="0 0 24 24" fill={color}><path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 0 1-2.063-2.065 2.064 2.064 0 1 1 2.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/></svg>
+  );
+  if(id==='tt') return(
+    <svg style={s} viewBox="0 0 24 24" fill={color}><path d="M19.59 6.69a4.83 4.83 0 0 1-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 0 1-2.88 2.5 2.89 2.89 0 0 1-2.89-2.89 2.89 2.89 0 0 1 2.89-2.89c.28 0 .54.04.79.1V9.01a6.33 6.33 0 0 0-.79-.05 6.34 6.34 0 0 0-6.34 6.34 6.34 6.34 0 0 0 6.34 6.34 6.34 6.34 0 0 0 6.33-6.34V8.69a8.18 8.18 0 0 0 4.78 1.52V6.75a4.85 4.85 0 0 1-1.01-.06z"/></svg>
+  );
+  if(id==='ig') return(
+    <svg style={s} viewBox="0 0 24 24" fill={color}><path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838a6.162 6.162 0 1 0 0 12.324 6.162 6.162 0 0 0 0-12.324zM12 16a4 4 0 1 1 0-8 4 4 0 0 1 0 8zm6.406-11.845a1.44 1.44 0 1 0 0 2.881 1.44 1.44 0 0 0 0-2.881z"/></svg>
+  );
+  if(id==='fb') return(
+    <svg style={s} viewBox="0 0 24 24" fill={color}><path d="M24 12.073c0-6.627-5.373-12-12-12s-12 5.373-12 12c0 5.99 4.388 10.954 10.125 11.854v-8.385H7.078v-3.47h3.047V9.43c0-3.007 1.792-4.669 4.533-4.669 1.312 0 2.686.235 2.686.235v2.953H15.83c-1.491 0-1.956.925-1.956 1.874v2.25h3.328l-.532 3.47h-2.796v8.385C19.612 23.027 24 18.062 24 12.073z"/></svg>
+  );
+  if(id==='tw') return(
+    <svg style={s} viewBox="0 0 24 24" fill={color}><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.747l7.73-8.835L1.254 2.25H8.08l4.259 5.63 5.905-5.63zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+  );
+  if(id==='th') return(
+    <svg style={s} viewBox="0 0 192 192" fill={color}><path d="M141.537 88.988a66.667 66.667 0 0 0-2.518-1.143c-1.482-27.307-16.403-42.94-41.457-43.1h-.34c-14.986 0-27.449 6.396-35.12 18.036l13.779 9.452c5.73-8.695 14.724-10.548 21.348-10.548h.23c8.249.053 14.474 2.452 18.502 7.13 2.932 3.405 4.893 8.111 5.864 14.05-7.314-1.243-15.224-1.626-23.68-1.14-23.82 1.371-39.134 15.264-38.105 34.568.522 9.792 5.4 18.216 13.735 23.719 7.047 4.652 16.124 6.927 25.557 6.412 12.458-.683 22.231-5.436 29.049-14.127 5.178-6.6 8.453-15.153 9.899-25.93 5.937 3.583 10.337 8.298 12.767 13.966 4.132 9.635 4.373 25.468-8.546 38.376C123.553 163.2 108.228 168.915 88 169.02c-22.22-.12-39.015-7.285-49.892-21.305C28.615 134.27 23.536 116.38 23.333 94c.203-22.379 5.282-40.269 15.076-53.715C49.185 26.715 65.98 19.55 88.2 19.43c22.389.12 39.353 7.295 50.408 21.325 5.486 6.944 9.579 15.64 12.208 25.755l16.17-4.322c-3.164-12.003-8.312-22.597-15.498-31.58C136.642 13.586 115.612 3.634 88.363 3.5h-.37C61.12 3.634 40.257 13.636 26.5 30.573 14.343 45.446 8.08 66.25 7.9 93.934L7.9 94l.002.066c.18 27.684 6.443 48.488 18.6 63.361C40.256 174.364 61.12 184.366 88 184.5h.37c23.863-.12 40.697-6.42 54.488-20.2 18.421-18.414 17.843-41.485 11.802-55.649-4.413-10.289-12.809-18.593-23.123-23.663zm-40.24 40.498c-10.45.588-21.286-4.098-21.82-14.135-.397-7.442 5.296-15.746 22.461-16.735 1.966-.114 3.895-.169 5.79-.169 6.235 0 12.068.606 17.371 1.765-1.978 24.702-13.574 28.674-23.802 29.274z"/></svg>
+  );
+  // fallback
+  return <span style={{fontSize:size,lineHeight:1}}>{id==='li'?'💼':id==='tt'?'🎵':id==='ig'?'📸':id==='fb'?'👥':id==='tw'?'𝕏':'🧵'}</span>;
+}
+
+function LogoMenu({onHome}) {
+  const [hover,setHover]=useState(false);
+  const [menuOpen,setMenuOpen]=useState(false);
+  const [logoSrc,setLogoSrc]=useState(()=>localStorage.getItem('sh_logo')||'');
+  const fileRef=useRef(null);
+  const handleUpload=e=>{
+    const file=e.target.files[0];if(!file)return;
+    const reader=new FileReader();
+    reader.onload=ev=>{const src=ev.target.result;setLogoSrc(src);localStorage.setItem('sh_logo',src);setMenuOpen(false);};
+    reader.readAsDataURL(file);
+  };
+  return(
+    <div style={{position:'relative',marginBottom:14}} onMouseEnter={()=>setHover(true)} onMouseLeave={()=>{setHover(false);setMenuOpen(false);}}>
+      <div onClick={onHome} style={{display:'flex',alignItems:'center',gap:10,cursor:'pointer',borderRadius:10,padding:'4px 6px',background:hover?'#f1f5f9':'transparent',transition:'background .15s'}}>
+        <div style={{width:38,height:38,background:logoSrc?'transparent':'#24b47e',borderRadius:10,display:'flex',alignItems:'center',justifyContent:'center',color:'#fff',fontSize:17,fontWeight:800,flexShrink:0,boxShadow:'0 2px 6px rgba(36,180,126,0.3)',overflow:'hidden'}}>
+          {logoSrc?<img src={logoSrc} alt="Logo" style={{width:'100%',height:'100%',objectFit:'cover'}}/>:'S'}
+        </div>
+        <div style={{flex:1}}>
+          <div style={{fontSize:13,fontWeight:700,color:'#0f172a',lineHeight:1.2}}>Strategic Honesty</div>
+          <div style={{fontSize:10,color:'#64748b',marginTop:1}}>Content Platform v3</div>
+        </div>
+        {hover&&<div style={{fontSize:10,color:'#94a3b8'}}>▾</div>}
+      </div>
+      {hover&&(
+        <div style={{position:'absolute',top:'100%',left:6,right:6,background:'#fff',border:'1px solid #E2E8F0',borderRadius:8,boxShadow:'0 4px 12px rgba(0,0,0,0.1)',zIndex:100,overflow:'hidden',animation:'fadeIn .12s ease'}}>
+          <div onClick={()=>{onHome();setMenuOpen(false);}} style={{padding:'8px 12px',fontSize:12,cursor:'pointer',color:'#0f172a',display:'flex',alignItems:'center',gap:7,transition:'background .1s'}} onMouseEnter={e=>e.currentTarget.style.background='#f8fafc'} onMouseLeave={e=>e.currentTarget.style.background='#fff'}>
+            🏠 <span>Go to Home</span>
+          </div>
+          <div onClick={()=>fileRef.current?.click()} style={{padding:'8px 12px',fontSize:12,cursor:'pointer',color:'#0f172a',display:'flex',alignItems:'center',gap:7,borderTop:'1px solid #f1f5f9',transition:'background .1s'}} onMouseEnter={e=>e.currentTarget.style.background='#f8fafc'} onMouseLeave={e=>e.currentTarget.style.background='#fff'}>
+            🖼 <span>Change Logo</span>
+          </div>
+          {logoSrc&&<div onClick={()=>{setLogoSrc('');localStorage.removeItem('sh_logo');setMenuOpen(false);}} style={{padding:'8px 12px',fontSize:12,cursor:'pointer',color:'#dc2626',display:'flex',alignItems:'center',gap:7,borderTop:'1px solid #f1f5f9',transition:'background .1s'}} onMouseEnter={e=>e.currentTarget.style.background='#fef2f2'} onMouseLeave={e=>e.currentTarget.style.background='#fff'}>
+            🗑 <span>Remove Logo</span>
+          </div>}
+        </div>
+      )}
+      <input ref={fileRef} type="file" accept="image/*" style={{display:'none'}} onChange={handleUpload}/>
+    </div>
+  );
+}
+
 function getUserId() {
   let id=localStorage.getItem('sh_user_id');
   if(!id){id='user_'+Math.random().toString(36).slice(2,10);localStorage.setItem('sh_user_id',id);}
@@ -600,10 +674,7 @@ export default function SocialHub() {
       {/* LEFT SIDEBAR */}
       <div style={{background:C.sidebar,borderRight:`1px solid ${C.border}`,display:'flex',flexDirection:'column',height:'100vh',position:'sticky',top:0,overflowY:'auto'}}>
         <div style={{padding:'16px 14px 14px',borderBottom:`1px solid ${C.border}`}}>
-          <div onClick={()=>setMainTab('calendar')} title='Go to Dashboard' style={{display:'flex',alignItems:'center',gap:10,marginBottom:14,cursor:'pointer',borderRadius:10,padding:'4px 6px',transition:'background .15s'}} onMouseEnter={e=>e.currentTarget.style.background='#f1f5f9'} onMouseLeave={e=>e.currentTarget.style.background='transparent'}>
-            <div style={{width:38,height:38,background:GREEN,borderRadius:10,display:'flex',alignItems:'center',justifyContent:'center',color:'#fff',fontSize:17,fontWeight:800,flexShrink:0,boxShadow:'0 2px 6px rgba(36,180,126,0.3)'}}>S</div>
-            <div><div style={{fontSize:13,fontWeight:700,color:C.text,lineHeight:1.2}}>Strategic Honesty</div><div style={{fontSize:10,color:C.muted,marginTop:1}}>Content Platform v3</div></div>
-          </div>
+          <LogoMenu onHome={()=>setMainTab('calendar')}/>
           <button onClick={()=>{wizardReset();setMainTab('wizard');}} style={{width:'100%',padding:'9px 0',background:GREEN,color:'#fff',border:'none',borderRadius:9,fontSize:13,fontWeight:600,cursor:'pointer',display:'flex',alignItems:'center',justifyContent:'center',gap:6,boxShadow:'0 2px 6px rgba(36,180,126,0.25)'}}>✦ New Post</button>
         </div>
         <div style={{padding:'11px 13px',borderBottom:`1px solid ${C.border}`}}>
@@ -640,6 +711,16 @@ export default function SocialHub() {
             <span style={{fontSize:9,color:C.muted,transform:quickConnectOpen?'rotate(180deg)':'rotate(0)',transition:'transform .2s',display:'inline-block'}}>▼</span>
           </div>
           {quickConnectOpen&&<div className='accordion-content' style={{padding:'0 8px 4px'}}>{[{id:'li',name:'LinkedIn',icon:'💼',connected:isLiConnected,fn:connectLinkedIn},{id:'yt',name:'YouTube',icon:'▶️',connected:isYtConnected,fn:connectYouTube},{id:'bs',name:'Bluesky',icon:'🦋',connected:bskyConnected,fn:()=>setMainTab('connect')}].map(p=>(<div key={p.id} onClick={p.connected?null:p.fn} style={{display:'flex',alignItems:'center',gap:8,padding:'6px 8px',borderRadius:8,cursor:p.connected?'default':'pointer',marginBottom:2,opacity:p.connected?0.75:1,transition:'all .12s'}} onMouseEnter={e=>{if(!p.connected)e.currentTarget.style.background='#f8fafc';}} onMouseLeave={e=>{e.currentTarget.style.background='transparent';}}><div style={{width:27,height:27,borderRadius:8,background:'#f8fafc',border:`1px solid ${C.border}`,display:'flex',alignItems:'center',justifyContent:'center',fontSize:13,position:'relative',flexShrink:0}}>{p.icon}{p.connected&&<span style={{position:'absolute',bottom:-3,right:-3,width:11,height:11,borderRadius:'50%',background:'#22c55e',display:'flex',alignItems:'center',justifyContent:'center',fontSize:7,color:'#fff',border:'1.5px solid #fff'}}>✓</span>}{!p.connected&&<span style={{position:'absolute',bottom:-3,right:-3,width:11,height:11,borderRadius:'50%',background:'#e2e8f0',display:'flex',alignItems:'center',justifyContent:'center',fontSize:8,color:C.muted,border:'1.5px solid #fff',fontWeight:'bold'}}>+</span>}</div><span style={{fontSize:12,color:p.connected?'#16a34a':C.muted,fontWeight:p.connected?500:400}}>{p.connected?`${p.name} ✓`:p.name}</span></div>))}</div>}
+        </div>
+        {/* Settings + Footer */}
+        <div style={{marginTop:'auto',borderTop:`1px solid ${C.border}`}}>
+          <div onClick={()=>setMainTab('settings')} style={{display:'flex',alignItems:'center',gap:9,padding:'10px 13px',cursor:'pointer',fontSize:13,color:mainTab==='settings'?'#fff':C.muted,fontWeight:mainTab==='settings'?600:400,background:mainTab==='settings'?GREEN:'transparent',transition:'all .12s'}} onMouseEnter={e=>{if(mainTab!=='settings')e.currentTarget.style.background='#f8fafc';}} onMouseLeave={e=>{if(mainTab!=='settings')e.currentTarget.style.background='transparent';}}>
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+            <span style={{flex:1}}>Settings</span>
+          </div>
+          <div style={{padding:'8px 13px 12px',fontSize:10,color:'#94a3b8',textAlign:'center',letterSpacing:'0.03em'}}>
+            © 2026 Strategic Honesty
+          </div>
         </div>
       </div>
 
@@ -940,11 +1021,14 @@ export default function SocialHub() {
         <div style={{padding:'13px 13px 0',borderBottom:`1px solid ${C.border}`}}>
           <div style={{fontSize:11,fontWeight:600,color:C.muted,textTransform:'uppercase',letterSpacing:'0.07em',marginBottom:9}}>Platform Preview</div>
           <div style={{display:'flex',gap:2,overflowX:'auto',paddingBottom:0}}>
-            {[{id:'li',label:'LinkedIn',color:'#0A66C2'},{id:'tt',label:'TikTok',color:'#010101'},{id:'ig',label:'Instagram',color:'#E1306C'},{id:'fb',label:'Facebook',color:'#1877F2'},{id:'tw',label:'X',color:'#333'},{id:'th',label:'Threads',color:'#444'}].map(p=>(
-              <button key={p.id} onClick={()=>setPreviewPlatform(p.id)} style={{padding:'5px 9px',fontSize:11,background:previewPlatform===p.id?p.color+'15':'transparent',border:'none',borderBottom:`2px solid ${previewPlatform===p.id?p.color:'transparent'}`,color:previewPlatform===p.id?p.color:C.muted,cursor:'pointer',fontWeight:previewPlatform===p.id?600:400,whiteSpace:'nowrap',transition:'all .15s',borderRadius:'4px 4px 0 0'}}>
-                {p.label}
+            {PREVIEW_PLATFORMS.map(p=>{
+              const active=previewPlatform===p.id;
+              return(
+              <button key={p.id} onClick={()=>setPreviewPlatform(p.id)} title={p.label} style={{padding:'6px 10px',fontSize:11,background:active?p.color+'18':'#f8fafc',border:'none',borderBottom:`2px solid ${active?p.color:'transparent'}`,color:active?p.color:'#64748b',cursor:'pointer',fontWeight:active?600:400,whiteSpace:'nowrap',transition:'all .15s',borderRadius:'4px 4px 0 0',display:'flex',alignItems:'center',gap:5}}>
+                <PlatformIcon id={p.id} size={14} color={active?p.color:'#64748b'}/>
+                <span style={{display:'none'}}>{p.label}</span>
               </button>
-            ))}
+            );})}
           </div>
         </div>
         <div style={{padding:'11px 13px',borderBottom:`1px solid ${C.border}`}}>
