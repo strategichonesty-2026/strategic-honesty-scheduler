@@ -602,7 +602,7 @@ export default function SocialHub() {
         <div style={{padding:'16px 14px 14px',borderBottom:`1px solid ${C.border}`}}>
           <div onClick={()=>setMainTab('calendar')} title='Go to Dashboard' style={{display:'flex',alignItems:'center',gap:10,marginBottom:14,cursor:'pointer',borderRadius:10,padding:'4px 6px',transition:'background .15s'}} onMouseEnter={e=>e.currentTarget.style.background='#f1f5f9'} onMouseLeave={e=>e.currentTarget.style.background='transparent'}>
             <div style={{width:38,height:38,background:GREEN,borderRadius:10,display:'flex',alignItems:'center',justifyContent:'center',color:'#fff',fontSize:17,fontWeight:800,flexShrink:0,boxShadow:'0 2px 6px rgba(36,180,126,0.3)'}}>S</div>
-            <div><div style={{fontSize:13,fontWeight:700,color:C.text,lineHeight:1.2}}>Strategic Honesty</div><div style={{fontSize:10,color:C.muted,marginTop:1}}>Content Platform v2</div></div>
+            <div><div style={{fontSize:13,fontWeight:700,color:C.text,lineHeight:1.2}}>Strategic Honesty</div><div style={{fontSize:10,color:C.muted,marginTop:1}}>Content Platform v3</div></div>
           </div>
           <button onClick={()=>{wizardReset();setMainTab('wizard');}} style={{width:'100%',padding:'9px 0',background:GREEN,color:'#fff',border:'none',borderRadius:9,fontSize:13,fontWeight:600,cursor:'pointer',display:'flex',alignItems:'center',justifyContent:'center',gap:6,boxShadow:'0 2px 6px rgba(36,180,126,0.25)'}}>✦ New Post</button>
         </div>
