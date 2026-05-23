@@ -9,3 +9,4 @@ credentials.txt
 .codex/
 src/src/
 build
+build.log
