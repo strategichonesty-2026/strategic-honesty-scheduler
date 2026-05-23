@@ -8,7 +8,7 @@ const F = '-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif';
 
 const C = {
   bg:'#F7F8FA', sidebar:'#FFFFFF', card:'#FFFFFF', border:'#E5E7EB',
-  text:'#111827', muted:'#6B7280', label:'#374151',
+  text:'#0f172a', muted:'#64748b', label:'#334155',
   green:'#24b47e', greenLight:'#E6F7F2', greenDark:'#0f6e56',
   gold:'#BA7517', goldLight:'#FEF3C7',
   purple:'#7c3aed', purpleLight:'#F5F3FF',
