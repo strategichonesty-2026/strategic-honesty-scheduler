@@ -1334,6 +1334,7 @@ export default function SocialHub() {
       </div>
     </div>
     {helpOpen&&<HelpModal onClose={()=>setHelpOpen(false)}/>}
+            </div></div></div></div></div></div></div></div></div></div></div></div>
   );
 }
 // Fri May 22 20:14:54 CDT 2026
