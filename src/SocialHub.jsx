@@ -746,7 +746,7 @@ export default function SocialHub() {
   const [coreIdea,setCoreIdea]=useState('');
   const [channelsOpen,setChannelsOpen]=useState(true);
   const [quickConnectOpen,setQuickConnectOpen]=useState(false);
-  const [helpOpen,setHelpOpen]=useState(false);
+  
   const [upcomingOpen,setUpcomingOpen]=useState(true);
   const [viralIdeasOpen,setViralIdeasOpen]=useState(true);
   const [approvedOpen,setApprovedOpen]=useState(true);
@@ -832,7 +832,7 @@ export default function SocialHub() {
   const statusDot=s=>({width:8,height:8,borderRadius:'50%',flexShrink:0,background:s==='active'?'#22c55e':s==='warning'?'#f59e0b':'#ef4444'});
   const brandScore=Math.min(100,40+approvedQueue.length*8);
   const viralIdeasSidebar=(()=>{try{return JSON.parse(localStorage.getItem('sh_ci_ideas')||'[]').filter(i=>i.status==='review').slice(0,6);}catch{return[];}})();
-  const NAV=[{id:'calendar',icon:'📅',label:'Calendar'},{id:'help',icon:'❓',label:'Help & Guide'},{id:'ideas',icon:'💡',label:'Content Ideas'},{id:'wizard',icon:'🚀',label:'Review & Post'},{id:'compose',icon:'✉️',label:'Quick Compose'},{id:'connect',icon:'🔗',label:'Connect'},{id:'upload',icon:'⬆',label:'Upload CSV'},{id:'log',icon:'📋',label:'Activity Log'}];
+  const NAV=[{id:'calendar',icon:'📅',label:'Calendar'},{id:'ideas',icon:'💡',label:'Content Ideas'},{id:'wizard',icon:'🚀',label:'Review & Post'},{id:'compose',icon:'✉️',label:'Quick Compose'},{id:'connect',icon:'🔗',label:'Connect'},{id:'upload',icon:'⬆',label:'Upload CSV'},{id:'log',icon:'📋',label:'Activity Log'}];
   const previewContent=testContent||wizardContent||(approvedQueue[0]?.content||'');
   const previewPlatformMeta={li:{label:'LinkedIn',color:'#0A66C2',icon:'💼'},tt:{label:'TikTok',color:'#010101',icon:'🎵'},ig:{label:'Instagram',color:'#E1306C',icon:'📸'},fb:{label:'Facebook',color:'#1877F2',icon:'👥'},tw:{label:'X/Twitter',color:'#333',icon:'🐦'},th:{label:'Threads',color:'#444',icon:'🧵'},yt:{label:'YouTube',color:'#FF0000',icon:'▶️'}};
 
