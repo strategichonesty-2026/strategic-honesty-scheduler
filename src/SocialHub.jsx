@@ -284,7 +284,7 @@ const [importMsg,setImportMsg]=useState('');
           <div style={{display:'flex',alignItems:'center',justifyContent:'space-between',padding:'10px 13px',background:'#f8fafc',borderRadius:9,border:`1px solid ${C.border}`}}>
           <div><div style={{fontSize:13,fontWeight:600,color:C.text}}>Export Content Library</div><div style={{fontSize:11,color:C.muted,marginTop:2}}>Saves research, ideas, queue, activity log with date stamp</div></div>
             <button onClick={exportData} style={{padding:'6px 14px',fontSize:12,fontWeight:600,background:C.navy,color:'#fff',border:'none',borderRadius:7,cursor:'pointer',flexShrink:0}}>📥 Export</button>
-          </div>
+          
           <div style={{display:'flex',alignItems:'center',justifyContent:'space-between',padding:'10px 13px',background:'#fff9f9',borderRadius:9,border:'1px solid #fca5a5'}}>
            </div>
           <div style={{display:'flex',alignItems:'center',justifyContent:'space-between',padding:'10px 13px',background:'#f0fdf4',borderRadius:9,border:'1px solid #bbf7d0'}}>
