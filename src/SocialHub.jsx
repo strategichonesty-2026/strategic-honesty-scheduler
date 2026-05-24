@@ -180,14 +180,36 @@ function SettingsPanel() {
     setSaved(true);setTimeout(()=>setSaved(false),2000);
   };
 
+const [importMsg,setImportMsg]=useState('');
+  const importRef=useRef(null);
   const exportData=()=>{
-    const data={profile:{displayName,tagline},defaults:{defLiTime,defIgTime,defTtTime,defFbTime,defPattern,defImageUrl},ideas:JSON.parse(localStorage.getItem('sh_ci_ideas')||'[]'),queue:JSON.parse(localStorage.getItem('sh_ci_queue')||'[]'),activityLog:JSON.parse(localStorage.getItem('sh_activity_log')||'[]')};
+    const data={version:'1.0',exportDate:new Date().toISOString(),exportDateReadable:new Date().toLocaleDateString('en-US',{weekday:'long',year:'numeric',month:'long',day:'numeric',hour:'numeric',minute:'2-digit'}),profile:{displayName,tagline},defaults:{defLiTime,defIgTime,defTtTime,defFbTime,defPattern,defImageUrl},research:JSON.parse(localStorage.getItem('sh_ci_findings')||'[]'),ideas:JSON.parse(localStorage.getItem('sh_ci_ideas')||'[]'),queue:JSON.parse(localStorage.getItem('sh_ci_queue')||'[]'),activityLog:JSON.parse(localStorage.getItem('sh_activity_log')||'[]'),lastRun:localStorage.getItem('sh_ci_lastrun')||''};
     const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});
     const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;
-    a.download=`strategic-honesty-export-${new Date().toISOString().split('T')[0]}.json`;
+    a.download=`strategic-honesty-${new Date().toISOString().split('T')[0]}.json`;
     a.click();URL.revokeObjectURL(url);
   };
-
+  const importData=(e)=>{
+    const file=e.target.files[0];if(!file)return;
+    const reader=new FileReader();
+    reader.onload=ev=>{
+      try{
+        const data=JSON.parse(ev.target.result);
+        if(data.research&&data.research.length>0){localStorage.setItem('sh_ci_findings',JSON.stringify(data.research));}
+        if(data.ideas&&data.ideas.length>0){localStorage.setItem('sh_ci_ideas',JSON.stringify(data.ideas));}
+        if(data.queue&&data.queue.length>0){localStorage.setItem('sh_ci_queue',JSON.stringify(data.queue));}
+        if(data.activityLog&&data.activityLog.length>0){localStorage.setItem('sh_activity_log',JSON.stringify(data.activityLog));}
+        if(data.lastRun){localStorage.setItem('sh_ci_lastrun',data.lastRun);}
+        if(data.profile){if(data.profile.displayName){setDisplayName(data.profile.displayName);localStorage.setItem('sh_display_name',data.profile.displayName);}if(data.profile.tagline){setTagline(data.profile.tagline);localStorage.setItem('sh_tagline',data.profile.tagline);}}
+        const date=data.exportDateReadable||data.exportDate||'unknown date';
+        const ideaCount=data.ideas?data.ideas.length:0;
+        const resCount=data.research?data.research.length:0;
+        setImportMsg(`Imported ${ideaCount} ideas and ${resCount} research findings from ${date}`);
+        setTimeout(()=>window.location.reload(),1500);
+      }catch(err){setImportMsg('Error: Could not read file.');}
+    };
+    reader.readAsText(file);
+  };
   const clearCache=()=>{
     if(!window.confirm('Clear all cached content ideas and research? This cannot be undone.'))return;
     ['sh_ci_findings','sh_ci_ideas','sh_ci_queue','sh_ci_lastrun','sh_ci_nextrun','sh_ci_resstatus'].forEach(k=>localStorage.removeItem(k));
@@ -260,11 +282,17 @@ function SettingsPanel() {
         <div style={{fontSize:13,fontWeight:700,color:C.text,marginBottom:13,paddingBottom:8,borderBottom:`1px solid ${C.border}`}}>💾 Data</div>
         <div style={{display:'flex',flexDirection:'column',gap:9}}>
           <div style={{display:'flex',alignItems:'center',justifyContent:'space-between',padding:'10px 13px',background:'#f8fafc',borderRadius:9,border:`1px solid ${C.border}`}}>
-            <div><div style={{fontSize:13,fontWeight:600,color:C.text}}>Export All Data</div><div style={{fontSize:11,color:C.muted,marginTop:2}}>Download ideas, queue, activity log as JSON</div></div>
+          <div><div style={{fontSize:13,fontWeight:600,color:C.text}}>Export Content Library</div><div style={{fontSize:11,color:C.muted,marginTop:2}}>Saves research, ideas, queue, activity log with date stamp</div></div>
             <button onClick={exportData} style={{padding:'6px 14px',fontSize:12,fontWeight:600,background:C.navy,color:'#fff',border:'none',borderRadius:7,cursor:'pointer',flexShrink:0}}>📥 Export</button>
           </div>
           <div style={{display:'flex',alignItems:'center',justifyContent:'space-between',padding:'10px 13px',background:'#fff9f9',borderRadius:9,border:'1px solid #fca5a5'}}>
-            <div><div style={{fontSize:13,fontWeight:600,color:C.text}}>Clear Content Cache</div><div style={{fontSize:11,color:C.muted,marginTop:2}}>Removes all research findings and content ideas</div></div>
+           </div>
+          <div style={{display:'flex',alignItems:'center',justifyContent:'space-between',padding:'10px 13px',background:'#f0fdf4',borderRadius:9,border:'1px solid #bbf7d0'}}>
+            <div><div style={{fontSize:13,fontWeight:600,color:C.text}}>Import Content Library</div><div style={{fontSize:11,color:C.muted,marginTop:2}}>Restore a previous export — research, ideas, and queue</div></div>
+            <button onClick={()=>importRef.current?.click()} style={{padding:'6px 14px',fontSize:12,fontWeight:600,background:'#16a34a',color:'#fff',border:'none',borderRadius:7,cursor:'pointer',flexShrink:0}}>📂 Import</button>
+          </div>
+          <input ref={importRef} type="file" accept=".json" style={{display:'none'}} onChange={importData}/>
+          {importMsg&&<div style={{padding:'8px 12px',background:'#f0fdf4',border:'1px solid #bbf7d0',borderRadius:7,fontSize:12,color:'#166534'}}>{importMsg}</div>}
             <button onClick={clearCache} style={{padding:'6px 14px',fontSize:12,fontWeight:600,background:'#dc2626',color:'#fff',border:'none',borderRadius:7,cursor:'pointer',flexShrink:0}}>🗑 Clear</button>
           </div>
           <div style={{display:'flex',alignItems:'center',justifyContent:'space-between',padding:'10px 13px',background:'#fff9f9',borderRadius:9,border:'1px solid #fca5a5'}}>
