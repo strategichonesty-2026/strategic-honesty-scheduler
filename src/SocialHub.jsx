@@ -1,5 +1,4 @@
 import { useState, useEffect, useCallback, useRef } from "react";
-import MediaStudio from "./MediaStudio";
 
 const BUILD_TIME = process.env.REACT_APP_BUILD_TIME || 'dev';
 const GREEN = "#24b47e";
@@ -23,11 +22,11 @@ const C = {
 const CONTENT_TYPES = [
   { id:'video-long',  label:'Video Long',      emoji:'🎬', desc:'YouTube, Facebook' },
   { id:'video-short', label:'Video Short/Reel', emoji:'📱', desc:'TikTok, Reels, Shorts' },
-  { id:'image',       label:'Image + Caption',  emoji:'📸', desc:'Instagram, Facebook...' },
+  { id:'image',       label:'Image + Caption',  emoji:'📸', desc:'Instagram, Facebook…' },
   { id:'text-short',  label:'Text Short <280',  emoji:'✍️', desc:'X, Bluesky, Threads' },
-  { id:'text-medium', label:'Text Medium <700', emoji:'📝', desc:'LinkedIn, Facebook...' },
-  { id:'text-long',   label:'Text Long',        emoji:'📄', desc:'LinkedIn Articles...' },
-  { id:'link',        label:'Link Share',       emoji:'🔗', desc:'LinkedIn, Bluesky...' },
+  { id:'text-medium', label:'Text Medium <700', emoji:'📝', desc:'LinkedIn, Facebook…' },
+  { id:'text-long',   label:'Text Long',        emoji:'📄', desc:'LinkedIn Articles…' },
+  { id:'link',        label:'Link Share',       emoji:'🔗', desc:'LinkedIn, Bluesky…' },
 ];
 const ROUTER_MAP = {
   'video-long':['yt','fb'],'video-short':['tt','ig','yt','fb'],
@@ -113,7 +112,7 @@ function PlatformIcon({id,size=16,color='currentColor'}) {
     <svg style={s} viewBox="0 0 192 192" fill={color}><path d="M141.537 88.988a66.667 66.667 0 0 0-2.518-1.143c-1.482-27.307-16.403-42.94-41.457-43.1h-.34c-14.986 0-27.449 6.396-35.12 18.036l13.779 9.452c5.73-8.695 14.724-10.548 21.348-10.548h.23c8.249.053 14.474 2.452 18.502 7.13 2.932 3.405 4.893 8.111 5.864 14.05-7.314-1.243-15.224-1.626-23.68-1.14-23.82 1.371-39.134 15.264-38.105 34.568.522 9.792 5.4 18.216 13.735 23.719 7.047 4.652 16.124 6.927 25.557 6.412 12.458-.683 22.231-5.436 29.049-14.127 5.178-6.6 8.453-15.153 9.899-25.93 5.937 3.583 10.337 8.298 12.767 13.966 4.132 9.635 4.373 25.468-8.546 38.376C123.553 163.2 108.228 168.915 88 169.02c-22.22-.12-39.015-7.285-49.892-21.305C28.615 134.27 23.536 116.38 23.333 94c.203-22.379 5.282-40.269 15.076-53.715C49.185 26.715 65.98 19.55 88.2 19.43c22.389.12 39.353 7.295 50.408 21.325 5.486 6.944 9.579 15.64 12.208 25.755l16.17-4.322c-3.164-12.003-8.312-22.597-15.498-31.58C136.642 13.586 115.612 3.634 88.363 3.5h-.37C61.12 3.634 40.257 13.636 26.5 30.573 14.343 45.446 8.08 66.25 7.9 93.934L7.9 94l.002.066c.18 27.684 6.443 48.488 18.6 63.361C40.256 174.364 61.12 184.366 88 184.5h.37c23.863-.12 40.697-6.42 54.488-20.2 18.421-18.414 17.843-41.485 11.802-55.649-4.413-10.289-12.809-18.593-23.123-23.663zm-40.24 40.498c-10.45.588-21.286-4.098-21.82-14.135-.397-7.442 5.296-15.746 22.461-16.735 1.966-.114 3.895-.169 5.79-.169 6.235 0 12.068.606 17.371 1.765-1.978 24.702-13.574 28.674-23.802 29.274z"/></svg>
   );
   // fallback
-  return <span style={{fontSize:size,lineHeight:1}}>{id==='li'?'💼':id==='tt'?'🎵':id==='ig'?'📸':id==='fb'?'👥':id==='tw'?'X':'🧵'}</span>;
+  return <span style={{fontSize:size,lineHeight:1}}>{id==='li'?'💼':id==='tt'?'🎵':id==='ig'?'📸':id==='fb'?'👥':id==='tw'?'𝕏':'🧵'}</span>;
 }
 
 function LogoMenu({onHome}) {
@@ -496,9 +495,9 @@ function ContentIdeasPanel({setApprovedQueue}) {
   const runResearch=async()=>{
       console.log('runResearch called, status:', resStatus);
     if(resStatus==='running')return;
-    setResStatus('running');setResProgress(0);setFindings([]);setResLabel('Initializing research cycle...');
+    setResStatus('running');setResProgress(0);setFindings([]);setResLabel('Initializing research cycle…');
     const nf=[];
-setResLabel('Researching viral trends across all platforms...');
+setResLabel('Researching viral trends across all platforms…');
 setResProgress(30);
 try{
   const raw=await ciCallClaude(`Research 6 viral social media content trends for a leadership/integrity personal brand (Gopu Shrestha, Nepal origin story, Wells Fargo PM, author).\n\nReturn ONLY a raw JSON array of exactly 6 objects (no markdown, no backticks):\n[{"platform":"LinkedIn","trend":"trend name","hook":"viral hook example","theme":"core theme","whyItWorks":"2-3 sentences","emotional":"emotional trigger","format":"content format","alignment":"Strategic Honesty fit","score":8,"gopu_angle":"specific angle using Nepal origin or credentials"}]`,null,2000);
@@ -510,7 +509,7 @@ try{
   setResProgress(65);
 }catch(e){console.error('Research error:',e.message);}
 
-    setResLabel('Generating content ideas...');setResProgress(70);
+    setResLabel('Generating content ideas…');setResProgress(70);
     try{
     console.log('Starting ideas generation...');
       const summary=nf.slice(0,5).map(f=>`• ${f.trend}: ${f.gopu_angle}`).join('\n');
@@ -562,7 +561,7 @@ const parsedIdeas=JSON.parse(cleaned2);
         ))}
         <div style={{flex:1}}/>
         <button onClick={runResearch} disabled={resStatus==='running'} style={{padding:'5px 13px',fontSize:11,fontWeight:600,background:resStatus==='running'?'#f5f5f5':C.purple,color:resStatus==='running'?C.muted:'#fff',border:'none',borderRadius:7,cursor:resStatus==='running'?'not-allowed':'pointer',margin:'4px 0'}}>
-          {resStatus==='running'?'⟳ Running...':'⟳ Run Research'}
+          {resStatus==='running'?'⟳ Running…':'⟳ Run Research'}
         </button>
       </div>
       {resStatus==='running'&&<div style={{marginBottom:12}}><div style={{display:'flex',justifyContent:'space-between',fontSize:11,color:C.muted,marginBottom:4}}><span>{resLabel}</span><span>{resProgress}%</span></div><div style={{height:4,background:C.border,borderRadius:2,overflow:'hidden'}}><div style={{height:'100%',width:resProgress+'%',background:`linear-gradient(90deg,${C.purple},#a78bfa)`,borderRadius:2,transition:'width 0.4s'}}/></div></div>}
@@ -620,7 +619,7 @@ const parsedIdeas=JSON.parse(cleaned2);
                   <div key={idea.id} onClick={()=>setActiveIdea(idea.id)} style={{padding:'8px 10px',background:activeIdea===idea.id?C.card:'transparent',border:`1px solid ${activeIdea===idea.id?C.purple:C.border}`,borderRadius:9,cursor:'pointer',marginBottom:4,transition:'all .12s'}}>
                     <div style={{display:'flex',gap:5,alignItems:'flex-start'}}>
                       <div style={{width:6,height:6,borderRadius:'50%',background:sc[idea.status]||C.muted,marginTop:4,flexShrink:0}}/>
-                      <div><div style={{fontSize:11,fontWeight:600,color:C.text,lineHeight:1.4,marginBottom:1}}>{idea.title}</div><div style={{fontSize:10,color:C.muted,overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap',maxWidth:160}}>{idea.core.slice(0,50)}...</div>{idea.pillars&&<span style={{display:'inline-block',padding:'1px 5px',borderRadius:7,fontSize:9,fontWeight:600,background:C.purpleLight,color:C.purple,marginTop:2}}>{idea.pillars}</span>}</div>
+                      <div><div style={{fontSize:11,fontWeight:600,color:C.text,lineHeight:1.4,marginBottom:1}}>{idea.title}</div><div style={{fontSize:10,color:C.muted,overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap',maxWidth:160}}>{idea.core.slice(0,50)}…</div>{idea.pillars&&<span style={{display:'inline-block',padding:'1px 5px',borderRadius:7,fontSize:9,fontWeight:600,background:C.purpleLight,color:C.purple,marginTop:2}}>{idea.pillars}</span>}</div>
                     </div>
                   </div>
                 ))}</div>;
@@ -652,12 +651,12 @@ const parsedIdeas=JSON.parse(cleaned2);
                     return <div key={plat.id} style={{background:C.card,border:`1px solid ${C.border}`,borderRadius:12,overflow:'hidden',marginBottom:8}}>
                       <div onClick={()=>setCard(activeIdea,plat.id,{expanded:!c.expanded})} style={{display:'flex',alignItems:'center',gap:9,padding:'10px 13px',cursor:'pointer',background:c.expanded?C.bg:C.card,borderBottom:c.expanded?`1px solid ${C.border}`:'none'}}>
                         <div style={{width:30,height:30,borderRadius:8,background:plat.color+'18',display:'flex',alignItems:'center',justifyContent:'center',fontSize:14,flexShrink:0}}>{plat.icon}</div>
-                        <div style={{flex:1}}><div style={{fontSize:13,fontWeight:600,color:C.text}}>{plat.label}</div><div style={{fontSize:10,color:C.muted}}>{plat.fmt.slice(0,46)}...</div></div>
+                        <div style={{flex:1}}><div style={{fontSize:13,fontWeight:600,color:C.text}}>{plat.label}</div><div style={{fontSize:10,color:C.muted}}>{plat.fmt.slice(0,46)}…</div></div>
                         <div style={{display:'flex',gap:5,alignItems:'center'}}>
                           {inQueue&&<span style={{padding:'2px 7px',borderRadius:10,fontSize:10,fontWeight:600,background:C.greenLight,color:C.greenDark}}>✓ queued</span>}
                           {c.content&&!inQueue&&<span style={{padding:'2px 7px',borderRadius:10,fontSize:10,fontWeight:600,background:C.goldLight,color:C.gold}}>Ready</span>}
                           <button onClick={e=>{e.stopPropagation();generateContent(activeIdea,plat.id);}} disabled={c.loading&&!c.actionLoading} style={{padding:'4px 12px',fontSize:11,fontWeight:600,background:c.loading&&!c.actionLoading?'#f0f0f0':plat.color,color:c.loading&&!c.actionLoading?C.muted:'#fff',border:'none',borderRadius:7,cursor:c.loading&&!c.actionLoading?'not-allowed':'pointer'}}>
-                            {c.loading&&!c.actionLoading?'...':c.content?'↺':'Generate'}
+                            {c.loading&&!c.actionLoading?'…':c.content?'↺':'Generate'}
                           </button>
                         </div>
                       </div>
@@ -669,7 +668,7 @@ const parsedIdeas=JSON.parse(cleaned2);
                           </div>}
                         {c.content&&<div style={{marginTop:10}}>
                           <div style={{display:'flex',flexWrap:'wrap',gap:4,marginBottom:8}}>
-                            {CI_ACTIONS.map(a=><button key={a.id} onClick={()=>generateContent(activeIdea,plat.id,a.id)} disabled={!!c.actionLoading} style={{padding:'3px 8px',fontSize:11,fontWeight:500,border:`1px solid ${C.border}`,borderRadius:6,background:c.actionLoading===a.id?C.purple:'#f9f9f9',color:c.actionLoading===a.id?'#fff':C.label,cursor:c.actionLoading?'not-allowed':'pointer',transition:'all .12s'}}>{a.icon} {c.actionLoading===a.id?'...':a.label}</button>)}
+                            {CI_ACTIONS.map(a=><button key={a.id} onClick={()=>generateContent(activeIdea,plat.id,a.id)} disabled={!!c.actionLoading} style={{padding:'3px 8px',fontSize:11,fontWeight:500,border:`1px solid ${C.border}`,borderRadius:6,background:c.actionLoading===a.id?C.purple:'#f9f9f9',color:c.actionLoading===a.id?'#fff':C.label,cursor:c.actionLoading?'not-allowed':'pointer',transition:'all .12s'}}>{a.icon} {c.actionLoading===a.id?'…':a.label}</button>)}
                           </div>
                           <div style={{display:'flex',gap:7}}>
                             <button onClick={()=>{if(c.editing)setCard(activeIdea,plat.id,{content:c.editVal,editing:false});else setCard(activeIdea,plat.id,{editVal:c.content,editing:true});}} style={{flex:1,padding:'6px 0',fontSize:12,fontWeight:600,border:`1px solid ${C.border}`,borderRadius:8,background:c.editing?C.greenLight:'#f9f9f9',color:c.editing?C.greenDark:C.label,cursor:'pointer'}}>{c.editing?'✓ Save edit':'✎ Edit'}</button>
@@ -804,7 +803,7 @@ export default function SocialHub() {
   function wizardCanAdvance(step){if(step===1)return wizardContent.trim().length>0;if(step===2)return wizardSel.size>0;if(step===3){if(wizardSel.has('bs')&&wizardContent.length>300)return false;if(wizardSchedule==='scheduled'&&!wizardDate)return false;return true;}return true;}
   function wizardComputeScheduledAt(){if(wizardSchedule==='now')return new Date(Date.now()+10000).toISOString();if(wizardSchedule==='1week')return new Date(Date.now()+7*24*60*60*1000).toISOString();if(wizardSchedule==='2weeks')return new Date(Date.now()+14*24*60*60*1000).toISOString();if(wizardSchedule==='scheduled'&&wizardDate)return new Date(wizardDate).toISOString();return new Date(Date.now()+10000).toISOString();}
 
-  async function wizardSend(){if(wizardPosting)return;setWizardPosting(true);setWizardDone(false);const init={};wizardSel.forEach(id=>{init[id]={state:'sending',msg:'Sending...'};});setWizardSendStatus(init);const scheduledAt=wizardComputeScheduledAt();const publishNow=wizardSchedule==='now';const update=(id,state,msg)=>setWizardSendStatus(prev=>({...prev,[id]:{state,msg}}));
+  async function wizardSend(){if(wizardPosting)return;setWizardPosting(true);setWizardDone(false);const init={};wizardSel.forEach(id=>{init[id]={state:'sending',msg:'Sending…'};});setWizardSendStatus(init);const scheduledAt=wizardComputeScheduledAt();const publishNow=wizardSchedule==='now';const update=(id,state,msg)=>setWizardSendStatus(prev=>({...prev,[id]:{state,msg}}));
     for(const platformId of wizardSel){
       if(platformId==='li'&&connections.linkedin){try{const data=await(await fetch(`${BACKEND}/posts`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({platform:'linkedin',userId:localStorage.getItem('sh_linkedin_userId')||userId,content:wizardContent,mediaUrl:wizardImage||null,mediaType:wizardImage?'image':null,scheduledAt})})).json();if(data.success){if(publishNow){await fetch(`${BACKEND}/posts/${data.post.id}/publish`,{method:'POST'});update('li','ok',`✓ Published to LinkedIn`);saveToLog({platform:'LinkedIn',type:'real',status:'ok',msg:`Published`,preview:wizardContent.slice(0,80)});}else{update('li','ok',`✓ Scheduled for ${new Date(scheduledAt).toLocaleString()}`);fetchScheduledPosts();}}else{update('li','err',`Error: ${data.error}`);}}catch(e){update('li','err',`LinkedIn: ${e.message}`);}}
       else if(platformId==='bs'){if(!bskyConnected){update('bs','err','Not connected — go to Connect tab');continue;}if(wizardContent.length>300){update('bs','err',`Over 300 chars — skipped`);continue;}try{const session=await bskyCreateSession(localStorage.getItem('sh_bsky_handle'),localStorage.getItem('sh_bsky_apppw'));const r=await bskyPost(session.accessJwt,session.did,wizardContent);update('bs','ok',`✓ Published to Bluesky`);saveToLog({platform:'Bluesky',type:'real',status:'ok',msg:`Published`,preview:wizardContent.slice(0,80)});}catch(e){update('bs','err',`Bluesky: ${e.message}`);}}
@@ -833,7 +832,7 @@ export default function SocialHub() {
   const statusDot=s=>({width:8,height:8,borderRadius:'50%',flexShrink:0,background:s==='active'?'#22c55e':s==='warning'?'#f59e0b':'#ef4444'});
   const brandScore=Math.min(100,40+approvedQueue.length*8);
   const viralIdeasSidebar=(()=>{try{return JSON.parse(localStorage.getItem('sh_ci_ideas')||'[]').filter(i=>i.status==='review').slice(0,6);}catch{return[];}})();
-  const NAV=[{id:'calendar',icon:'📅',label:'Calendar'},{id:'help',icon:'❓',label:'Help & Guide'},{id:'ideas',icon:'💡',label:'Content Ideas'},{id:'wizard',icon:'🚀',label:'Review & Post'},{id:'compose',icon:'✉️',label:'Quick Compose'},{id:'media',icon:'🎨',label:'Media Studio'},{id:'connect',icon:'🔗',label:'Connect'},{id:'upload',icon:'⬆',label:'Upload CSV'},{id:'log',icon:'📋',label:'Activity Log'}];
+  const NAV=[{id:'calendar',icon:'📅',label:'Calendar'},{id:'help',icon:'❓',label:'Help & Guide'},{id:'ideas',icon:'💡',label:'Content Ideas'},{id:'wizard',icon:'🚀',label:'Review & Post'},{id:'compose',icon:'✉️',label:'Quick Compose'},{id:'connect',icon:'🔗',label:'Connect'},{id:'upload',icon:'⬆',label:'Upload CSV'},{id:'log',icon:'📋',label:'Activity Log'}];
   const previewContent=testContent||wizardContent||(approvedQueue[0]?.content||'');
   const previewPlatformMeta={li:{label:'LinkedIn',color:'#0A66C2',icon:'💼'},tt:{label:'TikTok',color:'#010101',icon:'🎵'},ig:{label:'Instagram',color:'#E1306C',icon:'📸'},fb:{label:'Facebook',color:'#1877F2',icon:'👥'},tw:{label:'X/Twitter',color:'#333',icon:'🐦'},th:{label:'Threads',color:'#444',icon:'🧵'},yt:{label:'YouTube',color:'#FF0000',icon:'▶️'}};
 
@@ -935,16 +934,6 @@ export default function SocialHub() {
             </div>
           )}
 
-          {mainTab==='media'&&(
-            <MediaStudio
-              approvedQueue={approvedQueue}
-              onAttachToPost={(url)=>{
-                setWizardImage(url);
-                setMainTab('wizard');
-              }}
-            />
-          )}
-
           {mainTab==='ideas'&&<ContentIdeasPanel setApprovedQueue={setApprovedQueue}/>}
 
           {mainTab==='compose'&&(
@@ -1032,7 +1021,7 @@ export default function SocialHub() {
                   {!bskyConnected&&<div style={{marginTop:11,display:'grid',gridTemplateColumns:'1fr 1fr auto',gap:8,alignItems:'end'}}>
                     <div><label style={labelStyle}>Handle</label><input value={bskyHandleInput} onChange={e=>setBskyHandleInput(e.target.value)} placeholder="strategic-honesty.bsky.social" style={{...inputStyle,marginBottom:0}}/></div>
                     <div><label style={labelStyle}>App password</label><input type="password" value={bskyPwInput} onChange={e=>setBskyPwInput(e.target.value)} placeholder="xxxx-xxxx-xxxx-xxxx" style={{...inputStyle,marginBottom:0}}/></div>
-                    <button onClick={connectBluesky} disabled={bskyConnecting} style={{padding:'8px 14px',fontSize:13,border:'none',borderRadius:8,background:BSKY_COLOR,cursor:bskyConnecting?'wait':'pointer',color:'#fff',fontWeight:500,height:36}}>{bskyConnecting?'...':'Connect'}</button>
+                    <button onClick={connectBluesky} disabled={bskyConnecting} style={{padding:'8px 14px',fontSize:13,border:'none',borderRadius:8,background:BSKY_COLOR,cursor:bskyConnecting?'wait':'pointer',color:'#fff',fontWeight:500,height:36}}>{bskyConnecting?'…':'Connect'}</button>
                   </div>}
                 </div>
               </div>
@@ -1054,7 +1043,7 @@ export default function SocialHub() {
                 {activityLog.map(entry=>{const isReal=entry.type==='real',isFail=entry.status==='err',isBuffer=entry.type==='buffer';const bg=isFail?'#fef2f2':isReal?'#f0faf6':'#fffbeb';const border=isFail?'#fca5a5':isReal?'#b6e8d6':'#fcd34d';const icon=isFail?'❌':isReal?'✅':'⚠️';const badge=isFail?{bg:'#fee2e2',color:'#dc2626',text:'Failed'}:isReal?{bg:'#dcfce7',color:'#166534',text:'Real post'}:isBuffer?{bg:'#f5f3ff',color:C.purple,text:'Buffer CSV'}:{bg:'#fef9c3',color:'#854d0e',text:'Simulated'};return(
                   <div key={entry.id} style={{background:bg,border:`1px solid ${border}`,borderRadius:10,padding:'10px 13px'}}>
                     <div style={{display:'flex',alignItems:'center',gap:8,marginBottom:4}}><span style={{fontSize:16}}>{icon}</span><div style={{flex:1}}><div style={{display:'flex',alignItems:'center',gap:6,flexWrap:'wrap'}}><span style={{fontSize:13,fontWeight:600,color:C.text}}>{entry.platform}</span><span style={{fontSize:10,padding:'2px 6px',borderRadius:10,background:badge.bg,color:badge.color,fontWeight:600}}>{badge.text}</span><span style={{fontSize:11,color:C.muted,marginLeft:'auto'}}>{new Date(entry.ts).toLocaleString('en-US',{month:'short',day:'numeric',hour:'numeric',minute:'2-digit',hour12:true})}</span></div><div style={{fontSize:12,color:isFail?'#dc2626':isReal?C.greenDark:'#854d0e',marginTop:2,fontWeight:500}}>{entry.msg}</div></div></div>
-                    {entry.preview&&<div style={{fontSize:12,color:C.muted,background:'rgba(0,0,0,0.04)',borderRadius:5,padding:'4px 8px',fontStyle:'italic',overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap'}}>"{entry.preview}{entry.preview.length>=80?'...':''}"</div>}
+                    {entry.preview&&<div style={{fontSize:12,color:C.muted,background:'rgba(0,0,0,0.04)',borderRadius:5,padding:'4px 8px',fontStyle:'italic',overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap'}}>"{entry.preview}{entry.preview.length>=80?'…':''}"</div>}
                     {isBuffer&&entry.platformId&&<div style={{marginTop:6,display:'flex',gap:7}}><button onClick={()=>downloadCSV(entry.platformId,entry.preview,null,null)} style={{padding:'3px 9px',fontSize:11,fontWeight:600,background:C.purple,color:'#fff',border:'none',borderRadius:5,cursor:'pointer'}}>📥 Re-download CSV</button><a href="https://buffer.com" target="_blank" rel="noreferrer" style={{fontSize:11,color:C.purple,fontWeight:500}}>Open Buffer →</a></div>}
                   </div>
                 );})}
@@ -1091,7 +1080,7 @@ export default function SocialHub() {
                 <div style={{fontSize:14,fontWeight:700,color:C.text,marginBottom:3}}>✍️ Write your post</div>
                 <div style={{fontSize:12,color:C.muted,marginBottom:13}}>Paste AI-generated content or write from scratch.</div>
                 <label style={labelStyle}>Post content</label>
-                <textarea value={wizardContent} onChange={e=>setWizardContent(e.target.value)} rows={8} style={{...inputStyle,fontSize:14,lineHeight:1.6,marginBottom:4}} placeholder={`Share something that reflects your philosophy...\n\n"Be Good. Do Good. Do Well."`} autoFocus/>
+                <textarea value={wizardContent} onChange={e=>setWizardContent(e.target.value)} rows={8} style={{...inputStyle,fontSize:14,lineHeight:1.6,marginBottom:4}} placeholder={`Share something that reflects your philosophy…\n\n"Be Good. Do Good. Do Well."`} autoFocus/>
                 <div style={{display:'flex',justifyContent:'space-between',marginTop:2,marginBottom:13}}><span style={{fontSize:11,color:C.muted}}>{wizardContent.length} characters</span>{wizardContent.length>300&&<span style={{fontSize:11,color:'#d97706',fontWeight:500}}>⚠ Over Bluesky limit</span>}</div>
                 <label style={labelStyle}>Image URL <span style={{color:'#bbb',fontWeight:400}}>(optional)</span></label>
                 <input value={wizardImage} onChange={e=>setWizardImage(e.target.value)} style={{...inputStyle,marginBottom:13}} placeholder="https://img.youtube.com/vi/VIDEO_ID/maxresdefault.jpg"/>
@@ -1125,7 +1114,7 @@ export default function SocialHub() {
                   <div>
                     <div style={{fontSize:13,fontWeight:700,color:C.text,marginBottom:9}}>👁 Platform previews</div>
                     <div style={{display:'flex',flexDirection:'column',gap:8}}>
-                      {[...wizardSel].map(id=>{const ch=CONNECTED_CHANNELS.find(c=>c.id===id)||ALL_PLATFORMS.find(x=>x.id===id);if(!ch)return null;const cfg=CHAR_LIMITS[id];const len=wizardContent.length;const over=cfg&&len>cfg.limit;const warn=cfg&&len>cfg.warn&&!over;const preview=wizardContent.length>200?wizardContent.slice(0,200)+'...':wizardContent;return(<div key={id} style={{border:`1px solid ${over?'#fca5a5':ch.color+'33'}`,borderRadius:10,overflow:'hidden'}}><div style={{background:ch.color+'12',padding:'6px 10px',display:'flex',alignItems:'center',gap:6,borderBottom:`1px solid ${ch.color+'22'}`}}><span style={{fontSize:14}}>{ch.icon}</span><span style={{fontSize:12,fontWeight:600,color:ch.color}}>{ch.name}</span>{cfg&&<span style={{marginLeft:'auto',fontSize:11,color:over?'#dc2626':warn?'#d97706':'#888',fontWeight:over||warn?600:400}}>{len}/{cfg.limit}{over?' 🚫':warn?' ⚠':' ✓'}</span>}</div><div style={{padding:9}}><div style={{fontSize:12,color:C.text,lineHeight:1.6,whiteSpace:'pre-wrap',wordBreak:'break-word'}}>{preview||<span style={{color:'#bbb',fontStyle:'italic'}}>No content</span>}</div>{over&&cfg.hard&&<div style={{marginTop:5,fontSize:11,color:'#dc2626',fontWeight:600}}>🚫 Must trim to {cfg.limit}</div>}</div></div>);})}
+                      {[...wizardSel].map(id=>{const ch=CONNECTED_CHANNELS.find(c=>c.id===id)||ALL_PLATFORMS.find(x=>x.id===id);if(!ch)return null;const cfg=CHAR_LIMITS[id];const len=wizardContent.length;const over=cfg&&len>cfg.limit;const warn=cfg&&len>cfg.warn&&!over;const preview=wizardContent.length>200?wizardContent.slice(0,200)+'…':wizardContent;return(<div key={id} style={{border:`1px solid ${over?'#fca5a5':ch.color+'33'}`,borderRadius:10,overflow:'hidden'}}><div style={{background:ch.color+'12',padding:'6px 10px',display:'flex',alignItems:'center',gap:6,borderBottom:`1px solid ${ch.color+'22'}`}}><span style={{fontSize:14}}>{ch.icon}</span><span style={{fontSize:12,fontWeight:600,color:ch.color}}>{ch.name}</span>{cfg&&<span style={{marginLeft:'auto',fontSize:11,color:over?'#dc2626':warn?'#d97706':'#888',fontWeight:over||warn?600:400}}>{len}/{cfg.limit}{over?' 🚫':warn?' ⚠':' ✓'}</span>}</div><div style={{padding:9}}><div style={{fontSize:12,color:C.text,lineHeight:1.6,whiteSpace:'pre-wrap',wordBreak:'break-word'}}>{preview||<span style={{color:'#bbb',fontStyle:'italic'}}>No content</span>}</div>{over&&cfg.hard&&<div style={{marginTop:5,fontSize:11,color:'#dc2626',fontWeight:600}}>🚫 Must trim to {cfg.limit}</div>}</div></div>);})}
                     </div>
                   </div>
                   <div>
@@ -1145,14 +1134,14 @@ export default function SocialHub() {
             const Step4=()=>{
               const sColor=s=>s==='ok'?'#16a34a':s==='err'?'#dc2626':s==='warn'?'#d97706':s==='sending'?'#0A66C2':s==='csv'?C.purple:'#999';
               const sBg=s=>s==='ok'?'#dcfce7':s==='err'?'#fee2e2':s==='warn'?'#fef9c3':s==='sending'?'#eff6ff':s==='csv'?'#f5f3ff':'#f3f4f6';
-              const sIcon=s=>s==='ok'?'✓':s==='err'?'✗':s==='warn'?'⚠':s==='sending'?'...':s==='csv'?'📥':'·';
+              const sIcon=s=>s==='ok'?'✓':s==='err'?'✗':s==='warn'?'⚠':s==='sending'?'…':s==='csv'?'📥':'·';
               return(
                 <div style={{background:C.card,border:`1px solid ${C.border}`,borderRadius:12,padding:20}}>
                   {!wizardPosting&&!wizardDone&&<div style={{textAlign:'center',padding:'16px 0'}}><div style={{fontSize:36,marginBottom:9}}>🚀</div><div style={{fontSize:14,fontWeight:700,color:C.text,marginBottom:4}}>Ready to publish</div><div style={{fontSize:13,color:C.muted,marginBottom:20}}>Posting to {wizardSel.size} platform{wizardSel.size!==1?'s':''} · {wizardSchedule==='now'?'immediately':wizardSchedule==='1week'?'in 1 week':wizardSchedule==='2weeks'?'in 2 weeks':`on ${new Date(wizardDate||Date.now()).toLocaleDateString()}`}</div><button onClick={wizardSend} style={{padding:'10px 28px',background:GREEN,color:'#fff',border:'none',borderRadius:9,fontSize:14,fontWeight:700,cursor:'pointer',boxShadow:`0 2px 8px ${GREEN}44`}}>⚡ Publish now</button></div>}
                   {(wizardPosting||wizardDone)&&<div>
-                    <div style={{fontSize:14,fontWeight:700,color:C.text,marginBottom:13}}>{wizardPosting?'📡 Publishing...':'🎉 Done!'}</div>
+                    <div style={{fontSize:14,fontWeight:700,color:C.text,marginBottom:13}}>{wizardPosting?'📡 Publishing…':'🎉 Done!'}</div>
                     <div style={{display:'flex',flexDirection:'column',gap:8}}>
-                      {[...wizardSel].map(id=>{const ch=CONNECTED_CHANNELS.find(c=>c.id===id)||ALL_PLATFORMS.find(x=>x.id===id);if(!ch)return null;const st=wizardSendStatus[id]||{state:'pending',msg:'Waiting...'};return(<div key={id} style={{display:'flex',alignItems:'center',gap:10,padding:'10px 12px',borderRadius:8,border:`1px solid ${C.border}`,background:sBg(st.state)}}><span style={{fontSize:18}}>{ch.icon}</span><div style={{flex:1}}><div style={{fontSize:13,fontWeight:500,color:C.text}}>{ch.name}</div><div style={{fontSize:12,color:sColor(st.state)}}>{st.msg}</div></div><div style={{display:'flex',alignItems:'center',gap:6,flexShrink:0}}>{st.state==='csv'&&<button onClick={()=>downloadCSV(id,wizardContent,wizardImage,wizardDate)} style={{padding:'4px 10px',fontSize:11,fontWeight:600,background:C.purple,color:'#fff',border:'none',borderRadius:6,cursor:'pointer',whiteSpace:'nowrap'}}>📥 CSV</button>}<div style={{width:24,height:24,borderRadius:'50%',background:sColor(st.state),display:'flex',alignItems:'center',justifyContent:'center',color:'#fff',fontSize:11,fontWeight:700,animation:st.state==='sending'?'spin 1s linear infinite':'none'}}>{sIcon(st.state)}</div></div></div>);})}
+                      {[...wizardSel].map(id=>{const ch=CONNECTED_CHANNELS.find(c=>c.id===id)||ALL_PLATFORMS.find(x=>x.id===id);if(!ch)return null;const st=wizardSendStatus[id]||{state:'pending',msg:'Waiting…'};return(<div key={id} style={{display:'flex',alignItems:'center',gap:10,padding:'10px 12px',borderRadius:8,border:`1px solid ${C.border}`,background:sBg(st.state)}}><span style={{fontSize:18}}>{ch.icon}</span><div style={{flex:1}}><div style={{fontSize:13,fontWeight:500,color:C.text}}>{ch.name}</div><div style={{fontSize:12,color:sColor(st.state)}}>{st.msg}</div></div><div style={{display:'flex',alignItems:'center',gap:6,flexShrink:0}}>{st.state==='csv'&&<button onClick={()=>downloadCSV(id,wizardContent,wizardImage,wizardDate)} style={{padding:'4px 10px',fontSize:11,fontWeight:600,background:C.purple,color:'#fff',border:'none',borderRadius:6,cursor:'pointer',whiteSpace:'nowrap'}}>📥 CSV</button>}<div style={{width:24,height:24,borderRadius:'50%',background:sColor(st.state),display:'flex',alignItems:'center',justifyContent:'center',color:'#fff',fontSize:11,fontWeight:700,animation:st.state==='sending'?'spin 1s linear infinite':'none'}}>{sIcon(st.state)}</div></div></div>);})}
                     </div>
                     {wizardDone&&<div style={{marginTop:16}}>
                       {[...wizardSel].some(id=>BUFFER_PLATFORMS[id])&&<div style={{background:'#f5f3ff',border:'1px solid #ddd6fe',borderRadius:9,padding:'10px 13px',marginBottom:9}}><div style={{fontSize:12,fontWeight:600,color:C.purple,marginBottom:6}}>📥 Buffer upload ready</div><div style={{display:'flex',flexWrap:'wrap',gap:6}}>{[...wizardSel].filter(id=>BUFFER_PLATFORMS[id]).map(id=>{const cfg=BUFFER_PLATFORMS[id];return(<button key={id} onClick={()=>downloadCSV(id,wizardContent,wizardImage,wizardDate)} style={{padding:'5px 11px',fontSize:12,fontWeight:600,background:C.purple,color:'#fff',border:'none',borderRadius:7,cursor:'pointer'}}>{cfg.icon} {cfg.name} CSV</button>);})}<a href="https://buffer.com" target="_blank" rel="noreferrer" style={{padding:'5px 11px',fontSize:12,fontWeight:600,background:'#fff',color:C.purple,border:'1px solid #ddd6fe',borderRadius:7,textDecoration:'none'}}>Open Buffer →</a></div></div>}
@@ -1207,22 +1196,64 @@ export default function SocialHub() {
 
         </div>
       </div>
-      </div>
-      </div>
-      </div>
-      </div>
-      </div>
-      </div>
-      </div>
-      </div>
 
-      <RightPanel
-        previewContent={previewContent}
-        approvedQueue={approvedQueue}
-        viralIdeasSidebar={viralIdeasSidebar}
-        schedulePosts={SCHEDULE_POSTS}
-        setMainTab={setMainTab}
-      />
+      {/* RIGHT PANEL */}
+      <div style={{background:C.sidebar,borderLeft:`1px solid ${C.border}`,display:'flex',flexDirection:'column',height:'100vh',position:'sticky',top:0,overflowY:'auto'}}>
+        <div style={{borderBottom:`1px solid ${C.border}`}}>
+          <div style={{background:GREEN,padding:'11px 14px 0',display:'flex',alignItems:'center',justifyContent:'space-between'}}>
+          <div style={{fontSize:11,fontWeight:600,color:'#fff',textTransform:'uppercase',letterSpacing:'0.07em',marginBottom:9}}>Platform Preview</div>
+          </div>
+          <div style={{display:'flex',gap:2,overflowX:'auto',paddingBottom:0}}>
+            {PREVIEW_PLATFORMS.map(p=>{
+              const active=previewPlatform===p.id;
+              return(
+              <button key={p.id} onClick={()=>setPreviewPlatform(p.id)} title={p.label} style={{padding:'6px 10px',fontSize:11,background:active?p.color+'18':'#e2e8f0',border:`1px solid ${active?p.color+'44':'#cbd5e1'}`,borderBottom:`2px solid ${active?p.color:'#94a3b8'}`,color:active?p.color:'#64748b',cursor:'pointer',fontWeight:active?600:400,whiteSpace:'nowrap',transition:'all .15s',borderRadius:'4px 4px 0 0',display:'flex',alignItems:'center',gap:5}}>
+                <PlatformIcon id={p.id} size={14} color={active?p.color:'#64748b'}/>
+                <span style={{display:'none'}}>{p.label}</span>
+              </button>
+            );})}
+          </div>
+        </div>
+        <div style={{padding:'11px 13px',borderBottom:`1px solid ${C.border}`}}>
+          <div style={{background:'#f8fafc',border:`1px solid ${C.border}`,borderRadius:12,padding:'12px 13px',minHeight:120,boxShadow:'inset 0 1px 3px rgba(0,0,0,0.03)'}}>
+            <div style={{display:'flex',alignItems:'center',gap:8,marginBottom:10}}>
+              <div style={{width:34,height:34,borderRadius:'50%',background:GREEN,display:'flex',alignItems:'center',justifyContent:'center',fontSize:13,fontWeight:700,color:'#fff',flexShrink:0}}>G</div>
+              <div style={{flex:1}}><div style={{fontSize:12,fontWeight:600,color:C.text}}>Gopu Shrestha</div><div style={{fontSize:10,color:C.muted,marginTop:1}}>{previewPlatformMeta[previewPlatform]?.label} · Just now</div></div>
+              <div style={{fontSize:16}}>{previewPlatformMeta[previewPlatform]?.icon}</div>
+            </div>
+            <div style={{fontSize:12,color:'#334155',lineHeight:1.65,whiteSpace:'pre-wrap',wordBreak:'break-word',maxHeight:165,overflow:'hidden'}}>
+              {previewContent?(previewContent.length>280?previewContent.slice(0,280)+'…':previewContent):<span style={{color:'#cbd5e1',fontStyle:'italic',fontSize:11}}>Preview appears here as you write…</span>}
+            </div>
+            {previewContent&&<div style={{marginTop:10,display:'flex',gap:12,fontSize:11,color:C.muted,borderTop:`1px solid ${C.border}`,paddingTop:8}}><span style={{cursor:'pointer'}}>👍 Like</span><span style={{cursor:'pointer'}}>💬 Comment</span><span style={{cursor:'pointer'}}>↗️ Share</span></div>}
+          </div>
+        </div>
+        <div style={{borderBottom:`1px solid ${C.border}`}}>
+          <div onClick={()=>setUpcomingOpen(o=>!o)} style={{display:'flex',alignItems:'center',justifyContent:'space-between',padding:'11px 14px',cursor:'pointer',background:GREEN,borderRadius:'0',transition:'background .12s'}}>
+            <div style={{display:'flex',alignItems:'center',gap:6}}><span style={{fontSize:11,fontWeight:600,color:C.muted,textTransform:'uppercase',letterSpacing:'0.07em'}}>Upcoming Posts</span><span style={{fontSize:10,padding:'1px 5px',borderRadius:7,background:'#f1f5f9',color:C.muted,fontWeight:500}}>{SCHEDULE_POSTS.length}</span></div>
+            <div style={{display:'flex',alignItems:'center',gap:6}}><button onClick={e=>{e.stopPropagation();setMainTab('calendar');}} style={{fontSize:10,color:C.blue,background:'none',border:'none',cursor:'pointer',fontWeight:600,padding:0}}>View all</button><span style={{fontSize:9,color:C.muted,transform:upcomingOpen?'rotate(180deg)':'rotate(0)',transition:'transform .2s',display:'inline-block'}}>▼</span></div>
+          </div>
+          {upcomingOpen&&<div className='accordion-content' style={{padding:'0 12px 10px'}}>{SCHEDULE_POSTS.slice(0,5).map((p,i)=>(<div key={i} style={{display:'flex',alignItems:'center',gap:8,padding:'7px 9px',borderRadius:9,marginBottom:4,background:'#f8fafc',border:`1px solid ${C.border}`,transition:'all .12s'}} onMouseEnter={e=>e.currentTarget.style.background='#f1f5f9'} onMouseLeave={e=>e.currentTarget.style.background='#f8fafc'}><div style={{width:3,height:32,borderRadius:2,background:p.color,flexShrink:0}}/><div style={{flex:1,minWidth:0}}><div style={{fontSize:12,color:C.text,overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap',fontWeight:500}}>{p.text}</div><div style={{fontSize:10,color:C.muted,marginTop:2}}>May {p.day}</div></div></div>))}</div>}
+        </div>
+        <div style={{borderBottom:`1px solid ${C.border}`}}>
+          <div onClick={()=>setViralIdeasOpen(o=>!o)} style={{display:'flex',alignItems:'center',justifyContent:'space-between',padding:'11px 14px',cursor:'pointer',background:GREEN,borderRadius:'0',transition:'background .12s'}}>
+            <div style={{display:'flex',alignItems:'center',gap:6}}><span style={{fontSize:11,fontWeight:600,color:C.muted,textTransform:'uppercase',letterSpacing:'0.07em'}}>💡 Viral Ideas</span>{viralIdeasSidebar.length>0&&<span style={{fontSize:10,padding:'1px 5px',borderRadius:7,background:C.purpleLight,color:C.purple,fontWeight:600}}>{viralIdeasSidebar.length}</span>}</div>
+            <div style={{display:'flex',alignItems:'center',gap:6}}><button onClick={e=>{e.stopPropagation();setMainTab('ideas');}} style={{fontSize:10,color:C.purple,background:'none',border:'none',cursor:'pointer',fontWeight:600,padding:0}}>View all</button><span style={{fontSize:9,color:C.muted,transform:viralIdeasOpen?'rotate(180deg)':'rotate(0)',transition:'transform .2s',display:'inline-block'}}>▼</span></div>
+          </div>
+          {viralIdeasOpen&&<div className='accordion-content' style={{padding:'0 12px 10px'}}>{viralIdeasSidebar.length?viralIdeasSidebar.map(idea=>(<div key={idea.id} onClick={()=>setMainTab('ideas')} style={{display:'flex',alignItems:'center',gap:8,padding:'7px 9px',borderRadius:9,cursor:'pointer',marginBottom:3,background:'#f8fafc',border:`1px solid ${C.border}`,transition:'all .12s'}} onMouseEnter={e=>e.currentTarget.style.background='#f1f5f9'} onMouseLeave={e=>e.currentTarget.style.background='#f8fafc'}><div style={{width:6,height:6,borderRadius:'50%',background:C.gold,flexShrink:0}}/><div style={{fontSize:12,color:C.text,flex:1,overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap',fontWeight:500}}>{idea.title}</div><span style={{fontSize:11,color:C.muted}}>›</span></div>)):<div style={{fontSize:11,color:C.muted,fontStyle:'italic',padding:'4px 2px'}}>Run research to generate ideas</div>}</div>}
+        </div>
+        <div style={{flex:1,display:'flex',flexDirection:'column'}}>
+          <div onClick={()=>setApprovedOpen(o=>!o)} style={{display:'flex',alignItems:'center',justifyContent:'space-between',padding:'11px 14px',cursor:'pointer',background:GREEN,borderRadius:'0',transition:'background .12s'}}>
+            <div style={{display:'flex',alignItems:'center',gap:6}}><span style={{fontSize:11,fontWeight:600,color:C.muted,textTransform:'uppercase',letterSpacing:'0.07em'}}>Approved Queue</span><span style={{fontSize:10,padding:'1px 5px',borderRadius:7,background:approvedQueue.length?C.purpleLight:'#f1f5f9',color:approvedQueue.length?C.purple:C.muted,fontWeight:600}}>{approvedQueue.length}</span></div>
+            <div style={{display:'flex',alignItems:'center',gap:6}}><button onClick={e=>{e.stopPropagation();setMainTab('ideas');}} style={{fontSize:10,color:C.purple,background:'none',border:'none',cursor:'pointer',fontWeight:600,padding:0}}>Manage</button><span style={{fontSize:9,color:C.muted,transform:approvedOpen?'rotate(180deg)':'rotate(0)',transition:'transform .2s',display:'inline-block'}}>▼</span></div>
+          </div>
+          {approvedOpen&&<div className='accordion-content' style={{padding:'0 12px 14px',flex:1}}>
+            {approvedQueue.length===0&&<div style={{fontSize:11,color:C.muted,fontStyle:'italic',padding:'4px 2px'}}>No approved posts yet</div>}
+            {approvedQueue.slice(0,5).map((item,i)=>(<div key={item.id||i} style={{display:'flex',alignItems:'flex-start',gap:8,padding:'8px 10px',borderRadius:10,marginBottom:5,background:'#f8fafc',border:`1px solid ${C.border}`,borderLeft:`3px solid ${item.color||C.purple}`,transition:'all .12s'}} onMouseEnter={e=>e.currentTarget.style.background='#f1f5f9'} onMouseLeave={e=>e.currentTarget.style.background='#f8fafc'}><span style={{fontSize:14,flexShrink:0,marginTop:1}}>{item.icon||'📝'}</span><div style={{flex:1,minWidth:0}}><div style={{fontSize:12,fontWeight:600,color:C.text,overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap'}}>{item.title||'Approved post'}</div><div style={{fontSize:10,color:C.muted,marginTop:2}}>{item.platform} · Approved</div><div style={{fontSize:10,color:'#94a3b8',overflow:'hidden',textOverflow:'ellipsis',whiteSpace:'nowrap',marginTop:2}}>{(item.content||'').slice(0,48)}…</div></div></div>))}
+            {approvedQueue.length>5&&<div style={{fontSize:11,color:C.muted,textAlign:'center',padding:'4px 0'}}>+{approvedQueue.length-5} more</div>}
+            {approvedQueue.length>0&&<button onClick={()=>setMainTab('ideas')} style={{width:'100%',marginTop:8,padding:'8px 0',fontSize:12,fontWeight:600,background:C.purple,color:'#fff',border:'none',borderRadius:9,cursor:'pointer',boxShadow:'0 2px 6px rgba(124,58,237,0.25)'}}>📥 Export & Publish</button>}
+          </div>}
+        </div>
+      </div>
     </div>
     {helpOpen&&<HelpModal onClose={()=>setHelpOpen(false)}/>}
   );
