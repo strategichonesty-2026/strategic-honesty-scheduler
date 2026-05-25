@@ -1013,6 +1013,7 @@ export default function SocialHub() {
         <div style={{padding:'16px 14px 14px',borderBottom:`1px solid ${C.border}`}}>
           <LogoMenu onHome={()=>setMainTab('calendar')}/>
           <button onClick={()=>{wizardReset();setMainTab('wizard');}} style={{width:'100%',padding:'9px 0',background:GREEN,color:'#fff',border:'none',borderRadius:9,fontSize:13,fontWeight:600,cursor:'pointer',display:'flex',alignItems:'center',justifyContent:'center',gap:6,boxShadow:'0 2px 6px rgba(36,180,126,0.25)'}}>✦ New Post</button>
+          <a href='/help.html' target='_blank' style={{display:'block',textAlign:'center',marginTop:6,fontSize:12,color:'#94a3b8',textDecoration:'none'}}>❓ Help & Guide</a>
         </div>
         <div style={{padding:'11px 13px',borderBottom:`1px solid ${C.border}`,background:'#fffdf5',borderLeft:'3px solid #BA7517'}}>
           <div style={{fontSize:10,fontWeight:700,color:'#1E293B',textTransform:'uppercase',letterSpacing:'0.08em',marginBottom:6,display:'flex',alignItems:'center',gap:5}}>
@@ -1419,7 +1420,6 @@ export default function SocialHub() {
         </div>
       </div>
     </div>
-      {helpOpen&&<HelpModal onClose={()=>setHelpOpen(false)}/>}
   );
 }
 // Fri May 22 20:14:54 CDT 2026
