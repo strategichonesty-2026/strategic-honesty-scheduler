@@ -887,7 +887,6 @@ const parsedIdeas=JSON.parse(cleaned2);
       )}
       <style>{`@keyframes blink{0%,100%{opacity:1}50%{opacity:0}}`}</style>
     </div>
-      {helpOpen&&<HelpModal onClose={()=>setHelpOpen(false)}/>}
   );
 }
 
