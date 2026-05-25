@@ -1071,6 +1071,7 @@ export default function SocialHub() {
           <div style={{fontSize:15,fontWeight:700,color:C.text,flex:1}}>{NAV.find(n=>n.id===mainTab)?.icon} {NAV.find(n=>n.id===mainTab)?.label||'Dashboard'}</div>
           <div style={{fontSize:11,color:C.muted}}>{new Date().toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric',year:'numeric'})}</div>
           <button onClick={()=>{wizardReset();setMainTab('wizard');}} style={{padding:'6px 14px',borderRadius:7,fontSize:12,cursor:'pointer',border:'none',background:GREEN,color:'#fff',fontWeight:600}}>✦ New post</button>
+          <a href='/help.html' target='_blank' style={{padding:'6px 12px',borderRadius:7,fontSize:12,cursor:'pointer',border:'1px solid #E2E8F0',background:'#fff',color:'#64748b',fontWeight:500,textDecoration:'none'}}>❓ Help</a>
         </div>
         <div style={{flex:1,overflowY:'auto',padding:'18px',background:C.bg}}>
 
