@@ -369,11 +369,7 @@ function HelpModal({onClose}) {
     schedule:{
       lead:"Scheduling controls when approved posts go live. Your dashboard shows 5/week posting frequency — here's how to maintain that cadence across all channels.",
       cards:[
-        {title:'Recommended posting times (Central Time)',icon:'⏰',body:'LinkedIn: Tue–Thu · 7–9am or 5–6pm
-X: Daily · 7–9am or 8–10pm
-Facebook: Wed & Fri · 9–11am
-Instagram: Tue & Fri · 11am or 6pm
-TikTok: Daily · 7–9pm'},
+        {title:'Recommended posting times (Central Time)',icon:'⏰',body:'LinkedIn: Tue–Thu · 7–9am or 5–6pm | X: Daily · 7–9am or 8–10pm | Facebook: Wed & Fri · 9–11am | Instagram: Tue & Fri · 11am or 6pm | TikTok: Daily · 7–9pm'},
         {title:'Auto-distribute',icon:'🪄',body:'Click Fill week to automatically spread all approved drafts across the next 7 days using the recommended time slots per platform.'},
         {title:'Manual scheduling',icon:'🎛',body:'Pick any approved post from the right sidebar Approved Queue, set your preferred date and time, and confirm. Manual schedules override auto-distribute for that post only.'},
       ],
