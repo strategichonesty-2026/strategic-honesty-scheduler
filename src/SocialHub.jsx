@@ -730,6 +730,7 @@ const parsedIdeas=JSON.parse(cleaned2);
                 <button onClick={exportPictoryScripts} style={{padding:'7px 13px',fontSize:12,fontWeight:600,background:'#FF0000',color:'#fff',border:'none',borderRadius:7,cursor:'pointer'}}>🎬 Pictory Scripts</button>
                 <button onClick={exportImagePrompts} style={{padding:'7px 13px',fontSize:12,fontWeight:600,background:'#E1306C',color:'#fff',border:'none',borderRadius:7,cursor:'pointer'}}>🎨 Image Prompts</button>
                 <button onClick={exportCreativeBrief} style={{padding:'7px 13px',fontSize:12,fontWeight:600,background:C.gold,color:'#fff',border:'none',borderRadius:7,cursor:'pointer'}}>📄 Creative Brief</button>
+                <button onClick={sendAllToMediaStudio} style={{padding:'7px 13px',fontSize:12,fontWeight:600,background:'#C9A84C',color:'#0F172A',border:'none',borderRadius:7,cursor:'pointer'}}>🎬 Send to Media Studio</button>
               </div>
               <div style={{marginTop:7,fontSize:11,color:C.muted}}>Buffer CSV → Buffer bulk upload · Pictory Scripts → Pictory.ai · Image Prompts → Midjourney/DALL-E/Canva AI</div>
             </div>
