@@ -1,0 +1,84 @@
+0000000000000000000000000000000000000000 5cd43864723fc41ff6eb1460862db6e396cb5746 Gopu Shrestha <strategichonesty@gmail.com> 1779400076 -0500	clone: from https://github.com/strategichonesty-2026/strategic-honesty-scheduler.git
+5cd43864723fc41ff6eb1460862db6e396cb5746 5cd655e0e9875ca5dbb18f929701bb3ad484c30d Gopu Shrestha <strategichonesty@gmail.com> 1779400102 -0500	commit: feat: wizard + smart router dev5
+5cd655e0e9875ca5dbb18f929701bb3ad484c30d d609df61dc70281537211754339c74a9488dac4b Gopu Shrestha <strategichonesty@gmail.com> 1779400574 -0500	commit: feat: wizard final
+d609df61dc70281537211754339c74a9488dac4b 5cead19fe589e7db440a50c12073204968bbb622 Gopu Shrestha <strategichonesty@gmail.com> 1779400934 -0500	commit: fix: update correct SocialHub
+5cead19fe589e7db440a50c12073204968bbb622 cf7c1b40b12ec56b803e2e5ca3efb26d1c9e0277 Gopu Shrestha <strategichonesty@gmail.com> 1779414575 -0500	commit: feat: activity log + real vs simulated labels
+cf7c1b40b12ec56b803e2e5ca3efb26d1c9e0277 742233c800e1dba10e56f8f46b445ec68447973d Gopu Shrestha <strategichonesty@gmail.com> 1779415080 -0500	commit: feat: Buffer CSV download for FB/TT/IG
+742233c800e1dba10e56f8f46b445ec68447973d d098b48f429658294a1a5b90d0972094b33471d7 Gopu Shrestha <strategichonesty@gmail.com> 1779416462 -0500	commit: feat: Add Step 5 Buffer Schedule Engine to wizard
+d098b48f429658294a1a5b90d0972094b33471d7 27702cd878420596e30fc26b0afe386fb556ad60 Gopu Shrestha <strategichonesty@gmail.com> 1779458772 -0500	commit: feat: Full UI redesign — 3-panel layout matching Copilot mockup
+27702cd878420596e30fc26b0afe386fb556ad60 00b32175636836da9c756aa90b8270d0515d6a42 Gopu Shrestha <strategichonesty@gmail.com> 1779477783 -0500	commit: fix: route Claude API through Cloudflare Worker proxy
+00b32175636836da9c756aa90b8270d0515d6a42 1cea154d644945f29abd625453802036ae8c7a4e Gopu Shrestha <strategichonesty@gmail.com> 1779478093 -0500	commit: fix: switch Claude calls to non-streaming via Worker proxy
+1cea154d644945f29abd625453802036ae8c7a4e 5112d1d2b02ce5982f787095f23b30c1c999984e Gopu Shrestha <strategichonesty@gmail.com> 1779479957 -0500	commit: fix: handle markdown-wrapped JSON in ideas parser
+5112d1d2b02ce5982f787095f23b30c1c999984e 04116271220c8aa01e75caf5a1bbc067e395389f Gopu Shrestha <strategichonesty@gmail.com> 1779481437 -0500	commit: debug: log runResearch trigger
+04116271220c8aa01e75caf5a1bbc067e395389f c71dd2c56748102b2ee565adeacbd7f129374360 Gopu Shrestha <strategichonesty@gmail.com> 1779481648 -0500	commit: fix: reset resStatus to idle on load
+c71dd2c56748102b2ee565adeacbd7f129374360 c2daae5be9d39b719cddb39a710e25e8b1844a97 Gopu Shrestha <strategichonesty@gmail.com> 1779481967 -0500	commit: debug: log research loop errors
+c2daae5be9d39b719cddb39a710e25e8b1844a97 41825c5956ab3b3bcbd8dc1791985feb2e617cd4 Gopu Shrestha <strategichonesty@gmail.com> 1779482366 -0500	commit: fix: increase research token limit to 800
+41825c5956ab3b3bcbd8dc1791985feb2e617cd4 7e6ec01d6200db9d1db87e1c91543d1f64e1651c Gopu Shrestha <strategichonesty@gmail.com> 1779482705 -0500	commit: fix: single API call for research, 83% cost reduction
+7e6ec01d6200db9d1db87e1c91543d1f64e1651c 21d874e871afbd8aefde3cb66d686df792ae7c78 Gopu Shrestha <strategichonesty@gmail.com> 1779483742 -0500	commit: debug: log ideas generation error
+21d874e871afbd8aefde3cb66d686df792ae7c78 6f4e3b99e50a14d8b7f3aed2dfdd0cc33ceabb52 Gopu Shrestha <strategichonesty@gmail.com> 1779484166 -0500	commit: debug: log nf length after research
+6f4e3b99e50a14d8b7f3aed2dfdd0cc33ceabb52 e4aba3f18e85f0eb1c7ed6619ab16130f581eb1f Gopu Shrestha <strategichonesty@gmail.com> 1779484585 -0500	commit: fix: increase ideas token limit to 2500
+e4aba3f18e85f0eb1c7ed6619ab16130f581eb1f 827bc68e1fd4ce80204f493a7b4f0c107f68c3cc Gopu Shrestha <strategichonesty@gmail.com> 1779495321 -0500	commit: feat: move Viral Content Ideas to right panel
+827bc68e1fd4ce80204f493a7b4f0c107f68c3cc bb14be41b24531df23ce46ec11bb488ebd8ae572 Gopu Shrestha <strategichonesty@gmail.com> 1779496239 -0500	commit: feat: apply Option B font colors sharper contrast
+bb14be41b24531df23ce46ec11bb488ebd8ae572 55621dec9bec530176464dfc003b2bc5d22fa099 Gopu Shrestha <strategichonesty@gmail.com> 1779498226 -0500	commit: feat: premium redesign — accordions, brand colors, hover states, premium spacing
+55621dec9bec530176464dfc003b2bc5d22fa099 85d61d66920ccf10f35f88b02e0670c86d5b1449 Gopu Shrestha <strategichonesty@gmail.com> 1779498894 -0500	commit: fix: force Cloudflare cache bust
+85d61d66920ccf10f35f88b02e0670c86d5b1449 9324d5c3c8ffbf6289bf27e068259b07a93b1927 Gopu Shrestha <strategichonesty@gmail.com> 1779499101 -0500	commit: fix: bust build cache v2
+9324d5c3c8ffbf6289bf27e068259b07a93b1927 d720ae1e5aabdc983d054779385259bb52ef87ca Gopu Shrestha <strategichonesty@gmail.com> 1779500299 -0500	commit: fix: remove duplicate src/src folder causing stale builds
+d720ae1e5aabdc983d054779385259bb52ef87ca 0da898a25ec23d9b2ef96a46c5c36e100b568294 Gopu Shrestha <strategichonesty@gmail.com> 1779500340 -0500	commit: fix: remove duplicate src/src from tracking
+0da898a25ec23d9b2ef96a46c5c36e100b568294 9966e15deefc797becf4858ce769fd53a5667efe Gopu Shrestha <strategichonesty@gmail.com> 1779500629 -0500	commit: fix: sync package-lock.json
+9966e15deefc797becf4858ce769fd53a5667efe 45e5e2764eb13d87a94624f9b212a0e06a97052d Gopu Shrestha <strategichonesty@gmail.com> 1779501171 -0500	commit: fix: force new build hash
+45e5e2764eb13d87a94624f9b212a0e06a97052d 13098aa5c52ada2af4e924529500ded82f2584a4 Gopu Shrestha <strategichonesty@gmail.com> 1779501778 -0500	commit: fix: nav active green border
+13098aa5c52ada2af4e924529500ded82f2584a4 688f5713a9ea6b37b89912109468941d51a75cb4 Gopu Shrestha <strategichonesty@gmail.com> 1779502060 -0500	commit: fix: platform tab icons and nav border
+688f5713a9ea6b37b89912109468941d51a75cb4 d2a8dfab1eab69d329b93f7d54764f0def326ecf Gopu Shrestha <strategichonesty@gmail.com> 1779502599 -0500	commit: fix: solid green active nav, white text
+d2a8dfab1eab69d329b93f7d54764f0def326ecf 5232e8c820f75463fbcc642a35b9bc9298b6dae4 Gopu Shrestha <strategichonesty@gmail.com> 1779502914 -0500	commit: fix: green accordion headers for Channels and Quick Connect
+5232e8c820f75463fbcc642a35b9bc9298b6dae4 5fd46a273b1b39db41dd37d11fab730db6d35613 Gopu Shrestha <strategichonesty@gmail.com> 1779503174 -0500	commit: fix: green headers for right panel accordions
+5fd46a273b1b39db41dd37d11fab730db6d35613 02727c6b08cd2e495719bb8835923bc0cfac227b Gopu Shrestha <strategichonesty@gmail.com> 1779503612 -0500	commit: feat: always-green accordion headers + move Channels/QuickConnect above bottom
+02727c6b08cd2e495719bb8835923bc0cfac227b 30eaaa015997a3fb3d00b7aaf4119e2b7dec9d91 Gopu Shrestha <strategichonesty@gmail.com> 1779503911 -0500	commit: fix: move Channels/QuickConnect directly after Activity Log
+30eaaa015997a3fb3d00b7aaf4119e2b7dec9d91 5d3636c02c0e1390827b0fbc3e9ea689c717a269 Gopu Shrestha <strategichonesty@gmail.com> 1779542583 -0500	commit: ui: logo hover menu, SVG icons, footer, settings nav, tab visibility
+5d3636c02c0e1390827b0fbc3e9ea689c717a269 58972b260ab036df3bccd21c508a13964aef9160 Gopu Shrestha <strategichonesty@gmail.com> 1779543406 -0500	commit: ui: settings page, green preview header, visible tabs, simplified logo
+58972b260ab036df3bccd21c508a13964aef9160 c06d871bfd7cfb2010da7416a597cfb0d537d03a Gopu Shrestha <strategichonesty@gmail.com> 1779544454 -0500	commit: ui: settings page, core idea gold styling, visible tabs, green preview header
+c06d871bfd7cfb2010da7416a597cfb0d537d03a 8270ba7e7141a0a685a532b4650e5de37d9bc062 Gopu Shrestha <strategichonesty@gmail.com> 1779544616 -0500	commit: fix: remove duplicate SettingsPanel
+8270ba7e7141a0a685a532b4650e5de37d9bc062 4279dc7e356d94d267bbdf466ec4c88028a7b410 Gopu Shrestha <strategichonesty@gmail.com> 1779545533 -0500	commit: core: Strategic Honesty Content Intelligence Engine prompt
+4279dc7e356d94d267bbdf466ec4c88028a7b410 cac66764e1c7773b32aed54df01ed8121bd4e955 Gopu Shrestha <strategichonesty@gmail.com> 1779545944 -0500	commit: fix: BRAND_SYSTEM backtick syntax error
+cac66764e1c7773b32aed54df01ed8121bd4e955 4227d6c16df2d3ca0713e9c42e7a025c2c7d83f4 Gopu Shrestha <strategichonesty@gmail.com> 1779546266 -0500	commit: feat: in-app help guide with 6 sections
+4227d6c16df2d3ca0713e9c42e7a025c2c7d83f4 b427c4975bae661669b37abc991691e87aa17e0d Gopu Shrestha <strategichonesty@gmail.com> 1779546518 -0500	commit: fix: HelpModal duplicate const, modal height fit screen
+b427c4975bae661669b37abc991691e87aa17e0d 04d4b0fe81063d0ce841c8945f3cefc8462632fb Gopu Shrestha <strategichonesty@gmail.com> 1779546853 -0500	commit: fix: remove duplicate GREEN const in HelpModal
+04d4b0fe81063d0ce841c8945f3cefc8462632fb 8cb0123a994ad714d7ea0a44067588ee506b4a52 Gopu Shrestha <strategichonesty@gmail.com> 1779547025 -0500	commit: fix: replace min() css with maxHeight in HelpModal
+8cb0123a994ad714d7ea0a44067588ee506b4a52 4ffbc5051fe6a81abf2b32531dbe13b49712899b Gopu Shrestha <strategichonesty@gmail.com> 1779547156 -0500	commit: fix: remove emoji variation selectors causing JSX parse error
+4ffbc5051fe6a81abf2b32531dbe13b49712899b df6dec2e765cada316234a4ed83c0a1234aee466 Gopu Shrestha <strategichonesty@gmail.com> 1779547541 -0500	commit: fix: collapse BRAND_SYSTEM to single line to fix JSX parse error
+df6dec2e765cada316234a4ed83c0a1234aee466 a3eb35f59159af22b68b3e8fecae76f429e28190 Gopu Shrestha <strategichonesty@gmail.com> 1779547825 -0500	commit: fix: replace template literal BRAND_SYSTEM with string concat
+a3eb35f59159af22b68b3e8fecae76f429e28190 cbe6efe0ad99788ce7d74ed0b8226d7eaabb0de8 Gopu Shrestha <strategichonesty@gmail.com> 1779547922 -0500	commit: revert: back to last known good build
+cbe6efe0ad99788ce7d74ed0b8226d7eaabb0de8 14d6b454d5943c56e9ce2675cef9800dd9fe940b Gopu Shrestha <strategichonesty@gmail.com> 1779548034 -0500	commit: revert: to last confirmed working build 8270ba7e
+14d6b454d5943c56e9ce2675cef9800dd9fe940b 5493c5db5755ac8fefd8b73b72d9da43dc82438f Gopu Shrestha <strategichonesty@gmail.com> 1779548342 -0500	commit: feat: clean HelpModal and BRAND_SYSTEM
+5493c5db5755ac8fefd8b73b72d9da43dc82438f 603ec642f5d867a2bd35c22eb1565d064406627c Gopu Shrestha <strategichonesty@gmail.com> 1779548672 -0500	commit: fix: add 12 missing closing divs in main return
+603ec642f5d867a2bd35c22eb1565d064406627c 49e42e4a1c4d7f670812fed7969eb6b3c62a8e21 Gopu Shrestha <strategichonesty@gmail.com> 1779548785 -0500	commit: revert: hard reset to 8270ba7e known good
+49e42e4a1c4d7f670812fed7969eb6b3c62a8e21 632d85e720cf4ba9d9d50156079275676641c918 Gopu Shrestha <strategichonesty@gmail.com> 1779549000 -0500	commit: feat: HelpModal via NAV array - no div structure changes
+632d85e720cf4ba9d9d50156079275676641c918 43898d4f3f321a12cfd3fc78f7352f5f9b18ae39 Gopu Shrestha <strategichonesty@gmail.com> 1779551172 -0500	commit: feat: add Media Studio tab + fix wizard image ref
+43898d4f3f321a12cfd3fc78f7352f5f9b18ae39 a9e43b3965202b07bfebb8a489b404b11ca1b145 Gopu Shrestha <strategichonesty@gmail.com> 1779551418 -0500	commit: fix: trigger Cloudflare rebuild
+a9e43b3965202b07bfebb8a489b404b11ca1b145 96502455495596ab1602cb1f12114b0b6712fa95 Gopu Shrestha <strategichonesty@gmail.com> 1779551839 -0500	commit: fix: disable eslint in SocialHub, remove build.log from tracking
+96502455495596ab1602cb1f12114b0b6712fa95 a8ec10b944d379d2dd7f7463ea54b3015a032f50 Gopu Shrestha <strategichonesty@gmail.com> 1779552266 -0500	commit: fix: disable eslint plugin + add Media Studio tab
+a8ec10b944d379d2dd7f7463ea54b3015a032f50 d6247093252f88d24fd2b1aafb0ecd016f3bef18 Gopu Shrestha <strategichonesty@gmail.com> 1779552283 -0500	commit: fix: force add .env with DISABLE_ESLINT_PLUGIN + Media Studio
+d6247093252f88d24fd2b1aafb0ecd016f3bef18 1d282ae5ec04fa0b30fe5e15c5a8d209407e6d1d Gopu Shrestha <strategichonesty@gmail.com> 1779565526 -0500	commit: ci: disable strict build errors
+1d282ae5ec04fa0b30fe5e15c5a8d209407e6d1d 063b80172c90e068652e5c455fdfaa1eeffbbe49 Gopu Shrestha <strategichonesty@gmail.com> 1779565613 -0500	commit: fix: add missing outer grid closing div
+063b80172c90e068652e5c455fdfaa1eeffbbe49 756f93b0b9b6fbd1e5bb23c012915b00b4ff028c Gopu Shrestha <strategichonesty@gmail.com> 1779565900 -0500	commit: fix: replace broken right panel with RightPanel component
+756f93b0b9b6fbd1e5bb23c012915b00b4ff028c 837b34b52f4a19d6ddd691b89500d722282f3ad2 Gopu Shrestha <strategichonesty@gmail.com> 1779566123 -0500	commit: fix: correct closing structure after RightPanel
+837b34b52f4a19d6ddd691b89500d722282f3ad2 44b574de79d7602aec05714a89dbb7b5ff1632e9 Gopu Shrestha <strategichonesty@gmail.com> 1779566388 -0500	commit: ci: retry deploy
+44b574de79d7602aec05714a89dbb7b5ff1632e9 ac211e60f478fa22a19fb0d51c9c4ba3ce69fb72 Gopu Shrestha <strategichonesty@gmail.com> 1779566719 -0500	commit: fix: add missing closing divs before RightPanel
+ac211e60f478fa22a19fb0d51c9c4ba3ce69fb72 47b52faf5584018951b97dbd20c4df5992e7f32e Gopu Shrestha <strategichonesty@gmail.com> 1779570935 -0500	commit: ci: redeploy railway with REPLICATE token
+47b52faf5584018951b97dbd20c4df5992e7f32e 0961b54ae0596b268b708b642e7bfcf8d67f8034 Gopu Shrestha <strategichonesty@gmail.com> 1779571233 -0500	commit: fix: allow localhost in CORS for dev
+0961b54ae0596b268b708b642e7bfcf8d67f8034 b17b1baa552cb616e6294b6f8484a2131d304901 strategichonesty-2026 <strategichonesty@gmail.com> 1779639723 -0500	reset: moving to origin/main
+b17b1baa552cb616e6294b6f8484a2131d304901 1ee47a9f96e12ef1fbf92551a297972ddac0e336 strategichonesty-2026 <strategichonesty@gmail.com> 1779715417 -0500	commit: feat: HelpModal accordion v3 + Help nav entry
+1ee47a9f96e12ef1fbf92551a297972ddac0e336 b17b1baa552cb616e6294b6f8484a2131d304901 strategichonesty-2026 <strategichonesty@gmail.com> 1779715458 -0500	reset: moving to HEAD~1
+b17b1baa552cb616e6294b6f8484a2131d304901 5659c56f76665399803d6cccc5265c9da6947ab9 strategichonesty-2026 <strategichonesty@gmail.com> 1779715539 -0500	reset: moving to HEAD~1
+5659c56f76665399803d6cccc5265c9da6947ab9 21c046964e294f792541a3c91c2a39d3531bd8f8 strategichonesty-2026 <strategichonesty@gmail.com> 1779715665 -0500	commit: feat: add HelpModal with 6 sections to SocialHub
+21c046964e294f792541a3c91c2a39d3531bd8f8 5659c56f76665399803d6cccc5265c9da6947ab9 strategichonesty-2026 <strategichonesty@gmail.com> 1779715728 -0500	reset: moving to HEAD~1
+5659c56f76665399803d6cccc5265c9da6947ab9 c7fb43710828f583a9558284a9be9df3a5fa4054 strategichonesty-2026 <strategichonesty@gmail.com> 1779718643 -0500	reset: moving to c7fb4371
+c7fb43710828f583a9558284a9be9df3a5fa4054 87badd11ebd1c4acee96b13756838544e75d0936 strategichonesty-2026 <strategichonesty@gmail.com> 1779718959 -0500	pull origin main: Fast-forward
+87badd11ebd1c4acee96b13756838544e75d0936 33bf22cb06198de9bedebc9ff2d44010382d41c7 strategichonesty-2026 <strategichonesty@gmail.com> 1779719234 -0500	commit: trigger: redeploy for helpOpen fix
+33bf22cb06198de9bedebc9ff2d44010382d41c7 ea707757d6e39fc3b6971962d623e83e9a5c6fe1 strategichonesty-2026 <strategichonesty@gmail.com> 1779720150 -0500	commit: fix: nav scrollable + HelpModal visible
+ea707757d6e39fc3b6971962d623e83e9a5c6fe1 6b7c0294d9dd59763587f84e9240069ef36799c9 strategichonesty-2026 <strategichonesty@gmail.com> 1779720332 -0500	commit: fix: unterminated string in HelpModal scheduling card
+6b7c0294d9dd59763587f84e9240069ef36799c9 5be87d5008010d917e9097efbf69f9ffde968498 strategichonesty-2026 <strategichonesty@gmail.com> 1779720689 -0500	commit: fix: remove misplaced HelpModal outside return
+5be87d5008010d917e9097efbf69f9ffde968498 c5aeea47f6b78696720d56daf1e6cb9b2a033a30 strategichonesty-2026 <strategichonesty@gmail.com> 1779721146 -0500	commit: feat: add standalone help.html page
+c5aeea47f6b78696720d56daf1e6cb9b2a033a30 2152e6c856e0ad755cbb886d9badda20e7c1a698 strategichonesty-2026 <strategichonesty@gmail.com> 1779721534 -0500	commit: feat: add Help & Guide link below New Post button
+2152e6c856e0ad755cbb886d9badda20e7c1a698 eb5a7db9b5f95a1dd26f2149ea751fc750340a3b strategichonesty-2026 <strategichonesty@gmail.com> 1779721878 -0500	commit: feat: add Help button in top header bar next to New Post
+eb5a7db9b5f95a1dd26f2149ea751fc750340a3b 8ba8f8d16a2ca053e9654566cc23c3b96a23d290 strategichonesty-2026 <strategichonesty@gmail.com> 1779845723 -0500	commit: feat: add Send to Media Studio buttons
+8ba8f8d16a2ca053e9654566cc23c3b96a23d290 121fff757776ad96b72f6aec887ffd8e608ac852 strategichonesty-2026 <strategichonesty@gmail.com> 1779846527 -0500	commit: force redeploy
