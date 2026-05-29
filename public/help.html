@@ -1,0 +1,706 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Strategic Honesty Content OS — Help & Guide</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --navy: #0F172A;
+    --navy-mid: #1E3A5F;
+    --gold: #C9A84C;
+    --gold-light: #F0D080;
+    --gold-pale: #FDF6E3;
+    --green: #16A34A;
+    --green-pale: #F0FDF4;
+    --red: #DC2626;
+    --red-pale: #FEF2F2;
+    --amber: #D97706;
+    --amber-pale: #FFFBEB;
+    --gray-50: #F8FAFC;
+    --gray-100: #F1F5F9;
+    --gray-200: #E2E8F0;
+    --gray-400: #94A3B8;
+    --gray-600: #475569;
+    --gray-800: #1E293B;
+    --white: #FFFFFF;
+    --radius: 10px;
+    --shadow: 0 2px 12px rgba(15,23,42,0.08);
+  }
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'DM Sans', sans-serif;
+    background: var(--gray-50);
+    color: var(--gray-800);
+    font-size: 15px;
+    line-height: 1.65;
+  }
+
+  /* ── HEADER ── */
+  .header {
+    background: var(--navy);
+    color: var(--white);
+    padding: 28px 40px 24px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    border-bottom: 3px solid var(--gold);
+  }
+  .header-brand { display: flex; align-items: center; gap: 14px; }
+  .header-logo {
+    width: 44px; height: 44px; border-radius: 10px;
+    background: var(--gold); display: flex; align-items: center;
+    justify-content: center; font-family: 'DM Serif Display', serif;
+    font-size: 22px; color: var(--navy); font-weight: 400;
+  }
+  .header-title { font-family: 'DM Serif Display', serif; font-size: 22px; font-weight: 400; }
+  .header-sub { font-size: 12px; color: var(--gold-light); margin-top: 2px; letter-spacing: 0.04em; text-transform: uppercase; }
+  .header-tagline {
+    font-size: 12px; color: var(--gold-light); font-style: italic;
+    font-family: 'DM Serif Display', serif;
+  }
+
+  /* ── LAYOUT ── */
+  .layout { display: flex; max-width: 1100px; margin: 0 auto; padding: 32px 24px; gap: 28px; }
+  .sidebar {
+    width: 220px; flex-shrink: 0;
+    position: sticky; top: 20px; align-self: flex-start;
+  }
+  .main { flex: 1; min-width: 0; }
+
+  /* ── SIDEBAR NAV ── */
+  .nav-section { margin-bottom: 8px; }
+  .nav-label {
+    font-size: 10px; font-weight: 600; letter-spacing: 0.08em;
+    text-transform: uppercase; color: var(--gray-400);
+    padding: 8px 12px 4px;
+  }
+  .nav-item {
+    display: flex; align-items: center; gap: 8px;
+    padding: 7px 12px; border-radius: 7px;
+    font-size: 13px; color: var(--gray-600);
+    cursor: pointer; text-decoration: none;
+    transition: background 0.15s, color 0.15s;
+    border: none; background: none; width: 100%; text-align: left;
+  }
+  .nav-item:hover { background: var(--gray-100); color: var(--navy); }
+  .nav-item.active { background: var(--navy); color: var(--white); font-weight: 500; }
+  .nav-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--gold); flex-shrink: 0; }
+  .nav-item.active .nav-dot { background: var(--gold-light); }
+
+  /* ── STATUS BADGE ── */
+  .status-card {
+    background: var(--white); border: 1px solid var(--gray-200);
+    border-radius: var(--radius); padding: 14px; margin-top: 16px;
+  }
+  .status-card h4 { font-size: 11px; font-weight: 600; color: var(--gray-400); text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 10px; }
+  .status-row { display: flex; align-items: center; gap: 8px; padding: 4px 0; font-size: 12px; }
+  .dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
+  .dot-green { background: var(--green); }
+  .dot-amber { background: var(--amber); }
+  .dot-gray { background: var(--gray-400); }
+
+  /* ── SECTIONS ── */
+  .section { display: none; }
+  .section.active { display: block; }
+
+  /* ── PAGE HEADER ── */
+  .page-header {
+    background: var(--white); border: 1px solid var(--gray-200);
+    border-radius: var(--radius); padding: 24px 28px; margin-bottom: 24px;
+    border-left: 4px solid var(--gold);
+  }
+  .page-header h1 {
+    font-family: 'DM Serif Display', serif;
+    font-size: 26px; font-weight: 400; color: var(--navy); margin-bottom: 6px;
+  }
+  .page-header p { color: var(--gray-600); font-size: 14px; }
+
+  /* ── CARDS ── */
+  .card {
+    background: var(--white); border: 1px solid var(--gray-200);
+    border-radius: var(--radius); padding: 22px 24px;
+    margin-bottom: 16px; box-shadow: var(--shadow);
+  }
+  .card h2 {
+    font-family: 'DM Serif Display', serif; font-size: 19px;
+    font-weight: 400; color: var(--navy); margin-bottom: 12px;
+    display: flex; align-items: center; gap: 10px;
+  }
+  .card h3 { font-size: 14px; font-weight: 600; color: var(--navy-mid); margin: 16px 0 8px; }
+  .card p { color: var(--gray-600); font-size: 14px; margin-bottom: 10px; }
+
+  /* ── STEP LIST ── */
+  .steps { list-style: none; counter-reset: steps; }
+  .steps li {
+    counter-increment: steps; display: flex; gap: 14px;
+    padding: 10px 0; border-bottom: 1px solid var(--gray-100);
+    font-size: 14px; color: var(--gray-700);
+    align-items: flex-start;
+  }
+  .steps li:last-child { border-bottom: none; }
+  .steps li::before {
+    content: counter(steps);
+    min-width: 26px; height: 26px; border-radius: 50%;
+    background: var(--navy); color: var(--white);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 12px; font-weight: 600; flex-shrink: 0; margin-top: 1px;
+  }
+
+  /* ── FLOW DIAGRAM ── */
+  .flow { display: flex; align-items: center; gap: 0; flex-wrap: wrap; margin: 16px 0; }
+  .flow-step {
+    background: var(--navy); color: var(--white);
+    padding: 10px 16px; border-radius: 8px;
+    font-size: 13px; font-weight: 500; text-align: center;
+    min-width: 110px;
+  }
+  .flow-step span { display: block; font-size: 10px; color: var(--gold-light); font-weight: 400; margin-top: 2px; }
+  .flow-arrow {
+    color: var(--gold); font-size: 18px; padding: 0 6px; font-weight: 600;
+  }
+  .flow-step.done { background: var(--green); }
+  .flow-step.partial { background: var(--amber); }
+
+  /* ── PLATFORM TABLE ── */
+  .platform-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 10px; margin: 14px 0; }
+  .platform-card {
+    border: 1px solid var(--gray-200); border-radius: 8px;
+    padding: 12px 14px; font-size: 13px;
+  }
+  .platform-card .name { font-weight: 600; color: var(--navy); margin-bottom: 4px; }
+  .platform-card .method { font-size: 11px; color: var(--gray-400); }
+  .badge {
+    display: inline-block; padding: 2px 8px; border-radius: 20px;
+    font-size: 11px; font-weight: 600; margin-top: 6px;
+  }
+  .badge-green { background: var(--green-pale); color: var(--green); }
+  .badge-amber { background: var(--amber-pale); color: var(--amber); }
+  .badge-gray { background: var(--gray-100); color: var(--gray-600); }
+
+  /* ── TIP BOX ── */
+  .tip {
+    background: var(--gold-pale); border: 1px solid #E8C94A;
+    border-radius: 8px; padding: 12px 16px; font-size: 13px;
+    color: #7A5C00; margin: 14px 0;
+  }
+  .tip strong { display: block; margin-bottom: 4px; }
+
+  /* ── WARNING BOX ── */
+  .warn {
+    background: var(--red-pale); border: 1px solid #FCA5A5;
+    border-radius: 8px; padding: 12px 16px; font-size: 13px;
+    color: var(--red); margin: 14px 0;
+  }
+
+  /* ── CHECKLIST ── */
+  .checklist { list-style: none; }
+  .checklist li {
+    display: flex; gap: 10px; align-items: flex-start;
+    padding: 6px 0; font-size: 14px; color: var(--gray-700);
+    border-bottom: 1px solid var(--gray-100);
+  }
+  .checklist li:last-child { border-bottom: none; }
+  .check-icon { color: var(--green); font-size: 16px; flex-shrink: 0; margin-top: 2px; }
+  .pending-icon { color: var(--amber); font-size: 16px; flex-shrink: 0; margin-top: 2px; }
+
+  /* ── TWO COL ── */
+  .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  @media (max-width: 700px) { .two-col { grid-template-columns: 1fr; } }
+
+  /* ── CODE ── */
+  code {
+    font-family: 'DM Mono', 'Courier New', monospace;
+    background: var(--gray-100); padding: 2px 6px;
+    border-radius: 4px; font-size: 12px; color: var(--navy);
+  }
+
+  /* ── FOOTER ── */
+  .footer {
+    text-align: center; padding: 24px; color: var(--gray-400);
+    font-size: 12px; border-top: 1px solid var(--gray-200);
+    margin-top: 40px; font-style: italic;
+  }
+  .footer strong { color: var(--gold); font-style: normal; }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-brand">
+    <div class="header-logo">SH</div>
+    <div>
+      <div class="header-title">Strategic Honesty Content OS</div>
+      <div class="header-sub">Help &amp; User Guide · v2.0 · May 2026</div>
+    </div>
+  </div>
+  <div class="header-tagline">"Be Good. Do Good. Do Well."</div>
+</div>
+
+<div class="layout">
+
+  <!-- SIDEBAR -->
+  <div class="sidebar">
+    <div class="nav-section">
+      <div class="nav-label">Getting Started</div>
+      <button class="nav-item active" onclick="show('overview')"><span class="nav-dot"></span>Overview</button>
+      <button class="nav-item" onclick="show('readiness')"><span class="nav-dot"></span>Readiness Status</button>
+    </div>
+    <div class="nav-section">
+      <div class="nav-label">Scheduler App</div>
+      <button class="nav-item" onclick="show('research')"><span class="nav-dot"></span>Research</button>
+      <button class="nav-item" onclick="show('adapter')"><span class="nav-dot"></span>Content Adapter</button>
+      <button class="nav-item" onclick="show('queue')"><span class="nav-dot"></span>Approve &amp; Queue</button>
+      <button class="nav-item" onclick="show('post')"><span class="nav-dot"></span>Post &amp; Schedule</button>
+    </div>
+    <div class="nav-section">
+      <div class="nav-label">Media Studio</div>
+      <button class="nav-item" onclick="show('studio')"><span class="nav-dot"></span>Studio Queue</button>
+      <button class="nav-item" onclick="show('video')"><span class="nav-dot"></span>Video Generation</button>
+    </div>
+    <div class="nav-section">
+      <div class="nav-label">Reference</div>
+      <button class="nav-item" onclick="show('platforms')"><span class="nav-dot"></span>Platform Guide</button>
+      <button class="nav-item" onclick="show('troubleshoot')"><span class="nav-dot"></span>Troubleshooting</button>
+    </div>
+
+    <div class="status-card">
+      <h4>System Status</h4>
+      <div class="status-row"><span class="dot dot-green"></span>Scheduler live</div>
+      <div class="status-row"><span class="dot dot-green"></span>Media Studio live</div>
+      <div class="status-row"><span class="dot dot-green"></span>Video generation</div>
+      <div class="status-row"><span class="dot dot-green"></span>Postgres queue</div>
+      <div class="status-row"><span class="dot dot-amber"></span>LinkedIn posting</div>
+      <div class="status-row"><span class="dot dot-amber"></span>Bluesky posting</div>
+      <div class="status-row"><span class="dot dot-gray"></span>Media Studio domain</div>
+    </div>
+  </div>
+
+  <!-- MAIN CONTENT -->
+  <div class="main">
+
+    <!-- OVERVIEW -->
+    <div id="overview" class="section active">
+      <div class="page-header">
+        <h1>Welcome to Your Content OS</h1>
+        <p>Two connected apps that take you from research to published content — end to end.</p>
+      </div>
+
+      <div class="card">
+        <h2>🗺 How the two apps connect</h2>
+        <div class="flow">
+          <div class="flow-step">Scheduler<span>scheduler.strategichonesty.com</span></div>
+          <div class="flow-arrow">→</div>
+          <div class="flow-step">Research<span>AI-powered intel</span></div>
+          <div class="flow-arrow">→</div>
+          <div class="flow-step">Adapter<span>Write &amp; route</span></div>
+          <div class="flow-arrow">→</div>
+          <div class="flow-step">Queue<span>Approve posts</span></div>
+          <div class="flow-arrow">→</div>
+          <div class="flow-step">Media Studio<span>strategic-honesty-media-studio.pages.dev</span></div>
+          <div class="flow-arrow">→</div>
+          <div class="flow-step">Video/Image<span>Generate assets</span></div>
+          <div class="flow-arrow">→</div>
+          <div class="flow-step">Publish<span>LinkedIn · Bluesky · Buffer</span></div>
+        </div>
+        <p style="font-size:13px; color: var(--gray-400); margin-top: 8px;">Everything starts in the Scheduler. Media Studio handles video and image production. Posts go live via direct posting or Buffer CSV.</p>
+      </div>
+
+      <div class="two-col">
+        <div class="card">
+          <h2>📅 Scheduler</h2>
+          <p><strong>URL:</strong> <code>scheduler.strategichonesty.com</code></p>
+          <p>Where you research trends, write content, adapt it for each platform, approve posts, and send them to Media Studio or directly to LinkedIn and Bluesky.</p>
+          <div class="tip"><strong>Start here every session.</strong> Run research → adapter → approve → send.</div>
+        </div>
+        <div class="card">
+          <h2>🎬 Media Studio</h2>
+          <p><strong>URL:</strong> <code>strategic-honesty-media-studio.pages.dev</code></p>
+          <p>Receives posts from Scheduler. Generates video (Creatomate) and images (LinkedIn image generator). Queue persists in Postgres — survives redeploys.</p>
+          <div class="tip"><strong>Use Firefox</strong> until Chrome cache is cleared. Hard reload fixes it: DevTools → right-click reload → Empty Cache and Hard Reload.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- READINESS STATUS -->
+    <div id="readiness" class="section">
+      <div class="page-header">
+        <h1>Readiness Status</h1>
+        <p>What works today, what needs a connection, and what's coming.</p>
+      </div>
+      <div class="card">
+        <h2>✅ What's fully working right now</h2>
+        <ul class="checklist">
+          <li><span class="check-icon">✓</span>Research tab — AI pulls trending topics and generates content ideas</li>
+          <li><span class="check-icon">✓</span>Content Adapter — adapts ideas for LinkedIn, TikTok, YouTube Shorts, Bluesky, Facebook, Instagram, X</li>
+          <li><span class="check-icon">✓</span>Approve to Queue — posts saved in Postgres, persist across redeploys</li>
+          <li><span class="check-icon">✓</span>Send to Media Studio — bulk send with auto scene generation for video posts</li>
+          <li><span class="check-icon">✓</span>Scene parser — 7-scene structure auto-generated per video post</li>
+          <li><span class="check-icon">✓</span>Video generation — Creatomate renders TikTok/YouTube Shorts (1080×1920, 50s)</li>
+          <li><span class="check-icon">✓</span>LinkedIn image generator — quote card generation in Media Studio</li>
+          <li><span class="check-icon">✓</span>Buffer CSV export — download and upload to Buffer.com for Facebook, Instagram, TikTok scheduling</li>
+          <li><span class="check-icon">✓</span>Pictory Scripts export — video scripts for Pictory.ai</li>
+          <li><span class="check-icon">✓</span>Progress button — disabled + dims while generating scenes</li>
+        </ul>
+      </div>
+
+      <div class="card">
+        <h2>⚠️ Needs account connection to post directly</h2>
+        <ul class="checklist">
+          <li><span class="pending-icon">○</span><strong>LinkedIn direct posting</strong> — OAuth token needs to be connected in Settings → Connect tab</li>
+          <li><span class="pending-icon">○</span><strong>Bluesky direct posting</strong> — App password needed in Settings → Connect tab (300 char limit)</li>
+        </ul>
+        <div class="tip"><strong>Workaround until connected:</strong> Use Buffer CSV export for all platforms. Download the CSV → Buffer.com → Bulk Upload → done.</div>
+      </div>
+
+      <div class="card">
+        <h2>🔜 Planned but not yet built</h2>
+        <ul class="checklist">
+          <li><span class="pending-icon">○</span>Media Studio custom domain (media.strategichonesty.com)</li>
+          <li><span class="pending-icon">○</span>Smart Content Router — auto-selects platforms by post type</li>
+          <li><span class="pending-icon">○</span>Viral Content Intelligence — daily AI research feed</li>
+          <li><span class="pending-icon">○</span>TTS audio in videos — edge-tts worker (built, needs deploy)</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- RESEARCH -->
+    <div id="research" class="section">
+      <div class="page-header">
+        <h1>Research Tab</h1>
+        <p>AI-powered intelligence that finds what your audience is reading, asking, and sharing right now.</p>
+      </div>
+      <div class="card">
+        <h2>🔭 How to run research</h2>
+        <ol class="steps">
+          <li>Go to <strong>Scheduler → Intelligence tab</strong> (top left)</li>
+          <li>Click <strong>⟳ Run Research</strong> — the button turns gray and shows a progress bar</li>
+          <li>Wait 30–60 seconds. The AI searches for trending topics relevant to integrity, leadership, and Agile</li>
+          <li>Review the findings cards. Each card shows a topic, insight, and suggested angle</li>
+          <li>Click <strong>✦ Use This</strong> on any finding to send it to the Adapter</li>
+        </ol>
+        <div class="tip"><strong>Pro tip:</strong> Run research once a week — not every session. Each run uses Claude API tokens (~$0.10). The findings stay saved until you clear cache.</div>
+        <div class="warn">Do not click Run Research multiple times in a row — each click fires a full API call.</div>
+      </div>
+    </div>
+
+    <!-- ADAPTER -->
+    <div id="adapter" class="section">
+      <div class="page-header">
+        <h1>Content Adapter</h1>
+        <p>Takes one idea and writes optimized versions for every platform in one click.</p>
+      </div>
+      <div class="card">
+        <h2>✦ How to adapt content</h2>
+        <ol class="steps">
+          <li>Click <strong>✦ Adapter tab</strong> in the top nav</li>
+          <li>Paste your idea or article text into the input box — or click Use This from a research finding</li>
+          <li>Select your <strong>Content Type</strong> (thought leadership, story, tip, book promotion, etc.)</li>
+          <li>Click <strong>Generate</strong> — the AI writes platform-specific versions for all selected platforms</li>
+          <li>Review each version. Edit inline if needed (LinkedIn allows 3000 chars, Bluesky hard limit is 300)</li>
+          <li>Click <strong>✓ Approve</strong> on each version you want to keep</li>
+        </ol>
+        <div class="tip"><strong>Pro tip:</strong> Generate 4–8 posts in one sitting. Each costs less than $0.08. Space them 2–3 days apart when scheduling.</div>
+      </div>
+      <div class="card">
+        <h2>Platform character limits</h2>
+        <div class="platform-grid">
+          <div class="platform-card"><div class="name">LinkedIn</div><div class="method">Direct or Buffer</div><span class="badge badge-green">3,000 chars</span></div>
+          <div class="platform-card"><div class="name">Bluesky</div><div class="method">Direct posting</div><span class="badge badge-amber">300 chars max</span></div>
+          <div class="platform-card"><div class="name">X / Twitter</div><div class="method">Buffer CSV</div><span class="badge badge-amber">280 chars</span></div>
+          <div class="platform-card"><div class="name">TikTok</div><div class="method">Buffer CSV</div><span class="badge badge-green">2,200 chars</span></div>
+          <div class="platform-card"><div class="name">Instagram</div><div class="method">Buffer CSV</div><span class="badge badge-green">2,200 chars</span></div>
+          <div class="platform-card"><div class="name">Facebook</div><div class="method">Buffer CSV</div><span class="badge badge-green">63,206 chars</span></div>
+          <div class="platform-card"><div class="name">YouTube Shorts</div><div class="method">Media Studio</div><span class="badge badge-green">Video only</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- QUEUE -->
+    <div id="queue" class="section">
+      <div class="page-header">
+        <h1>Approve &amp; Queue</h1>
+        <p>Your approved posts live here. Send them to Media Studio or export for Buffer.</p>
+      </div>
+      <div class="card">
+        <h2>📋 Working with the queue</h2>
+        <ol class="steps">
+          <li>Click the <strong>Queue tab</strong> — shows all approved posts with platform and status</li>
+          <li>Review posts. Delete any you don't want</li>
+          <li>Click <strong>🎬 Send to Media Studio</strong> to send all video posts (TikTok, YouTube Shorts, Instagram) with auto scene generation</li>
+          <li>The button dims to <em>⏳ Generating scenes…</em> and stays disabled until complete — do not click again</li>
+          <li>For text posts: use the CSV export buttons (Buffer, Pictory, Image Prompts, Creative Brief)</li>
+        </ol>
+        <div class="tip"><strong>Queue persists in Postgres</strong> — your posts survive app refreshes and Railway redeploys. Safe to close and reopen.</div>
+      </div>
+      <div class="card">
+        <h2>Export options</h2>
+        <div class="two-col">
+          <div>
+            <h3>📊 Buffer CSV</h3>
+            <p>Downloads a CSV with all approved posts. Upload to Buffer.com → Bulk Upload for scheduled posting on Facebook, Instagram, TikTok, X.</p>
+          </div>
+          <div>
+            <h3>🎬 Pictory Scripts</h3>
+            <p>Exports video scripts formatted for Pictory.ai. Good for TikTok and YouTube Shorts if you prefer Pictory over Creatomate.</p>
+          </div>
+          <div>
+            <h3>🎨 Image Prompts</h3>
+            <p>Exports all image prompts for Midjourney, DALL-E, or Canva AI. Use for LinkedIn carousels and quote cards.</p>
+          </div>
+          <div>
+            <h3>📄 Creative Brief</h3>
+            <p>Full creative brief with copy, image direction, and brand sign-off for each post. Good for sending to a designer or VA.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- POST & SCHEDULE -->
+    <div id="post" class="section">
+      <div class="page-header">
+        <h1>Post &amp; Schedule</h1>
+        <p>Two ways to publish: direct posting for LinkedIn and Bluesky, Buffer CSV for everything else.</p>
+      </div>
+      <div class="card">
+        <h2>🚀 Direct posting (LinkedIn &amp; Bluesky)</h2>
+        <ol class="steps">
+          <li>Go to <strong>Settings → Connect tab</strong> in the Scheduler</li>
+          <li>For LinkedIn: click Connect LinkedIn → authorize with your Wells Fargo / personal LinkedIn account</li>
+          <li>For Bluesky: enter your handle (<code>gopushrestha.bsky.social</code>) and App Password (not your main password)</li>
+          <li>Once connected, go back to the Adapter, approve a post, and click <strong>Publish Now</strong></li>
+          <li>The post goes live immediately — no Buffer needed</li>
+        </ol>
+        <div class="warn">Bluesky has a hard 300-character limit. Always check the character counter before publishing.</div>
+      </div>
+      <div class="card">
+        <h2>📂 Buffer CSV (Facebook, Instagram, TikTok, X)</h2>
+        <ol class="steps">
+          <li>In the Queue tab, click <strong>📊 Buffer CSV</strong></li>
+          <li>A CSV file downloads to your computer</li>
+          <li>Go to <a href="https://buffer.com" target="_blank">buffer.com</a> → select your channel → Settings → Bulk Upload</li>
+          <li>Upload the CSV — Buffer parses the dates and content automatically</li>
+          <li>Review the scheduled posts in Buffer and confirm</li>
+        </ol>
+        <div class="tip"><strong>Best posting times:</strong> LinkedIn 8am Monday, Instagram 11am Tuesday, TikTok 7pm any day. Set your defaults in Scheduler Settings.</div>
+      </div>
+    </div>
+
+    <!-- STUDIO QUEUE -->
+    <div id="studio" class="section">
+      <div class="page-header">
+        <h1>Media Studio Queue</h1>
+        <p>Posts arrive here from Scheduler. Generate videos and images, then download or publish.</p>
+      </div>
+      <div class="card">
+        <h2>🎬 Working with the Studio queue</h2>
+        <ol class="steps">
+          <li>Open Media Studio at <code>strategic-honesty-media-studio.pages.dev</code> (use Firefox for now)</li>
+          <li>Click <strong>Queue tab</strong> — you'll see items sent from Scheduler with their scene data</li>
+          <li>Find a video item (TikTok, YouTube Shorts) — it shows the scene count and hook text</li>
+          <li>Click <strong>→ Generate Video</strong> — this calls the Creatomate API to render the video</li>
+          <li>Poll status — takes 60–120 seconds. When done, a download link appears</li>
+          <li>For LinkedIn image items, click <strong>→ Create Image</strong> to generate a quote card</li>
+        </ol>
+        <div class="tip">The queue is backed by Postgres. Items stay after refresh, browser close, or Railway redeploy.</div>
+      </div>
+      <div class="card">
+        <h2>Queue item statuses</h2>
+        <div class="platform-grid">
+          <div class="platform-card"><div class="name">pending</div><span class="badge badge-gray">Waiting</span><div class="method">Sent from Scheduler, not yet processed</div></div>
+          <div class="platform-card"><div class="name">ready</div><span class="badge badge-amber">Ready</span><div class="method">Scene data attached, ready to generate</div></div>
+          <div class="platform-card"><div class="name">generating</div><span class="badge badge-amber">In progress</span><div class="method">Video render submitted to Creatomate</div></div>
+          <div class="platform-card"><div class="name">completed</div><span class="badge badge-green">Done</span><div class="method">Video/image ready to download</div></div>
+          <div class="platform-card"><div class="name">failed</div><span class="badge" style="background:#FEE2E2;color:#DC2626">Failed</span><div class="method">Error — check logs, retry</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- VIDEO GENERATION -->
+    <div id="video" class="section">
+      <div class="page-header">
+        <h1>Video Generation</h1>
+        <p>Creatomate renders your 7-scene videos at 1080×1920 (portrait) for TikTok and YouTube Shorts.</p>
+      </div>
+      <div class="card">
+        <h2>🎥 How a video is built</h2>
+        <p>Each video post goes through this pipeline automatically:</p>
+        <ol class="steps">
+          <li><strong>Scene Parser</strong> — Claude generates 7 scenes: Hook, Temptation, Origin, Decision, Math, Truth, CTA</li>
+          <li><strong>Pexels Images</strong> — Each scene fetches a relevant stock image from Pexels based on the <code>stockQuery</code></li>
+          <li><strong>Creatomate Render</strong> — Assembles image + caption text + overlay into an mp4 (1080×1920, 24fps)</li>
+          <li><strong>Status Poll</strong> — Check <code>/api/video/status/:renderId</code> every 20s until <code>"status":"succeeded"</code></li>
+          <li><strong>Download URL</strong> — Backblaze B2 CDN link, valid for 7 days</li>
+        </ol>
+        <div class="tip"><strong>Render time:</strong> 60–120 seconds for a 50-second video. Don't click Generate twice.</div>
+      </div>
+      <div class="card">
+        <h2>Motion styles supported</h2>
+        <div class="two-col">
+          <div>
+            <h3>✅ Working</h3>
+            <ul style="font-size:14px; color: var(--gray-600); padding-left: 18px;">
+              <li><code>slow_zoom_in</code> — gradual zoom in</li>
+              <li><code>slow_zoom_out</code> — gradual zoom out</li>
+              <li><code>static</code> — no motion</li>
+            </ul>
+          </div>
+          <div>
+            <h3>⏳ Planned</h3>
+            <ul style="font-size:14px; color: var(--gray-600); padding-left: 18px;">
+              <li><code>pan_right</code> — horizontal pan</li>
+              <li><code>pan_left</code> — horizontal pan</li>
+              <li>TTS voiceover audio</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PLATFORMS -->
+    <div id="platforms" class="section">
+      <div class="page-header">
+        <h1>Platform Guide</h1>
+        <p>Quick reference for every platform in your content mix.</p>
+      </div>
+      <div class="card">
+        <h2>📱 Platform overview</h2>
+        <table style="width:100%; border-collapse:collapse; font-size:13px;">
+          <thead>
+            <tr style="background:var(--navy); color:var(--white); text-align:left;">
+              <th style="padding:10px 12px; border-radius:6px 0 0 0;">Platform</th>
+              <th style="padding:10px 12px;">Format</th>
+              <th style="padding:10px 12px;">Limit</th>
+              <th style="padding:10px 12px;">How to post</th>
+              <th style="padding:10px 12px; border-radius:0 6px 0 0;">Best time</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr style="border-bottom:1px solid var(--gray-200);">
+              <td style="padding:10px 12px; font-weight:600;">LinkedIn</td>
+              <td style="padding:10px 12px;">Text + image</td>
+              <td style="padding:10px 12px;">3,000 chars</td>
+              <td style="padding:10px 12px;"><span class="badge badge-green">Direct</span></td>
+              <td style="padding:10px 12px;">Mon 8am CT</td>
+            </tr>
+            <tr style="border-bottom:1px solid var(--gray-200); background:var(--gray-50);">
+              <td style="padding:10px 12px; font-weight:600;">Bluesky</td>
+              <td style="padding:10px 12px;">Text only</td>
+              <td style="padding:10px 12px; color:var(--red);">300 chars ⚠️</td>
+              <td style="padding:10px 12px;"><span class="badge badge-green">Direct</span></td>
+              <td style="padding:10px 12px;">Tue 9am CT</td>
+            </tr>
+            <tr style="border-bottom:1px solid var(--gray-200);">
+              <td style="padding:10px 12px; font-weight:600;">TikTok</td>
+              <td style="padding:10px 12px;">Video (portrait)</td>
+              <td style="padding:10px 12px;">2,200 chars</td>
+              <td style="padding:10px 12px;"><span class="badge badge-amber">Buffer CSV</span></td>
+              <td style="padding:10px 12px;">Any day 7pm</td>
+            </tr>
+            <tr style="border-bottom:1px solid var(--gray-200); background:var(--gray-50);">
+              <td style="padding:10px 12px; font-weight:600;">YouTube Shorts</td>
+              <td style="padding:10px 12px;">Video (portrait)</td>
+              <td style="padding:10px 12px;">—</td>
+              <td style="padding:10px 12px;"><span class="badge badge-amber">Buffer CSV</span></td>
+              <td style="padding:10px 12px;">Thu 3pm CT</td>
+            </tr>
+            <tr style="border-bottom:1px solid var(--gray-200);">
+              <td style="padding:10px 12px; font-weight:600;">Instagram</td>
+              <td style="padding:10px 12px;">Image / Reel</td>
+              <td style="padding:10px 12px;">2,200 chars</td>
+              <td style="padding:10px 12px;"><span class="badge badge-amber">Buffer CSV</span></td>
+              <td style="padding:10px 12px;">Tue 11am CT</td>
+            </tr>
+            <tr style="border-bottom:1px solid var(--gray-200); background:var(--gray-50);">
+              <td style="padding:10px 12px; font-weight:600;">Facebook</td>
+              <td style="padding:10px 12px;">Text + image</td>
+              <td style="padding:10px 12px;">63,206 chars</td>
+              <td style="padding:10px 12px;"><span class="badge badge-amber">Buffer CSV</span></td>
+              <td style="padding:10px 12px;">Wed 1pm CT</td>
+            </tr>
+            <tr>
+              <td style="padding:10px 12px; font-weight:600;">X / Twitter</td>
+              <td style="padding:10px 12px;">Text</td>
+              <td style="padding:10px 12px; color:var(--amber);">280 chars</td>
+              <td style="padding:10px 12px;"><span class="badge badge-amber">Buffer CSV</span></td>
+              <td style="padding:10px 12px;">Wed 9am CT</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- TROUBLESHOOT -->
+    <div id="troubleshoot" class="section">
+      <div class="page-header">
+        <h1>Troubleshooting</h1>
+        <p>Common issues and quick fixes.</p>
+      </div>
+
+      <div class="card">
+        <h2>🐛 Known issues &amp; fixes</h2>
+
+        <h3>Chrome shows old build / blank screen</h3>
+        <p>Chrome is caching the old CRA build (<code>content.02d4c26d.js</code>).</p>
+        <p><strong>Fix:</strong> Open DevTools (F12) → right-click the reload button → <strong>Empty Cache and Hard Reload</strong>. Or use Firefox — the Vite build works there now.</p>
+
+        <h3>Video generation returns "Queue item not found"</h3>
+        <p>The item ID doesn't exist in Postgres — likely a stale ID from before the Postgres migration.</p>
+        <p><strong>Fix:</strong> Get a fresh ID from <code>/api/queue</code>, then retry with the real ID.</p>
+
+        <h3>Video render fails with "element has no valid type"</h3>
+        <p>A scene has an unsupported motion style or malformed animation object.</p>
+        <p><strong>Fix:</strong> Already patched in v2 — <code>pan_right</code>/<code>pan_left</code> no longer emit animation objects. Redeploy if on an older version.</p>
+
+        <h3>Send to Media Studio button stays active / double-fires</h3>
+        <p>Old bug — <code>let isSendingToStudio</code> reset on every render.</p>
+        <p><strong>Fix:</strong> Already patched — now uses <code>useState</code> and button is disabled while sending.</p>
+
+        <h3>Bluesky post fails silently</h3>
+        <p>Post is over 300 characters. The AT Protocol rejects it with no visible error.</p>
+        <p><strong>Fix:</strong> Check the character counter in the Adapter before approving. Must be 300 or under — no exceptions.</p>
+
+        <h3>Railway server shows stale data after redeploy</h3>
+        <p>File-based queue (<code>queue.json</code>) was wiped on redeploy. Now using Postgres.</p>
+        <p><strong>Fix:</strong> Already migrated. Queue persists in Postgres across all redeploys.</p>
+      </div>
+
+      <div class="card">
+        <h2>🔧 Useful test commands</h2>
+        <p style="font-size:13px;">Run these in Terminal to check system health:</p>
+        <pre style="background:var(--navy);color:#E2E8F0;padding:16px;border-radius:8px;font-size:12px;overflow-x:auto;line-height:1.8;">
+# Health check
+curl https://strategic-honesty-media-studio-production.up.railway.app/health
+
+# View queue
+curl https://strategic-honesty-media-studio-production.up.railway.app/api/queue
+
+# Test video generate (use real ID from queue)
+curl -X POST .../api/video/generate \
+  -H "Content-Type: application/json" \
+  -d '{"queueItemId":"YOUR_ID_HERE"}'
+
+# Poll video status
+curl .../api/video/status/YOUR_RENDER_ID</pre>
+      </div>
+    </div>
+
+  </div><!-- /main -->
+</div><!-- /layout -->
+
+<div class="footer">
+  Strategic Honesty Content OS · Built by Gopu Shrestha · <strong>Be Good. Do Good. Do Well.</strong> · strategichonesty.com
+</div>
+
+<script>
+  function show(id) {
+    document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+    document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+    document.getElementById(id).classList.add('active');
+    event.currentTarget.classList.add('active');
+    window.scrollTo(0, 0);
+  }
+</script>
+</body>
+</html>
