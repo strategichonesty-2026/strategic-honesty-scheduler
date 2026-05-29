@@ -876,7 +876,7 @@ export default function SocialHub() {
       <div style={{background:C.sidebar,borderRight:`1px solid ${C.border}`,display:'flex',flexDirection:'column',height:'100vh',position:'sticky',top:0,overflowY:'auto'}}>
         <div style={{padding:'16px 14px 14px',borderBottom:`1px solid ${C.border}`}}>
           <LogoMenu onHome={()=>setMainTab('calendar')}/>
-          <button onClick={()=>{wizardReset();setMainTab('wizard');}} style={{width:'100%',padding:'9px 0',background:GREEN,color:'#fff',border:'none',borderRadius:9,fontSize:13,fontWeight:600,cursor:'pointer',display:'flex',alignItems:'center',justifyContent:'center',gap:6,boxShadow:'0 2px 6px rgba(36,180,126,0.25)'}}>✦ New Post</button>
+          <button onClick={()=>{wizardReset();setMainTab('wizard');}} style={{width:'100%',padding:'9px 0',background:GREEN,color:'#fff',border:'none',borderRadius:9,fontSize:13,fontWeight:600,cursor:'pointer',display:'flex',alignItems:'center',justifyContent:'center',gap:6,boxShadow:'0 2px 6px rgba(36,180,126,0.25)'}}>✦ New Post</button><button onClick={()=>window.open('/help.html','_blank')} style={{width:'100%',padding:'7px 0',marginTop:6,background:'#fff',color:C.navy,border:'1px solid #E2E8F0',borderRadius:9,fontSize:12,fontWeight:600,cursor:'pointer',display:'flex',alignItems:'center',justifyContent:'center',gap:6}}>❓ Help &amp; Guide</button>
         </div>
         <div style={{padding:'11px 13px',borderBottom:`1px solid ${C.border}`,background:'#fffdf5',borderLeft:'3px solid #BA7517'}}>
           <div style={{fontSize:10,fontWeight:700,color:'#1E293B',textTransform:'uppercase',letterSpacing:'0.08em',marginBottom:6,display:'flex',alignItems:'center',gap:5}}>
