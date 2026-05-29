@@ -4,7 +4,7 @@
  * Keep this file under 150 lines.
  */
 
-const CLAUDE_API_URL = "https://api.anthropic.com/v1/messages";
+const CLAUDE_API_URL = "https://strategic-honesty-media-studio-production.up.railway.app/api/claude/messages";
 const MODEL = "claude-sonnet-4-20250514";
 
 const SYSTEM_PROMPT = `You are a creative director for a leadership thought-leadership brand called Strategic Honesty.

@@ -4,7 +4,7 @@
  * Returns JSON scenes ready for Creatomate video assembly.
  */
 
-const CLAUDE_API_URL = "https://api.anthropic.com/v1/messages";
+const CLAUDE_API_URL = "https://strategic-honesty-media-studio-production.up.railway.app/api/claude/messages";
 const MODEL = "claude-sonnet-4-20250514";
 
 const SCENE_SYSTEM = `You are a video director for Strategic Honesty, a leadership brand.
