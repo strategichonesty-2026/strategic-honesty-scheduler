@@ -1124,7 +1124,7 @@ export default function SocialHub() {
                 <div style={{fontSize:14,fontWeight:700,color:C.text,marginBottom:3}}>✍️ Write your post</div>
                 <div style={{fontSize:12,color:C.muted,marginBottom:13}}>Paste AI-generated content or write from scratch.</div>
                 <label style={labelStyle}>Post content</label>
-                <textarea value={wizardContent} onChange={e=>setWizardContent(e.target.value)} rows={8} style={{...inputStyle,fontSize:14,lineHeight:1.6,marginBottom:4}} placeholder={`Share something that reflects your philosophy…\n\n"Be Good. Do Good. Do Well."`} autoFocus/>
+                <textarea value={wizardContent} onChange={e=>setWizardContent(e.target.value)} rows={8} dir="ltr" style={{...inputStyle,fontSize:14,lineHeight:1.6,marginBottom:4,direction:"ltr",unicodeBidi:"plaintext"}} placeholder={`Share something that reflects your philosophy…\n\n"Be Good. Do Good. Do Well."`} autoFocus/>
                 <div style={{display:'flex',justifyContent:'space-between',marginTop:2,marginBottom:13}}><span style={{fontSize:11,color:C.muted}}>{wizardContent.length} characters</span>{wizardContent.length>300&&<span style={{fontSize:11,color:'#d97706',fontWeight:500}}>⚠ Over Bluesky limit</span>}</div>
                 <label style={labelStyle}>Image URL <span style={{color:'#bbb',fontWeight:400}}>(optional)</span></label>
                 <input value={wizardImage} onChange={e=>setWizardImage(e.target.value)} style={{...inputStyle,marginBottom:13}} placeholder="https://img.youtube.com/vi/VIDEO_ID/maxresdefault.jpg"/>
