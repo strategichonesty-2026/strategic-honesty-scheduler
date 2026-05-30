@@ -586,6 +586,7 @@ const parsedIdeas=JSON.parse(cleaned2);
   const reviewCount=ideas.filter(i=>i.status==='review').length;
 
   return (
+    <>
     <div style={{fontFamily:F}}>
       <div style={{display:'flex',alignItems:'center',gap:0,marginBottom:14,borderBottom:`1px solid ${C.border}`,background:C.card,borderRadius:'10px 10px 0 0',padding:'0 4px'}}>
         {[['research',`🔭 Intelligence${findings.length?` (${findings.length})`:''}` ],['adapter',`✦ Adapter${reviewCount?` (${reviewCount})`:''}` ],['queue',`📋 Queue${queue.length?` (${queue.length})`:''}` ]].map(([id,label])=>(
@@ -1288,7 +1289,7 @@ export default function SocialHub() {
         </div>
       </div>
     </div>
-      {exportModal && (
+    {exportModal && (
         <div style={{position:'fixed',inset:0,background:'rgba(0,0,0,0.5)',display:'flex',alignItems:'center',justifyContent:'center',zIndex:2000}}>
           <div style={{background:'#fff',borderRadius:12,padding:24,width:'min(680px,95vw)',maxHeight:'85vh',display:'flex',flexDirection:'column',boxShadow:'0 8px 32px rgba(0,0,0,0.2)'}}>
             <div style={{display:'flex',alignItems:'center',justifyContent:'space-between',marginBottom:14}}>
@@ -1303,6 +1304,7 @@ export default function SocialHub() {
           </div>
         </div>
       )}
+    </>
   );
 }
 // Fri May 22 20:14:54 CDT 2026
