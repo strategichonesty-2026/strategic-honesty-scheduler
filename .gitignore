@@ -10,3 +10,4 @@ credentials.txt
 src/src/
 build
 build.log
+node_modules/
