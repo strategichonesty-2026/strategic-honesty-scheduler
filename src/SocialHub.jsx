@@ -1,5 +1,6 @@
 import { generateScenes } from "./services/sceneParser";
 import { useState, useEffect, useCallback, useRef } from "react";
+import { ExportBufferCSV, ExportPictoryScripts, ExportImagePrompts, ExportCreativeBrief } from "./components/ExportModal";
 
 const BUILD_TIME = process.env.REACT_APP_BUILD_TIME || 'dev';
 const GREEN = "#24b47e";
@@ -577,16 +578,15 @@ const parsedIdeas=JSON.parse(cleaned2);
   const [isSendingToStudio, setIsSendingToStudio] = useState(false);
   const MEDIA_STUDIO_API=import.meta.env.VITE_MEDIA_STUDIO_API||'https://strategic-honesty-media-studio-production.up.railway.app';function _postToQueueItem(post){const firstLine=(post.content||'').split('\n').find(l=>l.trim())||'Untitled';const title=firstLine.replace(/^#+\s*/,'').replace(/\*\*/g,'').slice(0,80);const typeMap={LinkedIn:'LinkedIn Post',TikTok:'TikTok Video','YouTube Short':'YouTube Short',Instagram:'Instagram Reel',Facebook:'Facebook Post','X/Twitter':'X/Twitter Post'};return{title,platform:post.platform||'Unknown',contentType:post.contentType||typeMap[post.platform]||'Text Post',prompt:post.imagePrompt||'',source:'scheduler'};}async function sendAllToMediaStudio(){if(isSendingToStudio)return;setIsSendingToStudio(true);const posts=queue||[];if(!posts.length){alert('No approved posts.');return;}try{const items=[];for(const post of posts){const item=_postToQueueItem(post);item.sourceText=post.content||post.text||post.imagePrompt||'';const pl=(post.platform||'').toLowerCase();const isVid=pl.includes('tiktok')||pl.includes('youtube')||pl.includes('instagram');if(isVid){try{const scenes=await generateScenes(item.sourceText,post.platform,item.contentType);item.sceneData=scenes;}catch(e){console.warn('Scene gen failed',e.message);}}items.push(item);}const res=await fetch(MEDIA_STUDIO_API+'/api/queue',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({items})});if(!res.ok)throw new Error('Server '+res.status);const d=await res.json();setIsSendingToStudio(false);alert('Sent '+d.count+' post(s) to Media Studio!');}catch(e){setIsSendingToStudio(false);alert('Failed: '+e.message);}}
   const [exportModal,setExportModal]=useState(null);
-  const exportBufferCSV=()=>{const esc=v=>`"${(v||'').replace(/"/g,'""')}"`;const rows=['Platform,Title,Content,Status',...queue.map(i=>[esc(i.platform),esc(i.title),esc(i.content),esc('Approved')].join(','))];setExportModal({title:'Buffer CSV',filename:`SH_ContentQueue_${new Date().toISOString().split('T')[0]}.txt`,content:rows.join('\n')});};
-  const exportPictoryScripts=()=>{const items=queue.filter(i=>['TikTok','YouTube Shorts','Facebook','Instagram'].includes(i.platform));if(!items.length){alert('No video platform posts in queue.');return;}const lines=['STRATEGIC HONESTY — PICTORY VIDEO SCRIPTS','Generated: '+new Date().toLocaleDateString(),'','═'.repeat(60),''];items.forEach((item,i)=>{lines.push(`PROJECT ${i+1}: ${item.platform.toUpperCase()} — ${item.title}`);lines.push('─'.repeat(50));lines.push(item.content);lines.push('');});setExportModal({title:'Pictory Scripts',filename:`SH_PictoryScripts_${new Date().toISOString().split('T')[0]}.txt`,content:lines.join('\n')});};
-  const exportImagePrompts=()=>{const items=queue.filter(i=>i.imageprompt);if(!items.length){alert('No image prompts available.');return;}const lines=['STRATEGIC HONESTY — IMAGE & THUMBNAIL PROMPTS','Generated: '+new Date().toLocaleDateString(),'Paste into Midjourney, DALL-E, Ideogram, or Canva AI','','═'.repeat(60),''];items.forEach((item,i)=>{lines.push(`PROMPT ${i+1}: ${item.title} (${item.platform})`);lines.push('─'.repeat(50));lines.push(item.imageprompt);lines.push('');});setExportModal({title:'Image Prompts',filename:`SH_ImagePrompts_${new Date().toISOString().split('T')[0]}.txt`,content:lines.join('\n')});};
-  const exportCreativeBrief=()=>{if(!queue.length)return;const lines=['STRATEGIC HONESTY — MASTER CREATIVE BRIEF','Generated: '+new Date().toLocaleDateString(),'Brand: StrategicHonesty.com | Author: Gopu Shrestha','Philosophy: Be Good. Do Good. Do Well.','','═'.repeat(60),''];queue.forEach((item,i)=>{lines.push(`${i+1}. ${item.platform.toUpperCase()} — ${item.title}`);lines.push('─'.repeat(50));lines.push('APPROVED COPY:');lines.push(item.content);lines.push('');if(item.imageprompt){lines.push('IMAGE/THUMBNAIL PROMPT:');lines.push(item.imageprompt);lines.push('');}lines.push('VISUAL DIRECTION: Dark navy background, gold accent typography, professional but human.');lines.push('BRAND SIGN-OFF: Be Good. Do Good. Do Well. — Gopu Shrestha');lines.push('');lines.push('═'.repeat(60));lines.push('');});setExportModal({title:'Creative Brief',filename:`SH_CreativeBrief_${new Date().toISOString().split('T')[0]}.txt`,content:lines.join('\n')});};
+
+
+
+
 
   const pill=(label,color)=><span style={{display:'inline-block',padding:'2px 8px',borderRadius:10,fontSize:10,fontWeight:600,background:color+'22',color:color}}>{label}</span>;
   const reviewCount=ideas.filter(i=>i.status==='review').length;
 
   return (
-    <>
     <div style={{fontFamily:F}}>
       <div style={{display:'flex',alignItems:'center',gap:0,marginBottom:14,borderBottom:`1px solid ${C.border}`,background:C.card,borderRadius:'10px 10px 0 0',padding:'0 4px'}}>
         {[['research',`🔭 Intelligence${findings.length?` (${findings.length})`:''}` ],['adapter',`✦ Adapter${reviewCount?` (${reviewCount})`:''}` ],['queue',`📋 Queue${queue.length?` (${queue.length})`:''}` ]].map(([id,label])=>(
@@ -731,10 +731,10 @@ const parsedIdeas=JSON.parse(cleaned2);
             <div style={{background:C.card,border:`1px solid ${C.border}`,borderRadius:12,padding:'13px 15px',marginBottom:14}}>
               <div style={{fontSize:13,fontWeight:700,color:C.text,marginBottom:9}}>{queue.length} approved post{queue.length!==1?'s':''} — export to your tools</div>
               <div style={{display:'flex',flexWrap:'wrap',gap:7}}>
-                <button onClick={exportBufferCSV} style={{padding:'7px 13px',fontSize:12,fontWeight:600,background:C.purple,color:'#fff',border:'none',borderRadius:7,cursor:'pointer'}}>📥 Buffer CSV</button>
-                <button onClick={exportPictoryScripts} style={{padding:'7px 13px',fontSize:12,fontWeight:600,background:'#FF0000',color:'#fff',border:'none',borderRadius:7,cursor:'pointer'}}>🎬 Pictory Scripts</button>
-                <button onClick={exportImagePrompts} style={{padding:'7px 13px',fontSize:12,fontWeight:600,background:'#E1306C',color:'#fff',border:'none',borderRadius:7,cursor:'pointer'}}>🎨 Image Prompts</button>
-                <button onClick={exportCreativeBrief} style={{padding:'7px 13px',fontSize:12,fontWeight:600,background:C.gold,color:'#fff',border:'none',borderRadius:7,cursor:'pointer'}}>📄 Creative Brief</button>
+                <ExportBufferCSV queue={queue} />
+                <ExportPictoryScripts queue={queue} />
+                <ExportImagePrompts queue={queue} />
+                <ExportCreativeBrief queue={queue} />
                 <button onClick={sendAllToMediaStudio} disabled={isSendingToStudio} style={{padding:'7px 13px',fontSize:12,fontWeight:600,background:isSendingToStudio?'#a08030':'#C9A84C',color:'#0F172A',border:'none',borderRadius:7,cursor:isSendingToStudio?'not-allowed':'pointer'}}>{isSendingToStudio?'⏳ Generating scenes…':'🎬 Send to Media Studio'}</button>
               </div>
               <div style={{marginTop:7,fontSize:11,color:C.muted}}>Buffer CSV → Buffer bulk upload · Pictory Scripts → Pictory.ai · Image Prompts → Midjourney/DALL-E/Canva AI</div>
@@ -763,7 +763,6 @@ const parsedIdeas=JSON.parse(cleaned2);
 export default function SocialHub() {
   const _ = BUILD_TIME;
   const [mainTab,setMainTab]=useState('calendar');
-  const [exportModal,setExportModal]=useState(null);
   const [userId]=useState(getUserId);
   const [connections,setConnections]=useState({});
   const [testSel,setTestSel]=useState(new Set(['ig','tt']));
@@ -1290,22 +1289,6 @@ export default function SocialHub() {
         </div>
       </div>
     </div>
-    {exportModal && (
-        <div style={{position:'fixed',inset:0,background:'rgba(0,0,0,0.5)',display:'flex',alignItems:'center',justifyContent:'center',zIndex:2000}}>
-          <div style={{background:'#fff',borderRadius:12,padding:24,width:'min(680px,95vw)',maxHeight:'85vh',display:'flex',flexDirection:'column',boxShadow:'0 8px 32px rgba(0,0,0,0.2)'}}>
-            <div style={{display:'flex',alignItems:'center',justifyContent:'space-between',marginBottom:14}}>
-              <h3 style={{fontSize:16,fontWeight:700,color:'#0F172A',margin:0}}>{exportModal.title}</h3>
-              <button onClick={()=>setExportModal(null)} style={{background:'none',border:'none',fontSize:20,cursor:'pointer',color:'#64748b'}}>x</button>
-            </div>
-            <textarea value={exportModal.content} onChange={e=>setExportModal(m=>({...m,content:e.target.value}))} style={{flex:1,minHeight:320,padding:12,fontSize:12,fontFamily:'monospace',border:'1px solid #E2E8F0',borderRadius:8,resize:'vertical',lineHeight:1.6}}/>
-            <div style={{display:'flex',gap:8,marginTop:14,justifyContent:'flex-end'}}>
-              <button onClick={()=>setExportModal(null)} style={{padding:'8px 16px',background:'#f1f5f9',color:'#334155',border:'none',borderRadius:8,fontSize:13,cursor:'pointer'}}>Cancel</button>
-              <button onClick={()=>{const blob=new Blob([exportModal.content],{type:'text/plain'});const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download=exportModal.filename;a.click();URL.revokeObjectURL(url);}} style={{padding:'8px 16px',background:'#1E3A5F',color:'#fff',border:'none',borderRadius:8,fontSize:13,fontWeight:600,cursor:'pointer'}}>Download .txt</button>
-            </div>
-          </div>
-        </div>
-      )}
-    </>
   );
 }
 // Fri May 22 20:14:54 CDT 2026
