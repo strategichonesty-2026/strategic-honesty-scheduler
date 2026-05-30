@@ -1288,6 +1288,21 @@ export default function SocialHub() {
         </div>
       </div>
     </div>
+      {exportModal && (
+        <div style={{position:'fixed',inset:0,background:'rgba(0,0,0,0.5)',display:'flex',alignItems:'center',justifyContent:'center',zIndex:2000}}>
+          <div style={{background:'#fff',borderRadius:12,padding:24,width:'min(680px,95vw)',maxHeight:'85vh',display:'flex',flexDirection:'column',boxShadow:'0 8px 32px rgba(0,0,0,0.2)'}}>
+            <div style={{display:'flex',alignItems:'center',justifyContent:'space-between',marginBottom:14}}>
+              <h3 style={{fontSize:16,fontWeight:700,color:'#0F172A',margin:0}}>{exportModal.title}</h3>
+              <button onClick={()=>setExportModal(null)} style={{background:'none',border:'none',fontSize:20,cursor:'pointer',color:'#64748b'}}>x</button>
+            </div>
+            <textarea value={exportModal.content} onChange={e=>setExportModal(m=>({...m,content:e.target.value}))} style={{flex:1,minHeight:320,padding:12,fontSize:12,fontFamily:'monospace',border:'1px solid #E2E8F0',borderRadius:8,resize:'vertical',lineHeight:1.6}}/>
+            <div style={{display:'flex',gap:8,marginTop:14,justifyContent:'flex-end'}}>
+              <button onClick={()=>setExportModal(null)} style={{padding:'8px 16px',background:'#f1f5f9',color:'#334155',border:'none',borderRadius:8,fontSize:13,cursor:'pointer'}}>Cancel</button>
+              <button onClick={()=>{const blob=new Blob([exportModal.content],{type:'text/plain'});const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download=exportModal.filename;a.click();URL.revokeObjectURL(url);}} style={{padding:'8px 16px',background:'#1E3A5F',color:'#fff',border:'none',borderRadius:8,fontSize:13,fontWeight:600,cursor:'pointer'}}>Download .txt</button>
+            </div>
+          </div>
+        </div>
+      )}
   );
 }
 // Fri May 22 20:14:54 CDT 2026
