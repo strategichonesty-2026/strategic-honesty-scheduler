@@ -940,8 +940,8 @@ export default function SocialHub() {
           {mainTab==='calendar'&&(
             <div>
               <div style={{display:'grid',gridTemplateColumns:'repeat(4,1fr)',gap:10,marginBottom:18}}>
-                {[{n:scheduledPosts.filter(p=>p.status==='pending').length||393,l:'Posts scheduled'},{n:'5/week',l:'Posting frequency'},{n:CONNECTED_CHANNELS.length,l:'Channels active'},{n:approvedQueue.length,l:'In approved queue'}].map((item,i)=>(
-                  <div key={i} style={{background:C.card,border:`1px solid ${C.border}`,borderRadius:10,padding:'13px 15px'}}><div style={{fontSize:20,fontWeight:700,color:C.text}}>{item.n}</div><div style={{fontSize:12,color:C.muted,marginTop:2}}>{item.l}</div></div>
+                {[{n:scheduledPosts.filter(p=>p.status==='pending').length||393,l:'Posts scheduled',sub:'View all →',tab:'calendar'},{n:'5/week',l:'Posting frequency',sub:'View schedule →',tab:'calendar'},{n:CONNECTED_CHANNELS.length,l:'Channels active',sub:'Manage →',tab:'connect'},{n:approvedQueue.length,l:'In approved queue',sub:'Go to queue →',tab:'ideas'}].map((item,i)=>(
+                  <div key={i} onClick={()=>setMainTab(item.tab)} style={{background:C.card,border:`1px solid ${C.border}`,borderRadius:10,padding:'13px 15px',cursor:'pointer',transition:'border-color .15s'}} onMouseEnter={e=>e.currentTarget.style.borderColor=C.green} onMouseLeave={e=>e.currentTarget.style.borderColor=C.border}><div style={{fontSize:20,fontWeight:700,color:C.text}}>{item.n}</div><div style={{fontSize:12,color:C.muted,marginTop:2}}>{item.l}</div><div style={{fontSize:11,color:C.green,marginTop:4}}>{item.sub}</div></div>
                 ))}
               </div>
               <div style={{display:'flex',alignItems:'center',gap:10,marginBottom:12}}>
