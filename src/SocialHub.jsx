@@ -1,5 +1,6 @@
 import { generateScenes } from "./services/sceneParser";
 import { useState, useEffect, useCallback, useRef } from "react";
+import { saveContent, loadContent, runCleanup } from "./services/contentStorage";
 import { ExportBufferCSV, ExportPictoryScripts, ExportImagePrompts, ExportCreativeBrief } from "./components/ExportModal";
 
 const BUILD_TIME = process.env.REACT_APP_BUILD_TIME || 'dev';
@@ -503,10 +504,16 @@ function ContentIdeasPanel({setApprovedQueue}) {
   const [resStatus,setResStatus]=useState('idle');
   const [resProgress,setResProgress]=useState(0);
   const [resLabel,setResLabel]=useState('');
-  const [findings,setFindings]=useState(()=>{try{return JSON.parse(localStorage.getItem('sh_ci_findings')||'[]');}catch{return[];}});
-  const [ideas,setIdeas]=useState(()=>{try{return JSON.parse(localStorage.getItem('sh_ci_ideas')||'[]');}catch{return[];}});
+  const [findings,setFindings]=useState([]);
+  const [ideas,setIdeas]=useState([]);
   const [queue,setQueue]=useState(()=>{try{return JSON.parse(localStorage.getItem('sh_ci_queue')||'[]');}catch{return[];}});
   const [lastRun,setLastRun]=useState(()=>localStorage.getItem('sh_ci_lastrun')||'');
+
+  useEffect(()=>{
+    loadContent('findings').then(items=>{ if(items.length) setFindings(items); });
+    loadContent('ideas').then(items=>{ if(items.length) setIdeas(items); });
+    runCleanup();
+  },[]);
   const [nextRun,setNextRun]=useState(()=>localStorage.getItem('sh_ci_nextrun')||'');
   const [activeIdea,setActiveIdea]=useState(null);
   const [cards,setCards]=useState({});
@@ -536,6 +543,7 @@ try{
   parsed.forEach((f,i)=>{f.id='f'+Date.now()+i;nf.push(f);});
   console.log('nf length:', nf.length);
   setFindings([...nf]);
+  saveContent('findings', [...nf]);
   setResProgress(65);
 }catch(e){console.error('Research error:',e.message);}
 
@@ -549,7 +557,7 @@ const cleaned2=raw.replace(/```json\n?/g,'').replace(/```\n?/g,'').trim();
 const parsedIdeas=JSON.parse(cleaned2);
 
       const newIdeas=parsedIdeas.map((idea,i)=>({id:'idea'+Date.now()+i,title:idea.title,core:idea.core,findingRef:idea.findingRef||'',virality:idea.virality||'',imageprompt:idea.imageprompt||'',pillars:idea.pillars||'Integrity',status:'review'}));
-      setIdeas(prev=>{const existIds=new Set(prev.map(i=>i.id));return[...newIdeas.filter(i=>!existIds.has(i.id)),...prev].slice(0,30);});
+      setIdeas(prev=>{const merged=[...newIdeas.filter(i=>!new Set(prev.map(p=>p.id)).has(i.id)),...prev].slice(0,30);saveContent('ideas',merged);return merged;});
     }catch(e){console.error('Ideas error:',e.message);}
     setResProgress(100);setResLabel('Research complete');setResStatus('done');
     const lr=new Date().toISOString(),nr=new Date(Date.now()+7*24*60*60*1000).toISOString();
