@@ -574,6 +574,8 @@ const parsedIdeas=JSON.parse(cleaned2);
     try{await ciCallClaude(prompt,text=>setCard(ideaId,platId,{content:text,expanded:true}));}
     catch(e){setCard(ideaId,platId,{content:'Error: '+e.message});}
     setCard(ideaId,platId,{loading:false,actionLoading:null});
+    const updatedCard=getCard(ideaId,platId);
+    if(updatedCard?.content) saveContent('cards',[{id:`${ideaId}_${platId}`,ideaId,platId,content:updatedCard.content,savedAt:new Date().toISOString()}]);
   },[ideas,getCard,setCard]);
 
   const approveToQueue=useCallback((ideaId,platId)=>{
