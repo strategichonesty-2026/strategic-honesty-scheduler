@@ -571,11 +571,11 @@ const parsedIdeas=JSON.parse(cleaned2);
     else setCard(ideaId,platId,{loading:true,content:'',expanded:true});
     let prompt=`Core idea: "${idea.core}"\n\nTitle: "${idea.title}"\n\nWrite a ${plat.label} post. Format: ${plat.fmt}.`;
     if(actionId&&c.content)prompt+=`\n\nExisting draft:\n"""\n${c.content}\n"""\n\nInstruction: ${ACTION_MODS[actionId]}`;
-    try{await ciCallClaude(prompt,text=>setCard(ideaId,platId,{content:text,expanded:true}));}
+    let generatedText='';
+    try{await ciCallClaude(prompt,text=>{generatedText=text;setCard(ideaId,platId,{content:text,expanded:true});});}
     catch(e){setCard(ideaId,platId,{content:'Error: '+e.message});}
     setCard(ideaId,platId,{loading:false,actionLoading:null});
-    const updatedCard=getCard(ideaId,platId);
-    if(updatedCard?.content) saveContent('cards',[{id:`${ideaId}_${platId}`,ideaId,platId,content:updatedCard.content,savedAt:new Date().toISOString()}]);
+    if(generatedText) saveContent('cards',[{id:`${ideaId}_${platId}`,ideaId,platId,content:generatedText,savedAt:new Date().toISOString()}]);
   },[ideas,getCard,setCard]);
 
   const approveToQueue=useCallback((ideaId,platId)=>{
