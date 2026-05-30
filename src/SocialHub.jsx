@@ -763,6 +763,7 @@ const parsedIdeas=JSON.parse(cleaned2);
 export default function SocialHub() {
   const _ = BUILD_TIME;
   const [mainTab,setMainTab]=useState('calendar');
+  const [exportModal,setExportModal]=useState(null);
   const [userId]=useState(getUserId);
   const [connections,setConnections]=useState({});
   const [testSel,setTestSel]=useState(new Set(['ig','tt']));
